@@ -1,11 +1,22 @@
 HELP.md
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
+**/build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
+# Gradle wrapper 예외 처리
+!gradle/wrapper/gradle-wrapper.jar
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Gradle 캐시
+.gradletasknamecache
+
+# Gradle GUI 설정
+gradle-app.setting
+
+# Eclipse 관련
 .apt_generated
 .classpath
 .factorypath
@@ -17,7 +28,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
+# IntelliJ IDEA
 .idea
 *.iws
 *.iml
@@ -26,12 +37,12 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
-/.nb-gradle/
+.nb-gradle/
 
-### VS Code ###
+# VS Code
 .vscode/
