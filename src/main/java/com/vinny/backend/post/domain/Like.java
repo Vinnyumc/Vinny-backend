@@ -1,11 +1,16 @@
 package com.vinny.backend.post.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "like")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
+@Builder
 public class Like {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

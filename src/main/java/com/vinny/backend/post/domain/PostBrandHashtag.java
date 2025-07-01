@@ -1,9 +1,14 @@
 package com.vinny.backend.post.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "post_brand_hashtag")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
+@Builder
 public class PostBrandHashtag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
