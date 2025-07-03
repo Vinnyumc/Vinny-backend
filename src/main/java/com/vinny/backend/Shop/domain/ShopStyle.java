@@ -1,6 +1,7 @@
 package com.vinny.backend.Shop.domain;
 
 import com.vinny.backend.Common.domain.BaseEntity;
+import com.vinny.backend.Shop.domain.id.ShopStyleId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,4 @@ public class ShopStyle extends BaseEntity {
     @JoinColumn(name = "style_id")
     private Style style;
 
-    // 추가 메타필드가 있다면 여기에 예: 등록일, 우선순위 등
 }
