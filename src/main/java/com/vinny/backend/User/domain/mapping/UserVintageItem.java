@@ -1,6 +1,6 @@
 package com.vinny.backend.User.domain.mapping;
 
-import com.vinny.backend.User.domain.BaseEntity;
+import com.vinny.backend.Common.domain.BaseEntity;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.domain.VintageItem;
 import jakarta.persistence.*;

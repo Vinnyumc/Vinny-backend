@@ -1,4 +1,4 @@
-package com.vinny.backend.User.domain;
+package com.vinny.backend.Common.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
