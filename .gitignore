@@ -46,3 +46,9 @@ out/
 
 # VS Code
 .vscode/
+
+# DS_store
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
