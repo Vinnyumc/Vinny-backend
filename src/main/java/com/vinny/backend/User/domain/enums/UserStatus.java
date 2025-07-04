@@ -1,4 +1,4 @@
-package com.vinny.backend.Common.domain.enums;
+package com.vinny.backend.User.domain.enums;
 
 public enum UserStatus {
     ACTIVE, INACTIVE

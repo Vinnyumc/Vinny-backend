@@ -1,4 +1,4 @@
-package com.vinny.backend.Common.domain;
+package com.vinny.backend.User.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class VintageStyle {
+public class VintageItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

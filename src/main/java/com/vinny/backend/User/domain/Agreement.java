@@ -1,10 +1,9 @@
-package com.vinny.backend.Common.domain;
+package com.vinny.backend.User.domain;
 
-import com.vinny.backend.Common.domain.mapping.UserAgreement;
+import com.vinny.backend.User.domain.mapping.UserAgreement;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

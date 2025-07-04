@@ -1,6 +1,6 @@
-package com.vinny.backend.Common.domain;
+package com.vinny.backend.User.domain;
 
-import com.vinny.backend.Common.domain.mapping.*;
+import com.vinny.backend.User.domain.mapping.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

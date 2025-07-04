@@ -1,8 +1,8 @@
-package com.vinny.backend.Common.domain.mapping;
+package com.vinny.backend.User.domain.mapping;
 
-import com.vinny.backend.Common.domain.BaseEntity;
-import com.vinny.backend.Common.domain.User;
-import com.vinny.backend.Common.domain.VintageStyle;
+import com.vinny.backend.User.domain.BaseEntity;
+import com.vinny.backend.User.domain.Brand;
+import com.vinny.backend.User.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UserVintageStyle extends BaseEntity {
+public class UserBrand extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,6 @@ public class UserVintageStyle extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vintage_style_id", nullable = false)
-    private VintageStyle vintageStyle;
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
 }
