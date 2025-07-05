@@ -1,6 +1,7 @@
 package com.vinny.backend.User.domain;
 
 import com.vinny.backend.Common.domain.BaseEntity;
+import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.domain.mapping.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,7 +42,7 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status", columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
-    private String userStatus; // 유지상태
+    private UserStatus userStatus; // 유지상태
 
     @Column(name = "inactivate_date")
     private LocalDateTime inactivateDate; // 비활성시기
