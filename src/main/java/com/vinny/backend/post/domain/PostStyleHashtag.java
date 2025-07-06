@@ -19,6 +19,6 @@ public class PostStyleHashtag {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vintage_item_id", nullable = false)
-    private VintageStyle vintageItem;
+    @JoinColumn(name = "vintage_style_id", nullable = false)
+    private VintageStyle vintageStyle;
 }
