@@ -1,10 +1,14 @@
 package com.vinny.backend.Shop.domain;
 
+import com.vinny.backend.Shop.domain.mapping.ShopVintageStyle;
+import com.vinny.backend.User.domain.Region;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.Shop.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "shop")
@@ -52,10 +56,10 @@ public class Shop extends BaseEntity {
     @Column(name = "longitude", nullable = false)
     private Double longitude;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_category_id")
-    private RegionCategory regionCategory;
+    @JoinColumn(name = "region_id")
+    private Region region;
 
-
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShopVintageStyle> shopVintageStyleList = new ArrayList<>();
 }
