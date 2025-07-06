@@ -36,3 +36,4 @@ public abstract class BaseEntity {
     @Column(name = "updated_by")
     protected String updatedBy;
 }
+
