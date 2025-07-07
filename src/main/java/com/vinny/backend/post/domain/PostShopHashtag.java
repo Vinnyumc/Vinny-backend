@@ -1,5 +1,6 @@
 package com.vinny.backend.post.domain;
 
+import com.vinny.backend.Shop.domain.Shop;
 import jakarta.persistence.*;
 import lombok.*;
 
