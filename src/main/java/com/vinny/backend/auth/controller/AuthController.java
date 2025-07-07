@@ -25,4 +25,9 @@ public class AuthController {
         String kakaoUserId = authentication.getName();
         return ResponseEntity.ok("Your Kakao User ID is: " + kakaoUserId);
     }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto requestDto) {
+        return ResponseEntity.ok(authService.reissue(requestDto));
+    }
 }

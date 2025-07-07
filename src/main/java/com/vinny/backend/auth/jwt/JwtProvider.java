@@ -29,16 +29,19 @@ public class JwtProvider {
 
     private final Key key;
     private final long accessTokenExpirationMilliseconds;
+    private final long refreshTokenExpirationMilliseconds;
 
     public JwtProvider(@Value("${jwt.secret}") String secretKey,
-                       @Value("${jwt.access-token-expiration-milliseconds}") long accessTokenExpirationMilliseconds) {
+                       @Value("${jwt.access-token-expiration-milliseconds}") long accessTokenExpirationMilliseconds,
+                       @Value("${jwt.refresh-token-expiration-milliseconds}") long refreshTokenExpirationMilliseconds) {
 //        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpirationMilliseconds = accessTokenExpirationMilliseconds;
+        this.refreshTokenExpirationMilliseconds = refreshTokenExpirationMilliseconds;
     }
 
-    public TokenDto generateTokenDto(User user) {
+    public TokenDto generateTokens(User user) {
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + this.accessTokenExpirationMilliseconds);
         String subject = String.valueOf(user.getKakaoUserId());
@@ -51,9 +54,15 @@ public class JwtProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + this.refreshTokenExpirationMilliseconds))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
