@@ -3,6 +3,8 @@ package com.vinny.backend.error;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vinny.backend.error.code.BaseCode;
+import com.vinny.backend.error.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -21,13 +23,13 @@ public class ApiResponse<T> {
 
     // 성공한 경우 응답 생성
 
-//    public static <T> ApiResponse<T> onSuccess(T result){
-//        return new ApiResponse<>(true, SuccessStatus._OK.getCode() , SuccessStatus._OK.getMessage(), result);
-//    }
-//
-//    public static <T> ApiResponse<T> of(BaseCode code, T result){
-    //        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
-//    }
+    public static <T> ApiResponse<T> onSuccess(T result){
+        return new ApiResponse<>(true, SuccessStatus._OK.getCode() , SuccessStatus._OK.getMessage(), result);
+    }
+
+    public static <T> ApiResponse<T> of(BaseCode code, T result){
+            return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
+    }
 
 
     // 실패한 경우 응답 생성
