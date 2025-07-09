@@ -4,8 +4,6 @@ import com.vinny.backend.User.domain.User;
 import com.vinny.backend.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import com.vinny.backend.User.domain.User;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_post") //like는 예약어라서 변경
@@ -13,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Like extends BaseEntity {
+public class UserPost extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
