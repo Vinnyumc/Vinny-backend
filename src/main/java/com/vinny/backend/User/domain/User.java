@@ -67,7 +67,7 @@ public class User extends BaseEntity {
     private List<UserAgreement> userAgreements = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserFavorite> userFavoriteList = new ArrayList<>();
+    private List<UserShop> userShopList = new ArrayList<>();
 
     @Column(name = "refresh_token")
     private String refreshToken;

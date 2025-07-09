@@ -12,10 +12,10 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "user_favorites", uniqueConstraints = {
+@Table(name = "user_shop", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "shop_id"})
 }) // 유저가 같은 샵을 중복으로 즐겨찾기하지 못하게 막는 제약 조건
-public class UserFavorite extends BaseEntity {
+public class UserShop extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
