@@ -41,8 +41,8 @@ public class Shop extends BaseEntity {
     @Column(name = "instagram", length = 100)
     private String instagram;
 
-    @Column(name = "image_url", length = 255)
-    private String imageUrl;
+    @Column(name = "main_image", length = 255)
+    private String mainImage;
 
     @Column(name = "address", nullable = false, length = 255)
     private String address;
@@ -62,4 +62,8 @@ public class Shop extends BaseEntity {
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShopVintageStyle> shopVintageStyleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShopImage> shopImages = new ArrayList<>();
+
 }
