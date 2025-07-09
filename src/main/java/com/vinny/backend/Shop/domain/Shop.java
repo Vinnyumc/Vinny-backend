@@ -41,9 +41,6 @@ public class Shop extends BaseEntity {
     @Column(name = "instagram", length = 100)
     private String instagram;
 
-    @Column(name = "main_image", length = 255)
-    private String mainImage;
-
     @Column(name = "address", nullable = false, length = 255)
     private String address;
 
