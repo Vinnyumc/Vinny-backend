@@ -66,6 +66,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAgreement> userAgreements = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserShop> userShopList = new ArrayList<>();
+
     @Column(name = "refresh_token")
     private String refreshToken;
 
