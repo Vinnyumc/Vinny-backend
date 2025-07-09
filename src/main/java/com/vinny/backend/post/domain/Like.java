@@ -8,7 +8,7 @@ import com.vinny.backend.User.domain.User;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "like")
+@Table(name = "user_post") //like는 예약어라서 변경
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
