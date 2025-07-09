@@ -2,6 +2,7 @@ package com.vinny.backend.User.domain.mapping;
 
 import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.domain.enums.UserShopStatus;
 import com.vinny.backend.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,5 +28,12 @@ public class UserFavorite extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private UserShopStatus status;
+
+    @Column(name = "visit_count")
+    private Integer visitCount;
 
 }
