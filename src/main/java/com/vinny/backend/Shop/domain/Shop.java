@@ -57,9 +57,11 @@ public class Shop extends BaseEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
+    @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShopVintageStyle> shopVintageStyleList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShopImage> shopImages = new ArrayList<>();
 
