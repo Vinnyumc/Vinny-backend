@@ -24,6 +24,7 @@ public class ShopImage extends BaseEntity {
     @Column(name = "image_url", nullable = false, length = 255)
     private String imageUrl;
 
-    @Column(name = "is_main_image", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
-    private boolean IsMainImage;
+    @Column(name = "is_main_image", nullable = false)
+    private boolean isMainImage = false;
+
 }
