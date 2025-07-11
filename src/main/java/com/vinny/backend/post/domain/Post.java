@@ -20,6 +20,9 @@ public class Post extends BaseEntity {
     private Long id;
 
     @Column(length = 255, nullable = false)
+    private String title;
+
+    @Column(length = 255, nullable = false)
     private String content;
 
 
