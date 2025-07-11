@@ -24,4 +24,9 @@ public class ShopVintageStyle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vintage_style_id", nullable = false)
     private VintageStyle vintageStyle;
+
+    public ShopVintageStyle(Shop shop, VintageStyle style) {
+        this.shop = shop;
+        this.vintageStyle = style;
+    }
 }

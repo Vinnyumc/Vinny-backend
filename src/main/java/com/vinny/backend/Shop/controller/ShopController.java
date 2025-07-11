@@ -1,5 +1,16 @@
 package com.vinny.backend.Shop.controller;
 
+import com.vinny.backend.Shop.dto.ShopRequestDto;
+import com.vinny.backend.Shop.dto.ShopResponseDto;
+import com.vinny.backend.Shop.service.ShopCommandService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import com.vinny.backend.Shop.dto.ShopSearchResponseDto;
 import com.vinny.backend.Shop.service.ShopService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +33,15 @@ import java.util.Map;
 public class ShopController {
 
     private final ShopService shopService;
+    private final ShopCommandService shopCommandService;
+
+    @PostMapping
+    public ResponseEntity<ShopResponseDto.PreviewDto> createShop(
+            @RequestBody @Valid ShopRequestDto.CreateDto requestDto
+    ) {
+        ShopResponseDto.PreviewDto response = shopCommandService.createShop(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
 
     @Operation(summary = "샵 검색", description = "키워드로 빈티지샵을 검색합니다.")

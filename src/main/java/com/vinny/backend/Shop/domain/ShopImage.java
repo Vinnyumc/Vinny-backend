@@ -25,6 +25,13 @@ public class ShopImage extends BaseEntity {
     private String imageUrl;
 
     @Column(name = "is_main_image", nullable = false)
-    private boolean isMainImage = false;
+    private boolean isMainImage;
+
+    public ShopImage(Shop shop, String imageUrl, boolean isMainImage) {
+        this.shop = shop;
+        this.imageUrl = imageUrl;
+        this.isMainImage = isMainImage;
+    }
+
 
 }

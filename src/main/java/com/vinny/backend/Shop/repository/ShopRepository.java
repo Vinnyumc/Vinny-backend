@@ -20,4 +20,3 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     """)
     List<Shop> searchByNameOrStyleOrRegion(@Param("keyword") String keyword);
 }
-
