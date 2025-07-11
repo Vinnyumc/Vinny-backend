@@ -1,6 +1,8 @@
 package com.vinny.backend.Shop.repository;
 
 import com.vinny.backend.Shop.domain.Shop;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,8 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
            OR LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
     List<Shop> searchByNameOrStyleOrRegion(@Param("keyword") String keyword);
+
+
+    Page<Shop> findByShopVintageStyleList_VintageStyle_Name(String style, Pageable pageable);
+
 }

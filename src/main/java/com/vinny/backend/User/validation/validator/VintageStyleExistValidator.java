@@ -24,18 +24,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class VintageStyleExistValidator implements ConstraintValidator<ExistVintageStyle, List<Long>> {
+public class VintageStyleExistValidator implements ConstraintValidator<ExistVintageStyle, String> {
 
     private final VintageStyleRepository vintageStyleRepository;
 
     @Override
-    public boolean isValid(List<Long> values, ConstraintValidatorContext context) {
-        if (values == null || values.isEmpty()) {
-            return true;
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null || value.isBlank()) {
+            return false;
         }
 
-        return values.stream()
-                .allMatch(vintageStyleRepository::existsById);
+        return vintageStyleRepository.existsByName(value);
     }
 }
+
 

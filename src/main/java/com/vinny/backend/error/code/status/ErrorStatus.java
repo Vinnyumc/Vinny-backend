@@ -22,7 +22,14 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
 
     // 예시,,,
-    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다.");
+    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
+
+    // page
+    INVALID_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4001", "page는 1 이상의 정수여야 합니다."),
+    MISSING_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4002", "page 파라미터가 필요합니다."),
+    INVALID_PAGE_FORMAT(HttpStatus.BAD_REQUEST, "PAGEPARAM4003", "page는 숫자여야 합니다.")
+
+    ;
 
 
     private final HttpStatus httpStatus;
