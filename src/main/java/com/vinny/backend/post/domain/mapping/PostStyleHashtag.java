@@ -1,16 +1,17 @@
-package com.vinny.backend.post.domain;
+package com.vinny.backend.post.domain.mapping;
 
-import com.vinny.backend.User.domain.Brand;
+import com.vinny.backend.User.domain.VintageStyle;
+import com.vinny.backend.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "post_brand_hashtag")
+@Table(name = "post_style_hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
 @Builder
-public class PostBrandHashtag {
+public class PostStyleHashtag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +21,6 @@ public class PostBrandHashtag {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id", nullable = false)
-    private Brand brand;
+    @JoinColumn(name = "vintage_style_id", nullable = false)
+    private VintageStyle vintageStyle;
 }

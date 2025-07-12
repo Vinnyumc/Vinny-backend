@@ -1,6 +1,8 @@
-package com.vinny.backend.post.repsitory;
+package com.vinny.backend.post.repository;
 
 import com.vinny.backend.post.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,4 +26,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            OR LOWER(vs.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
     List<Post> searchByKeyword(@org.springframework.data.repository.query.Param("keyword") String keyword);
+
+    @Query(value = "SELECT DISTINCT p FROM Post p " +
+            "LEFT JOIN FETCH p.user u " +
+            "LEFT JOIN FETCH p.images i " +
+            "LEFT JOIN FETCH p.likes l " +
+            "LEFT JOIN FETCH p.shopHashtags sh " +
+            "LEFT JOIN FETCH sh.shop s " +
+            "LEFT JOIN FETCH p.styleHashtags sth " +
+            "LEFT JOIN FETCH sth.vintageStyle vs " +
+            "LEFT JOIN FETCH p.brandHashtags bh " +
+            "LEFT JOIN FETCH bh.brand b",
+            countQuery = "SELECT COUNT(p) FROM Post p")
+    Page<Post> findAllWithAssociations(Pageable pageable);
 }
