@@ -1,6 +1,7 @@
-package com.vinny.backend.post.domain;
+package com.vinny.backend.post.domain.mapping;
 
 import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
 
