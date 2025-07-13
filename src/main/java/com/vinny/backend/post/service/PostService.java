@@ -7,7 +7,9 @@ import com.vinny.backend.post.dto.PostSearchResponseDto;
 import com.vinny.backend.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +34,13 @@ public class PostService {
 
     }
     public PostResponseDto getPosts(Pageable pageable, Long currentUserId) {
+//        //정렬 조건 추가
+//        Pageable sortedPageable = PageRequest.of(
+//                pageable.getPageNumber(),
+//                pageable.getPageSize(),
+//                Sort.by(Sort.Direction.DESC, "createdAt")
+//        );
+
         Page<Post> posts = postRepository.findAllWithAssociations(pageable); // ← repository에서 JOIN FETCH
         List<PostResponseDto.PostDto> postDtos = posts.map(post -> PostConverter.toDto(post, currentUserId)).toList();
 
