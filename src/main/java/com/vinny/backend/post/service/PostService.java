@@ -33,7 +33,7 @@ public class PostService {
         )).toList();
 
     }
-    public PostResponseDto getPosts(Pageable pageable, Long currentUserId) {
+    public PostResponseDto getAllposts(Pageable pageable, Long currentUserId) {
 //        //정렬 조건 추가
 //        Pageable sortedPageable = PageRequest.of(
 //                pageable.getPageNumber(),

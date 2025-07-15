@@ -65,7 +65,7 @@ public class PostController {
         // TODO: 로그인 인증 구현 전까지는 임시 userId 사용
         Long userId = 0L;
 
-        PostResponseDto response = postService.getPosts(pageable, userId);
+        PostResponseDto response = postService.getAllposts(pageable, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 }
