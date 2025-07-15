@@ -1,9 +1,15 @@
 package com.vinny.backend.post.service;
 
+import com.vinny.backend.post.converter.PostConverter;
 import com.vinny.backend.post.domain.Post;
+import com.vinny.backend.post.dto.PostResponseDto;
 import com.vinny.backend.post.dto.PostSearchResponseDto;
-import com.vinny.backend.post.repsitory.PostRepository;
+import com.vinny.backend.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,5 +32,28 @@ public class PostService {
                 post.getUser().getNickname()
         )).toList();
 
+    }
+    public PostResponseDto getAllposts(Pageable pageable, Long currentUserId) {
+//        //정렬 조건 추가
+//        Pageable sortedPageable = PageRequest.of(
+//                pageable.getPageNumber(),
+//                pageable.getPageSize(),
+//                Sort.by(Sort.Direction.DESC, "createdAt")
+//        );
+
+        Page<Post> posts = postRepository.findAllWithAssociations(pageable); // ← repository에서 JOIN FETCH
+        List<PostResponseDto.PostDto> postDtos = posts.map(post -> PostConverter.toDto(post, currentUserId)).toList();
+
+        PostResponseDto.PageInfoDto pageInfo = PostResponseDto.PageInfoDto.builder()
+                .page(posts.getNumber())
+                .size(posts.getSize())
+                .totalPages(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .build();
+
+        return PostResponseDto.builder()
+                .posts(postDtos)
+                .pageInfo(pageInfo)
+                .build();
     }
 }

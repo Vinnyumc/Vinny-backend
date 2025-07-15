@@ -2,8 +2,13 @@ package com.vinny.backend.post.domain;
 
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.common.domain.BaseEntity;
+import com.vinny.backend.post.domain.mapping.PostBrandHashtag;
+import com.vinny.backend.post.domain.mapping.PostShopHashtag;
+import com.vinny.backend.post.domain.mapping.PostStyleHashtag;
+import com.vinny.backend.post.domain.mapping.UserPost;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +40,18 @@ public class Post extends BaseEntity {
     private List<PostImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
     private List<UserPost> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
     private List<PostBrandHashtag> brandHashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
     private List<PostStyleHashtag> styleHashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
     private List<PostShopHashtag> shopHashtags = new ArrayList<>();
 }
