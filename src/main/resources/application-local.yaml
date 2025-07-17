@@ -1,4 +1,9 @@
 spring:
+  rds:
+    datasource:
+      url: jvinny.cnkkw26g66qk.ap-northeast-2.rds.amazonaws.com
+      username: root
+      password: root1234
   h2:
     console:
       enabled: true
