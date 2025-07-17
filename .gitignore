@@ -55,3 +55,6 @@ out/
 
 # Local-specific configurations
 application-local.yaml
+
+# Docker secret file ignore
+.env
