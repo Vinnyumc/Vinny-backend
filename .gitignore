@@ -4,6 +4,7 @@ build/
 **/build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+.env
 
 # Gradle wrapper 예외 처리
 !gradle/wrapper/gradle-wrapper.jar
@@ -52,9 +53,6 @@ out/
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
-
-# Local-specific configurations
-application-local.yaml
 
 # Docker secret file ignore
 .env
