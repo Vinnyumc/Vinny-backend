@@ -27,7 +27,13 @@ public enum ErrorStatus implements BaseErrorCode {
     // page
     INVALID_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4001", "page는 1 이상의 정수여야 합니다."),
     MISSING_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4002", "page 파라미터가 필요합니다."),
-    INVALID_PAGE_FORMAT(HttpStatus.BAD_REQUEST, "PAGEPARAM4003", "page는 숫자여야 합니다.")
+    INVALID_PAGE_FORMAT(HttpStatus.BAD_REQUEST, "PAGEPARAM4003", "page는 숫자여야 합니다."),
+
+    // S3 관련 에러
+    S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_ERROR_5001", "S3 파일 업로드에 실패했습니다."),
+    S3_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_ERROR_5002", "S3 파일 삭제에 실패했습니다."),
+    FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "S3_ERROR_4001", "업로드할 파일이 없습니다."),
+    INVALID_FILE_URL(HttpStatus.BAD_REQUEST, "S3_ERROR_4002", "잘못된 형식의 파일 URL입니다.")
 
     ;
 
