@@ -1,25 +1,67 @@
-name: Vinny Dev CI/CD
+name: Vinny Docker CI/CD Pipeline
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
 
     steps:
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: actions/checkout@v3
+
+      - name: Make application.yml  # application.yml 파일 생성 (운영용)
+        run: |
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+        shell: bash
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t vinny:latest .
+
+      - name: Save Docker image as tar
+        run: docker save vinny:latest -o vinny-latest.tar
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v3
         with:
-          host: ${{ secrets.EC2_HOST }}      # EC2 퍼블릭 IP
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}   # EC2 SSH 개인키 (PEM)
-          script: |
-            cd /home/ubuntu/Vinny-backend
-            git pull origin main
-            docker build -t vinny:latest .
+          name: vinny-image
+          path: vinny-latest.tar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: vinny-image
+          path: .
+
+      - name: Deploy to EC2 without DockerHub
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          echo "$EC2_SSH_KEY" > private_key.pem
+          chmod 600 private_key.pem
+
+          # Docker image tar 전송
+          scp -i private_key.pem -o StrictHostKeyChecking=no vinny-latest.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+
+          # EC2에서 docker load + compose 실행
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "
+            cd /home/$EC2_USERNAME/Vinny-backend
             docker compose down
+            docker load -i /home/$EC2_USERNAME/vinny-latest.tar
             docker compose up -d
+          "
+
+          rm -f private_key.pem
