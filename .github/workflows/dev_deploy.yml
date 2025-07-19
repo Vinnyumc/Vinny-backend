@@ -3,9 +3,23 @@ name: Vinny Dev CI/CD
 on:
   pull_request:
     types: [closed]
-  workflow_dispatch: # (2).수동 실행도 가능하도록
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # (3).OS환경
+  deploy:
+    runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ EC2_HOST }}      # EC2 퍼블릭 IP
+          username: ubuntu
+          key: ${{ EC2_SSH_KEY }}   # EC2 SSH 개인키 (PEM)
+          script: |
+            cd /home/ubuntu/your-repo-name
+            git pull origin main
+            docker build -t vinny:latest .
+            docker compose down
+            docker compose up -d
