@@ -14,9 +14,9 @@ jobs:
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ EC2_HOST }}      # EC2 퍼블릭 IP
+          host: ${{ secrets.EC2_HOST }}      # EC2 퍼블릭 IP
           username: ubuntu
-          key: ${{ EC2_SSH_KEY }}   # EC2 SSH 개인키 (PEM)
+          key: ${{ secrets.EC2_SSH_KEY }}   # EC2 SSH 개인키 (PEM)
           script: |
             cd /home/ubuntu/your-repo-name
             git pull origin main
