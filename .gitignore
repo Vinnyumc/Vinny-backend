@@ -53,3 +53,9 @@ out/
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
+
+# Local-specific configurations
+application-local.yaml
+
+# Docker secret file ignore
+.env

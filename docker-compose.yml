@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  springboot-app:
+    image: vinny:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    container_name: my-redis
+    ports:
+      - "6379:6379"
