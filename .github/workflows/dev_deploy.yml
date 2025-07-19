@@ -18,7 +18,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}   # EC2 SSH 개인키 (PEM)
           script: |
-            cd /home/ubuntu/your-repo-name
+            cd /home/ubuntu/Vinny-backend
             git pull origin main
             docker build -t vinny:latest .
             docker compose down
