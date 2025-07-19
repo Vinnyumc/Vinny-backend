@@ -2,9 +2,13 @@
 FROM eclipse-temurin:17-jdk as build
 WORKDIR /app
 
-# build.gradle 또는 pom.xml 등 복사
+# gradlew 및 설정 파일 복사
 COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
+
+# gradlew 실행 권한 추가
+RUN chmod +x ./gradlew
+
 # 의존성 캐싱
 RUN ./gradlew dependencies
 
@@ -26,3 +30,4 @@ EXPOSE 8080
 
 # 실행 명령
 ENTRYPOINT ["java","-jar","app.jar"]
+
