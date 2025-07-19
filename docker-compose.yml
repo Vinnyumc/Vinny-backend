@@ -1,35 +1,21 @@
-version: "3.7"
-
-networks:
-  wisefee-network-dev-deploy:
-    driver: bridge
+version: '3.8'
 
 services:
-  wisefee-app:
-    image: sjh9708/devserver-wisefee-app5:latest
-    restart: always
-    depends_on:
-      - wisefee-redis
+  springboot-app:
+    image: vinny:latest
     ports:
-      - "8082:8080"
-    container_name: wisefee-app-dev-deploy
-    env_file:
-      - .env
+      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://jvinny.cnkkw26g66qk.ap-northeast-2.rds.amazonaws.com:3306/wisefee-database?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
-      SPRING_REDIS_HOST: wisefee-redis-dev-deploy
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
-    volumes:
-      - ./volumes/storage/upload:/app/wisefee/storage/upload
-      - ./volumes/log:/app/wisefee/log
-    networks:
-      - wisefee-network-dev-deploy
+    depends_on:
+      - redis
 
-  wisefee-redis:
-    image: redis:6.2.6-alpine
+  redis:
+    image: redis:7
+    container_name: my-redis
     ports:
-      - "6391:6379"
-    container_name: wisefee-redis-dev-deploy
-    restart: always
-    networks:
-      - wisefee-network-dev-deploy
+      - "6379:6379"
