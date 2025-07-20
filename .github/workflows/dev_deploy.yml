@@ -58,11 +58,20 @@ jobs:
 
           # EC2에서 docker load + compose 실행
           ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "
-          set -ex
-          cd ~/Vinny-backend
-          docker compose down
-          docker load -i ~/vinny-latest.tar
-          docker compose up -d
+            set -ex
+            echo 'Step 1: cd ~/Vinny-backend'
+            cd ~/Vinny-backend
+          
+            echo 'Step 2: sudo docker compose down'
+            sudo docker compose down
+          
+            echo 'Step 3: sudo docker load'
+            sudo docker load -i ~/vinny-latest.tar
+          
+            echo 'Step 4: sudo docker compose up -d'
+            sudo docker compose up -d
+          
+            echo 'Step 5: done'
           "
 
 
