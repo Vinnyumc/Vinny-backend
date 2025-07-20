@@ -1,21 +1,10 @@
-version: '3.8'
-
+version: "3.8"
 services:
-  springboot-app:
-    image: vinny:latest
+  app:
+    image: 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-backend:latest
+    container_name: vinny-app
+    restart: always
     ports:
       - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-    depends_on:
-      - redis
-
-  redis:
-    image: redis:7
-    container_name: my-redis
-    ports:
-      - "6379:6379"
+    env_file:
+      - .env

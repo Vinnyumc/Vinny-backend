@@ -1,79 +1,55 @@
-name: Vinny Docker CI/CD Pipeline
+name: CI/CD to EC2
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
+env:
+  ECR_REGISTRY: 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com
+  ECR_REPOSITORY: vinny-project
+  IMAGE_TAG: latest
+  AWS_REGION: ap-northeast-2
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Make application.yml  # application.yml 파일 생성 (운영용)
-        run: |
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-        shell: bash
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image
-        run: |
-          docker build -t vinny:latest .
-
-      - name: Save Docker image as tar
-        run: docker save vinny:latest -o vinny-latest.tar
-
-      - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vinny-image
-          path: vinny-latest.tar
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download Docker image artifact
-        uses: actions/download-artifact@v4
+      - name: ✅ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          name: vinny-image
-          path: .
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      - name: Deploy to EC2 without DockerHub
-        env:
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-          EC2_HOST: ${{ secrets.EC2_HOST }}
+      - name: 🐳 Login to Amazon ECR
         run: |
-          echo "$EC2_SSH_KEY" > private_key.pem
-          chmod 600 private_key.pem
+          aws ecr get-login-password --region $AWS_REGION \
+          | docker login --username AWS --password-stdin $ECR_REGISTRY
 
-          # Docker image tar 전송
-          scp -i private_key.pem -o StrictHostKeyChecking=no vinny-latest.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+      - name: 📦 Build and Push Docker image
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-          # EC2에서 docker load + compose 실행
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "
-            set -ex
-            echo 'Step 1: cd ~/Vinny-backend'
-            cd ~/Vinny-backend
-          
-            echo 'Step 2: sudo docker compose down'
-            sudo docker compose down
-          
-            echo 'Step 3: sudo docker load'
-            sudo docker load -i ~/vinny-latest.tar
-          
-            echo 'Step 4: sudo docker compose up -d'
-            sudo docker compose up -d
-          
-            echo 'Step 5: done'
-          "
-
-
-
-          rm -f private_key.pem
+      - name: 🚀 Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            docker stop vinny-app || true
+            docker rm vinny-app || true
+            docker run -d --restart always \
+              --name vinny-app \
+              --env-file /home/ubuntu/.env \
+              -p 8080:8080 \
+              $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
