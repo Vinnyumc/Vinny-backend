@@ -45,11 +45,12 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            docker pull 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-project:latest
             docker stop vinny-app || true
             docker rm vinny-app || true
             docker run -d --restart always \
               --name vinny-app \
               --env-file /home/ubuntu/.env \
               -p 8080:8080 \
-              $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+              912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-project:latest
+          
