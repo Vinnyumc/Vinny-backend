@@ -15,6 +15,9 @@ RUN ./gradlew dependencies
 # 전체 소스 복사
 COPY . .
 
+# gradlew 실행 권한 재추가
+RUN chmod +x ./gradlew
+
 # 빌드 실행
 RUN ./gradlew bootJar
 
