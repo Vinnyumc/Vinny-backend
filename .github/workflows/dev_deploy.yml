@@ -58,10 +58,13 @@ jobs:
 
           # EC2에서 docker load + compose 실행
           ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "
-            cd /home/$EC2_USERNAME/Vinny-backend
-            docker compose down
-            docker load -i /home/$EC2_USERNAME/vinny-latest.tar
-            docker compose up -d
+          set -ex
+          cd ~/Vinny-backend
+          docker compose down
+          docker load -i ~/vinny-latest.tar
+          docker compose up -d
           "
+
+
 
           rm -f private_key.pem
