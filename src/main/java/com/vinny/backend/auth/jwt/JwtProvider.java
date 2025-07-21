@@ -44,7 +44,7 @@ public class JwtProvider {
     public TokenDto generateTokens(User user) {
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + this.accessTokenExpirationMilliseconds);
-        String subject = String.valueOf(user.getKakaoUserId());
+        String subject = String.valueOf(user.getId());
         String authorities = "ROLE_USER"; // 간단한 권한 부여
 
         String accessToken = Jwts.builder()
