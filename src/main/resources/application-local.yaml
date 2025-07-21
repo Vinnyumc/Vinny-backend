@@ -21,7 +21,7 @@ spring:
       max-request-size: 20MB
 
 jwt:
-  secret: ${AWS_JWT_SECRET}
+  secret: ${JWT_SECRET}
   access-token-expiration-milliseconds: 1800000 # 30분
   #  access-token-expiration-milliseconds: 5000 # 5초 -> refreshToken 테스트용
   refresh-token-expiration-milliseconds: 604800000 # 7일 (이건 그대로 둡니다)
@@ -29,8 +29,8 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: ${AWS_ACCESS_KEY_ID}
-      secret-key: ${AWS_SECRET_ACCESS_KEY}
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
     s3:
       bucket: "vinny-bucket-s3"
     region:
