@@ -10,15 +10,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class PostRequestDto {
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
     public class CreatePostRequest {
 
         @NotBlank(message = "제목은 필수입니다.")

@@ -79,8 +79,10 @@ public class PostResponseDto {
         private long totalElements;
     }
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
-    public class CreatePostResponse {
+    public static class CreatePostResponse {
         private Long postId;
     }
 }
