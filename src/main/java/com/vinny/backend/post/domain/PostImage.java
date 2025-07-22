@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Builder
 public class PostImage extends BaseEntity {
 
     @EmbeddedId
@@ -24,4 +23,10 @@ public class PostImage extends BaseEntity {
 
     @Column(name = "image_url", nullable = false, length = 255)
     private String imageUrl;
+
+    public PostImage(Post post, String imageUrl, Long sequence) {
+        this.post = post;
+        this.imageUrl = imageUrl;
+        this.id = new PostImageId(post.getId(), sequence);
+    }
 }

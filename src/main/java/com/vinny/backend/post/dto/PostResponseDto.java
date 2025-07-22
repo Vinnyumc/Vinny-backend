@@ -78,4 +78,9 @@ public class PostResponseDto {
         private int totalPages;
         private long totalElements;
     }
+    @Getter
+    @Builder
+    public class CreatePostResponse {
+        private Long postId;
+    }
 }
