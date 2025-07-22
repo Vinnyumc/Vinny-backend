@@ -33,7 +33,10 @@ public enum ErrorStatus implements BaseErrorCode {
     S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_ERROR_5001", "S3 파일 업로드에 실패했습니다."),
     S3_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_ERROR_5002", "S3 파일 삭제에 실패했습니다."),
     FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "S3_ERROR_4001", "업로드할 파일이 없습니다."),
-    INVALID_FILE_URL(HttpStatus.BAD_REQUEST, "S3_ERROR_4002", "잘못된 형식의 파일 URL입니다.")
+    INVALID_FILE_URL(HttpStatus.BAD_REQUEST, "S3_ERROR_4002", "잘못된 형식의 파일 URL입니다."),
+
+    SHOP_NOT_FOUND(HttpStatus.BAD_REQUEST, "SHOP4001", "존재하지 않는 Shop입니다."),
+
 
     ;
 

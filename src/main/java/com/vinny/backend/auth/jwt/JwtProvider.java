@@ -5,6 +5,7 @@ import com.vinny.backend.auth.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -100,4 +102,23 @@ public class JwtProvider {
             return e.getClaims();
         }
     }
+
+    /*
+    jwt 토큰에서 userid 추출하는 매서드
+    @CurrentUser 어노테이션으로 별다른 구조 없이 사용자 userId 추출해서 사용가능
+     */
+    public Long getUserIdFromToken(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+        return Long.parseLong(claims.getSubject()); // subject에 kakaoUserId를 넣었기 때문에
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+
 }
