@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,10 +76,10 @@ public class PostController {
         PostResponseDto.CreatePostResponse response = postService.createPost(userId, request);
 
         ApiResponse<PostResponseDto.CreatePostResponse> apiResponse = ApiResponse.<PostResponseDto.CreatePostResponse>builder()
-                .success(true)
+                .isSuccess(true)
                 .message("게시글이 성공적으로 등록되었습니다.")
-                .status(HttpStatus.CREATED.value())
-                .data(response)
+                .code(String.valueOf(HttpStatus.CREATED.value()))
+                .result(response)
                 .timestamp(LocalDateTime.now())
                 .build();
 
