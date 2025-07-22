@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,6 +89,20 @@ public class ShopController {
     ) {
         ShopResponseDto.ShopPreviewListDto shopPreviewListDto = shopService.getShopsByStyle(style, page);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopPreviewListDto));
+    }
+
+
+    @Operation(summary = "가게 상세 조회", description = "특정 가게의 상세 정보를 조회합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @GetMapping("/{shopId}")
+    public ResponseEntity<ApiResponse<ShopResponseDto.PreviewDto>> getShopDetails(
+            @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId
+    ) {
+        ShopResponseDto.PreviewDto shopDetails = shopService.getShopsDetails(shopId);
+        return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
     }
 
 

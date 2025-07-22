@@ -7,6 +7,8 @@ import com.vinny.backend.Shop.dto.ShopSearchResponseDto;
 import com.vinny.backend.Shop.repository.ShopRepository;
 import com.vinny.backend.User.domain.VintageStyle;
 import com.vinny.backend.User.repository.VintageStyleRepository;
+import com.vinny.backend.error.code.status.ErrorStatus;
+import com.vinny.backend.error.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,4 +56,14 @@ public class ShopService {
         Page<Shop> shopPage = shopRepository.findByShopVintageStyleList_VintageStyle_Name(style, pageable);
         return shopConverter.toShopPreviewListDto(shopPage);
     }
+
+    /**
+     * 가게 상세 조회
+     */
+    public ShopResponseDto.PreviewDto getShopsDetails(long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
+        return shopConverter.toPreviewDto(shop);
+    }
+
 }
