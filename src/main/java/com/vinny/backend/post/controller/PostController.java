@@ -1,22 +1,23 @@
 package com.vinny.backend.post.controller;
 
 import com.vinny.backend.error.ApiResponse;
+import com.vinny.backend.post.dto.PostRequestDto;
 import com.vinny.backend.post.dto.PostResponseDto;
 import com.vinny.backend.post.dto.PostSearchResponseDto;
 import com.vinny.backend.post.service.PostService;
+import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,5 +68,22 @@ public class PostController {
 
         PostResponseDto response = postService.getAllposts(pageable, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+    @PostMapping
+    public ResponseEntity<ApiResponse<PostResponseDto.CreatePostResponse>> createPost(
+            @CurrentUser Long userId,
+            @Valid @RequestBody PostRequestDto.CreatePostRequest request
+    ) {
+        PostResponseDto.CreatePostResponse response = postService.createPost(userId, request);
+
+        ApiResponse<PostResponseDto.CreatePostResponse> apiResponse = ApiResponse.<PostResponseDto.CreatePostResponse>builder()
+                .success(true)
+                .message("게시글이 성공적으로 등록되었습니다.")
+                .status(HttpStatus.CREATED.value())
+                .data(response)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 }
