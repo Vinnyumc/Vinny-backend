@@ -1,5 +1,6 @@
 package com.vinny.backend.auth.service;
 
+import com.vinny.backend.User.domain.enums.Provider;
 import com.vinny.backend.auth.dto.KakaoUserResponse;
 import com.vinny.backend.auth.dto.LoginResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class KakaoAuthService {
         KakaoUserResponse userResponse = getKakaoUserInfo(kakaoAccessToken).block();
 
         // 2. 받은 정보로 우리 서비스에 로그인/회원가입 처리
-        String provider = "kakao";
+        Provider provider = Provider.KAKAO;
         String providerId = String.valueOf(userResponse.getId());
         String email = userResponse.getKakaoAccount().getEmail();
 

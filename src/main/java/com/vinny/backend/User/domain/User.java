@@ -1,5 +1,6 @@
 package com.vinny.backend.User.domain;
 
+import com.vinny.backend.User.domain.enums.Provider;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.domain.mapping.*;
@@ -29,8 +30,9 @@ public class User extends BaseEntity {
 //    @Column(name = "kakao_user_id", nullable = false, unique = true)
 //    private Long kakaoUserId; // 카카오유저아이디
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private String provider;
+    private Provider provider;
 
     @Column(name = "provider_id", nullable = false, unique = true)
     private String providerId;
