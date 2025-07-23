@@ -28,7 +28,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("온보딩 진행 중인 사용자를 찾을 수 없습니다."));
 
         // 1. 닉네임 업데이트 및 상태를 'ACTIVE'로 변경
-        user.updateNickname(requestDto.getNickname());
+//        user.updateNickname(requestDto.getNickname());
         user.changeStatus(UserStatus.ACTIVE);
 
         // 2. VintageStyle 정보 저장
