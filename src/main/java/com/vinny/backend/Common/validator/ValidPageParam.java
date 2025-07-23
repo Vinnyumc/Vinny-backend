@@ -1,4 +1,4 @@
-package com.vinny.backend.common.validator;
+package com.vinny.backend.Common.validator;
 
 import java.lang.annotation.*;
 

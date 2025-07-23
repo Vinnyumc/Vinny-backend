@@ -1,7 +1,7 @@
 package com.vinny.backend.User.domain.mapping;
 
 import com.vinny.backend.User.domain.Agreement;
-import com.vinny.backend.common.domain.BaseEntity;
+import com.vinny.backend.Common.domain.BaseEntity;
 import com.vinny.backend.User.domain.User;
 import jakarta.persistence.*;
 import lombok.*;

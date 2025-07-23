@@ -15,7 +15,7 @@ public class PostRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public class CreatePostRequest {
+    public static class CreatePostRequest {
 
         @NotBlank(message = "제목은 필수입니다.")
         @Size(max = 15, message = "제목은 최대 15자까지 가능해요")

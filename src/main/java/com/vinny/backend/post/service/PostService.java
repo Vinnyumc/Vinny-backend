@@ -8,6 +8,8 @@ import com.vinny.backend.User.domain.VintageStyle;
 import com.vinny.backend.User.repository.BrandRepository;
 import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.User.repository.VintageStyleRepository;
+import com.vinny.backend.error.code.status.ErrorStatus;
+import com.vinny.backend.error.exception.GeneralException;
 import com.vinny.backend.post.converter.PostConverter;
 import com.vinny.backend.post.domain.Post;
 import com.vinny.backend.post.domain.PostImage;
@@ -77,8 +79,9 @@ public class PostService {
     @Transactional
     public PostResponseDto.CreatePostResponse createPost(Long userId, PostRequestDto.CreatePostRequest request) {
         // 1. 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        User user = userRepository.findByKakaoUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 2. 게시글 기본 정보 세팅
         Post post = Post.builder()

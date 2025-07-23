@@ -1,5 +1,5 @@
 package com.vinny.backend.Shop.domain;
-import com.vinny.backend.common.domain.BaseEntity;
+import com.vinny.backend.Common.domain.BaseEntity;
 import com.vinny.backend.User.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
