@@ -22,5 +22,7 @@ public class ReviewImage extends BaseEntity {
 
     @Column(name = "image_url", nullable = false, length = 255)
     private String imageUrl;
+
+
 }
 
