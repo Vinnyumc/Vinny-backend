@@ -30,7 +30,7 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
         JOIN s.shopVintageStyleList svs 
         JOIN svs.vintageStyle vs 
         WHERE vs.name = :styleName 
-        AND s.status = 'ACTIVE'
+        AND s.status = 'OPEN'
         """)
     Page<Shop> findByStyle(@Param("styleName") String styleType, Pageable pageable);
 
@@ -41,7 +41,7 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
         JOIN s.region r 
         WHERE vs.name = :styleName 
         AND r.name LIKE %:region% 
-        AND s.status = 'ACTIVE'
+        AND s.status = 'OPEN'
         """)
     Page<Shop> findByStyleAndRegion(
             @Param("styleName") String styleType,
