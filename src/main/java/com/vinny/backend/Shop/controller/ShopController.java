@@ -4,7 +4,7 @@ import com.vinny.backend.Shop.dto.ShopRequestDto;
 import com.vinny.backend.Shop.dto.ShopResponseDto;
 import com.vinny.backend.Shop.service.ShopCommandService;
 import com.vinny.backend.User.validation.annotation.ExistVintageStyle;
-import com.vinny.backend.Common.validator.ValidPageParam;
+import com.vinny.backend.common.validator.ValidPageParam;
 import com.vinny.backend.error.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;

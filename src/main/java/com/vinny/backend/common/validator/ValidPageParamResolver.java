@@ -1,4 +1,4 @@
-package com.vinny.backend.Common.validator;
+package com.vinny.backend.common.validator;
 
 import com.vinny.backend.error.code.status.ErrorStatus;
 import com.vinny.backend.error.exception.GeneralException;

@@ -3,7 +3,7 @@ package com.vinny.backend.User.domain.mapping;
 import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.domain.enums.UserShopStatus;
-import com.vinny.backend.Common.domain.BaseEntity;
+import com.vinny.backend.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

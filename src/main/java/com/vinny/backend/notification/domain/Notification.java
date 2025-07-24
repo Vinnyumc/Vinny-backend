@@ -13,7 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Notification extends com.vinny.backend.Common.domain.BaseEntity {
+public class Notification extends com.vinny.backend.common.domain.BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
