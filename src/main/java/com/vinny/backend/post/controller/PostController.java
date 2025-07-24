@@ -1,5 +1,6 @@
 package com.vinny.backend.post.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinny.backend.error.ApiResponse;
 import com.vinny.backend.post.dto.PostRequestDto;
 import com.vinny.backend.post.dto.PostResponseDto;
@@ -8,6 +9,8 @@ import com.vinny.backend.post.service.PostService;
 import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +18,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/post")
@@ -68,21 +74,31 @@ public class PostController {
         PostResponseDto response = postService.getAllposts(pageable, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "게시글 작성", description = "게시글 내용과 이미지 파일을 업로드합니다.")
     public ResponseEntity<ApiResponse<PostResponseDto.CreatePostResponse>> createPost(
             @CurrentUser Long userId,
-            @Valid @RequestBody PostRequestDto.CreatePostRequest request
-    ) {
-        PostResponseDto.CreatePostResponse response = postService.createPost(userId, request);
 
-        ApiResponse<PostResponseDto.CreatePostResponse> apiResponse = ApiResponse.<PostResponseDto.CreatePostResponse>builder()
-                .isSuccess(true)
-                .message("게시글이 성공적으로 등록되었습니다.")
-                .code(String.valueOf(HttpStatus.CREATED.value()))
-                .result(response)
-                .timestamp(LocalDateTime.now())
-                .build();
+            @Parameter(
+                    description = "게시글 작성 JSON",
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PostRequestDto.CreateDto.class)
+                    )
+            )
+            @RequestPart("dto") String dtoJson,
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PostRequestDto.CreateDto dto = objectMapper.readValue(dtoJson, PostRequestDto.CreateDto.class);
+
+        PostResponseDto.CreatePostResponse response =
+                postService.createPost(userId, dto.getTitle(), dto.getContent(), dto.getStyleIds(), dto.getBrandIds(), dto.getShopId(), images);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.onSuccess(response));
     }
 }
