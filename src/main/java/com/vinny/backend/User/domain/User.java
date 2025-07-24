@@ -1,5 +1,6 @@
 package com.vinny.backend.User.domain;
 
+import com.vinny.backend.User.domain.enums.Provider;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.domain.mapping.*;
@@ -26,8 +27,15 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 유저아이디 (PK)
 
-    @Column(name = "kakao_user_id", nullable = false, unique = true)
-    private Long kakaoUserId; // 카카오유저아이디
+//    @Column(name = "kakao_user_id", nullable = false, unique = true)
+//    private Long kakaoUserId; // 카카오유저아이디
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private Provider provider;
+
+    @Column(name = "provider_id", nullable = false, unique = true)
+    private String providerId;
 
     @Column(length = 50)
     private String nickname; // 닉네임
@@ -47,7 +55,7 @@ public class User extends BaseEntity {
 
     @Column(name = "inactivate_date")
     private LocalDateTime inactivateDate; // 비활성시기
-    
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserBrand> userBrandList = new ArrayList<>();
 
@@ -74,5 +82,13 @@ public class User extends BaseEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changeStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 }

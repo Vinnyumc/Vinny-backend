@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KakaoLoginRequestDto {
-    private Long kakaoUserId;
+public class KakaoTokenRequestDto {
+    private String accessToken;
 }
