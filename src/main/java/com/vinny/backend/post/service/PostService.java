@@ -80,7 +80,7 @@ public class PostService {
     public PostResponseDto.CreatePostResponse createPost(Long userId, PostRequestDto.CreatePostRequest request) {
         // 1. 사용자 조회
 
-        User user = userRepository.findByKakaoUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 2. 게시글 기본 정보 세팅
