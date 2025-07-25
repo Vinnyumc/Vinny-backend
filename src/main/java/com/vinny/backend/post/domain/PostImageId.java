@@ -17,7 +17,6 @@ public class PostImageId implements Serializable {
         this.sequence = sequence;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
