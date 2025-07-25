@@ -1,6 +1,6 @@
 package com.vinny.backend.search.dto;
 
-import com.vinny.backend.User.domain.SearchLog;
+import com.vinny.backend.search.domain.SearchLog;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;

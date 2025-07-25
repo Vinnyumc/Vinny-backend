@@ -1,6 +1,9 @@
 package com.vinny.backend.search.service;
 
-import com.vinny.backend.User.domain.SearchLog;
+import com.vinny.backend.search.dto.RecentSearchListResponse;
+import com.vinny.backend.search.dto.RecentSearchResponse;
+import com.vinny.backend.search.dto.SearchLogDeleteResponse;
+import com.vinny.backend.search.domain.SearchLog;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.error.code.status.ErrorStatus;
@@ -29,8 +32,8 @@ public class SearchLogService {
 
     // 최대 저장 가능한 검색어 개수
     private static final int MAX_SEARCH_LOG_COUNT = 20;
-    // 조회할 최근 검색어 개수
-    private static final int RECENT_SEARCH_COUNT = 10;
+    //  조회할 최근 검색어 개수
+    private static final int DEFAULT_RECENT_SEARCH_LIMIT = 10;
 
     /**
      * 검색어 추가
@@ -114,4 +117,94 @@ public class SearchLogService {
             log.info("Cleaned up {} old search logs for user: {}", deleteCount, user.getId());
         }
     }
+
+    /**
+     * 최근 검색어 목록 조회
+     */
+    public RecentSearchListResponse getRecentSearches(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // 최근 검색어 조회 (최대 10개)
+        List<SearchLog> searchLogs = searchLogRepository.findRecentSearchesByUser(
+                user, PageRequest.of(0, DEFAULT_RECENT_SEARCH_LIMIT)
+        );
+
+        if (searchLogs.isEmpty()) {
+            log.info("No recent searches found for user: {}", userId);
+            return RecentSearchListResponse.empty();
+        }
+
+        // DTO 변환
+        List<RecentSearchResponse> searchItems = searchLogs.stream()
+                .map(RecentSearchResponse::from)
+                .toList();
+
+        log.info("Retrieved {} recent searches for user: {}", searchItems.size(), userId);
+        return RecentSearchListResponse.of(searchItems);
+    }
+
+
+
+    /**
+     * 검색어 개별 삭제
+     */
+    @Transactional
+    public SearchLogDeleteResponse deleteSearchLog(Long userId, Long searchLogId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // 권한 체크와 함께 삭제 수행
+        int deletedCount = searchLogRepository.deleteByIdAndUserId(searchLogId, userId);
+
+        if (deletedCount == 0) {
+            // 해당 검색 로그가 없거나 권한이 없는 경우
+            throw new GeneralException(ErrorStatus.SEARCH_LOG_NOT_FOUND_OR_FORBIDDEN);
+        }
+
+
+        return SearchLogDeleteResponse.success(searchLogId);
+    }
+
+    /**
+     * 모든 검색어 삭제
+     */
+    @Transactional
+    public void deleteAllSearchLogs(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // 삭제 전 개수 확인
+        long beforeCount = searchLogRepository.countByUser(user);
+
+        if (beforeCount == 0) {
+            log.info("No search logs to delete for user: {}", userId);
+            return;
+        }
+
+        // 모든 검색어 삭제
+        searchLogRepository.deleteAllByUser(user);
+
+        log.info("Deleted all {} search logs for user: {}", beforeCount, userId);
+    }
+
+    public Long getSearchLogByKeyword(Long userId, String keyword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // 키워드 정규화
+        String normalizedKeyword = normalizeKeyword(keyword);
+
+        // 키워드로 검색 로그 ID 조회
+        Optional<SearchLog> deletedSearchLog = searchLogRepository.findSearchLogIdByUserAndKeyword(user, normalizedKeyword);
+
+
+        if (deletedSearchLog.isPresent()) {
+            return deletedSearchLog.get().getId();
+        } else {
+            return null;
+        }
+    }
+
+
 }
