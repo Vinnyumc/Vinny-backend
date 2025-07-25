@@ -1,5 +1,6 @@
-package com.vinny.backend.User.domain;
+package com.vinny.backend.search.domain;
 
+import com.vinny.backend.User.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 

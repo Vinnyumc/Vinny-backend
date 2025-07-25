@@ -4,6 +4,7 @@ import com.vinny.backend.User.domain.enums.Provider;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.domain.mapping.*;
+import com.vinny.backend.search.domain.SearchLog;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
