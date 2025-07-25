@@ -25,4 +25,27 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
 
     Page<Shop> findByShopVintageStyleList_VintageStyle_Name(String style, Pageable pageable);
 
+    @Query("""
+        SELECT DISTINCT s FROM Shop s 
+        JOIN s.shopVintageStyleList svs 
+        JOIN svs.vintageStyle vs 
+        WHERE vs.name = :styleName 
+        AND s.status = 'OPEN'
+        """)
+    Page<Shop> findByStyle(@Param("styleName") String styleType, Pageable pageable);
+
+    @Query("""
+        SELECT DISTINCT s FROM Shop s 
+        JOIN s.shopVintageStyleList svs 
+        JOIN svs.vintageStyle vs 
+        JOIN s.region r 
+        WHERE vs.name = :styleName 
+        AND r.name LIKE %:region% 
+        AND s.status = 'OPEN'
+        """)
+    Page<Shop> findByStyleAndRegion(
+            @Param("styleName") String styleType,
+            @Param("region") String region,
+            Pageable pageable);
+
 }
