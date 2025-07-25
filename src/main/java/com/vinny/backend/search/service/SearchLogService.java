@@ -40,7 +40,8 @@ public class SearchLogService {
     @Transactional
     public SearchLogResponse addSearchLog(Long userId, SearchLogCreateRequest request) {
         // 사용자 조회
-        //User user = userRepository.findByKakaoId(userId)
+        User user = userRepository.findById(userId)
+      
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
