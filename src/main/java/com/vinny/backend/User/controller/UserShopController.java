@@ -12,24 +12,52 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/users/shops/favorites")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserShopController {
+
     private final UserShopService userShopService;
 
-    @Operation(summary = "가게 즐겨찾기 추가", description = "사용자가 특정 가게를 즐겨찾기 목록에 추가합니다.")
-    @PostMapping
+    @Operation(summary = "가게 찜 추가", description = "사용자가 특정 가게를 찜 목록에 추가합니다.")
+    @PostMapping("/shops/{shopId}/favorite")
     public ApiResponse<UserShopResponseDto.PreviewDto> addFavoriteShop(
-            @RequestBody @Valid UserShopRequestDto.LikeDto requestDto
+            @Parameter(description = "찜할 가게 ID", required = true)
+            @PathVariable Long shopId
     ) {
+        UserShopRequestDto.LikeDto requestDto = new UserShopRequestDto.LikeDto(shopId);
         UserShopResponseDto.PreviewDto response = userShopService.addFavoriteShop(requestDto);
         return ApiResponse.onSuccess(response);
     }
 
+    @Operation(summary = "가게 찜 삭제", description = "사용자가 특정 가게를 찜 목록에서 삭제합니다.")
+    @PatchMapping("/shops/{shopId}/favorite")
+    public ApiResponse<String> removeFavoriteShop(
+            @Parameter(description = "삭제할 가게 ID", required = true)
+            @PathVariable Long shopId
+    ) {
+        String message = userShopService.removeFavoriteShop(shopId);
+        return ApiResponse.onSuccess(message);
+    }
+
+    @Operation(summary = "내 찜 목록 조회", description = "현재 로그인한 사용자의 찜 가게 목록을 조회합니다.")
+    @GetMapping("/users/me/shops/favorites")
+    public ApiResponse<List<UserShopResponseDto.PreviewShopDetailDto>> getMyFavoriteShops() {
+        List<UserShopResponseDto.PreviewShopDetailDto> response = userShopService.getFavoriteShops();
+        return ApiResponse.onSuccess(response);
+    }
+
+    @Operation(summary = "특정 사용자 찜 목록 조회", description = "지정된 사용자의 찜 가게 목록을 조회합니다. (관리자 권한 필요할 수 있음)")
+    @GetMapping("/users/{userId}/shops/favorites")
+    public ApiResponse<List<UserShopResponseDto.PreviewShopDetailDto>> getUserFavoriteShops(
+            @Parameter(description = "조회할 사용자 ID", required = true)
+            @PathVariable Long userId
+    ) {
+        List<UserShopResponseDto.PreviewShopDetailDto> response = userShopService.getFavoriteShops(userId);
+        return ApiResponse.onSuccess(response);
+    }
 }
