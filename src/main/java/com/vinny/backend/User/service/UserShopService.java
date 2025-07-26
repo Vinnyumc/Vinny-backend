@@ -12,6 +12,8 @@ import com.vinny.backend.User.repository.UserShopRepository;
 import com.vinny.backend.error.code.status.ErrorStatus;
 import com.vinny.backend.error.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,25 +31,35 @@ public class UserShopService {
      * 가게 즐겨찾기 추가
      */
     @Transactional
-    public UserShopResponseDto.PreviewDto addFavoriteShop(Long userId, UserShopRequestDto.LikeDto likeDto) {
-        // 유저와 가게 조회
+    public UserShopResponseDto.PreviewDto addFavoriteShop(UserShopRequestDto.LikeDto likeDto) {
+        // 현재 로그인한 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        Long userId;
+        try {
+            userId = Long.parseLong(authentication.getName()); // name에 userId가 들어 있어야 함
+        } catch (NumberFormatException e) {
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         Shop shop = shopRepository.findById(likeDto.getShopId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
 
-        // 이미 등록된 경우 예외 처리
         if (userShopRepository.findByUserAndShop(user, shop).isPresent()) {
             throw new IllegalStateException("이미 등록된 즐겨찾기입니다.");
         }
 
-        // UserShop 엔티티 생성
         UserShop userShop = UserShop.create(user, shop, UserShopStatus.FAVORITE);
         userShopRepository.save(userShop);
 
-        // 응답 DTO로 변환
         return UserShopResponseDto.toPreviewDto(userShop);
     }
+
 }
 

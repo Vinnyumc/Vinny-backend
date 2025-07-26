@@ -26,10 +26,9 @@ public class UserShopController {
     @Operation(summary = "가게 즐겨찾기 추가", description = "사용자가 특정 가게를 즐겨찾기 목록에 추가합니다.")
     @PostMapping
     public ApiResponse<UserShopResponseDto.PreviewDto> addFavoriteShop(
-            @RequestBody @Valid UserShopRequestDto.LikeDto requestDto,
-            @Parameter(hidden = true) @CurrentUser Long userId
+            @RequestBody @Valid UserShopRequestDto.LikeDto requestDto
     ) {
-        UserShopResponseDto.PreviewDto response = userShopService.addFavoriteShop(userId, requestDto);
+        UserShopResponseDto.PreviewDto response = userShopService.addFavoriteShop(requestDto);
         return ApiResponse.onSuccess(response);
     }
 
