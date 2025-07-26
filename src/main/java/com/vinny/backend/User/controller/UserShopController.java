@@ -3,6 +3,7 @@ package com.vinny.backend.User.controller;
 import com.vinny.backend.User.dto.UserShopRequestDto;
 import com.vinny.backend.User.dto.UserShopResponseDto;
 import com.vinny.backend.User.service.UserShopService;
+import com.vinny.backend.error.ApiResponse;
 import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,11 +25,12 @@ public class UserShopController {
 
     @Operation(summary = "가게 즐겨찾기 추가", description = "사용자가 특정 가게를 즐겨찾기 목록에 추가합니다.")
     @PostMapping
-    public ResponseEntity<UserShopResponseDto.PreviewDto> addFavoriteShop(
+    public ApiResponse<UserShopResponseDto.PreviewDto> addFavoriteShop(
             @RequestBody @Valid UserShopRequestDto.LikeDto requestDto,
             @Parameter(hidden = true) @CurrentUser Long userId
     ) {
         UserShopResponseDto.PreviewDto response = userShopService.addFavoriteShop(userId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ApiResponse.onSuccess(response);
     }
+
 }
