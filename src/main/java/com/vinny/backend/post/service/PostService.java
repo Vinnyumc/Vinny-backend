@@ -1,16 +1,31 @@
 package com.vinny.backend.post.service;
 
+import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.Shop.repository.ShopRepository;
+import com.vinny.backend.User.domain.Brand;
+import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.domain.VintageStyle;
+import com.vinny.backend.User.repository.BrandRepository;
+import com.vinny.backend.User.repository.UserRepository;
+import com.vinny.backend.User.repository.VintageStyleRepository;
+import com.vinny.backend.error.code.status.ErrorStatus;
+import com.vinny.backend.error.exception.GeneralException;
 import com.vinny.backend.post.converter.PostConverter;
 import com.vinny.backend.post.domain.Post;
+import com.vinny.backend.post.domain.PostImage;
+import com.vinny.backend.post.domain.mapping.PostBrandHashtag;
+import com.vinny.backend.post.domain.mapping.PostShopHashtag;
+import com.vinny.backend.post.domain.mapping.PostStyleHashtag;
 import com.vinny.backend.post.dto.PostResponseDto;
 import com.vinny.backend.post.dto.PostSearchResponseDto;
 import com.vinny.backend.post.repository.PostRepository;
+import com.vinny.backend.s3.service.S3Service;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,6 +34,11 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final BrandRepository brandRepository;
+    private final ShopRepository shopRepository;
+    private final VintageStyleRepository styleRepository;
+    private final S3Service s3Service;
 
     public List<PostSearchResponseDto.PostDto> searchPosts(String keyword) {
         List<Post> posts = postRepository.searchByKeyword(keyword);
@@ -56,4 +76,86 @@ public class PostService {
                 .pageInfo(pageInfo)
                 .build();
     }
+
+    @Transactional
+    public PostResponseDto.CreatePostResponse createPost(
+            Long userId,
+            String title,
+            String content,
+            List<Long> styleIds,
+            List<Long> brandIds,
+            Long shopId,
+            List<MultipartFile> images
+    ) throws java.io.IOException {
+        // 1. 사용자 조회
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. 게시글 기본 정보 세팅
+        Post post = Post.builder()
+                .title(title)
+                .content(content)
+                .user(user)
+                .build();
+
+        // 3. 이미지 처리
+        if (images != null) {
+            if (images.size() > 5) {
+                throw new IllegalArgumentException("이미지는 최대 5개까지 업로드할 수 있습니다. ");
+            }
+
+            List<String> imageUrls = s3Service.uploadFiles(images);
+
+            for (int i = 0; i < imageUrls.size(); i++) {
+                post.getImages().add(new PostImage(post, imageUrls.get(i), (long) i));
+            }
+        }
+
+        // 4. 브랜드 처리 (선택적, 여러 개 가능)
+        if (brandIds != null) {
+            for (Long brandId : brandIds) {
+                Brand brand = brandRepository.findById(brandId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 브랜드입니다."));
+                PostBrandHashtag brandHashtag = PostBrandHashtag.builder()
+                        .post(post)
+                        .brand(brand)
+                        .build();
+                post.getBrandHashtags().add(brandHashtag);
+            }
+        }
+
+        // 5. 샵 처리 (선택적)
+        if (shopId != null) {
+            Shop shop = shopRepository.findById(shopId)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 샵입니다."));
+            PostShopHashtag shopHashtag = PostShopHashtag.builder()
+                    .post(post)
+                    .shop(shop)
+                    .build();
+            post.getShopHashtags().add(shopHashtag);
+        }
+
+        // 6. 스타일 처리 (선택적, 여러 개 가능)
+        if (styleIds != null) {
+            for (Long styleId : styleIds) {
+                VintageStyle style = styleRepository.findById(styleId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스타일입니다."));
+                PostStyleHashtag styleHashtag = PostStyleHashtag.builder()
+                        .post(post)
+                        .vintageStyle(style)
+                        .build();
+                post.getStyleHashtags().add(styleHashtag);
+            }
+        }
+
+        // 7. 저장
+        Post savedPost = postRepository.save(post);
+
+        // 8. 응답 생성 및 반환
+        return PostResponseDto.CreatePostResponse.builder()
+                .postId(savedPost.getId())
+                .build();
+    }
+
 }

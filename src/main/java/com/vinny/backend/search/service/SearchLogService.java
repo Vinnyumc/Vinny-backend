@@ -40,7 +40,7 @@ public class SearchLogService {
     @Transactional
     public SearchLogResponse addSearchLog(Long userId, SearchLogCreateRequest request) {
         // 사용자 조회
-        User user = userRepository.findByKakaoUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 키워드 정제 (앞뒤 공백 제거, 소문자 변환 등)
