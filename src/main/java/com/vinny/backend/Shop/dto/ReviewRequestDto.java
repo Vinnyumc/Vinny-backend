@@ -20,8 +20,5 @@ public class ReviewRequestDto {
 
         @NotBlank(message = "content는 비어있을 수 없습니다.")
         private String content;
-
-        @NotNull(message = "imageUrls는 null일 수 없습니다.")
-        private List<@NotBlank(message = "imageUrl는 비어있을 수 없습니다.") String> imageUrls;
     }
 }
