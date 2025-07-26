@@ -14,6 +14,8 @@ import com.vinny.backend.error.code.status.ErrorStatus;
 import com.vinny.backend.error.exception.GeneralException;
 import com.vinny.backend.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,9 +41,21 @@ public class ReviewService {
     public ReviewResponseDto.PreviewDto createReview(
             ReviewRequestDto.CreateDto dto,
             Long shopId,
-            Long userId,
-            List<MultipartFile> imageFiles // 이미지 파일 파라미터 추가
+            List<MultipartFile> imageFiles
     ) throws IOException {
+
+        // 현재 로그인된 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        Long userId;
+        try {
+            userId = Long.parseLong(authentication.getName()); // authentication.getName() == userId
+        } catch (NumberFormatException e) {
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+        }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -49,7 +63,6 @@ public class ReviewService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
 
-        // 이미지 파일들을 S3에 업로드하고 URL 리스트 획득
         List<String> imageUrls = s3Service.uploadFiles(imageFiles);
 
         Review review = Review.create(
@@ -57,7 +70,7 @@ public class ReviewService {
                 dto.getContent(),
                 shop,
                 user,
-                imageUrls // URL 리스트 저장
+                imageUrls
         );
         reviewRepository.save(review);
 

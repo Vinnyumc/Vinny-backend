@@ -7,6 +7,8 @@ import com.vinny.backend.Shop.service.ReviewService;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,31 +28,40 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-//    @PostMapping(value = "/{shopId}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    @Operation(summary = "리뷰 생성", description = "지정된 샵에 리뷰를 작성합니다. 이미지 파일도 함께 업로드합니다.")
-//    public ResponseEntity<ReviewResponseDto.PreviewDto> createReview(
-//            @PathVariable Long shopId,
-//            @RequestPart("dto") ReviewRequestDto.CreateDto dto, // JSON 본문
-//            @RequestPart(value = "images", required = false) List<MultipartFile> images, // 이미지 파일 리스트
-//            @CurrentUser Long userId
-//    ) throws IOException {
-//        ReviewResponseDto.PreviewDto result = reviewService.createReview(dto, shopId, userId, images);
-//        return ResponseEntity.ok(result);
-//    }
+    /**
+    후기 작성 스웨거 용
+    **/
         @PostMapping(value = "/{shopId}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        @Operation(summary = "리뷰 생성", description = "지정된 샵에 리뷰를 작성합니다.")
+        @Operation(summary = "후기 생성", description = "지정된 가게에 후기를 작성합니다.")
         public ResponseEntity<ReviewResponseDto.PreviewDto> createReview(
                 @PathVariable Long shopId,
+                @Parameter(
+                        name = "dto",
+                        description = "JSON 문자열 입력 예시:\n{\n  \"title\": \"리뷰 제목\",\n  \"content\": \"리뷰 내용\"\n}",
+                        required = true
+                )
                 @RequestPart("dto") String dtoJson,
-                @RequestPart(value = "images", required = false) List<MultipartFile> images,
-                @CurrentUser Long userId
+                @RequestPart(value = "images", required = false) List<MultipartFile> images
         ) throws IOException {
-
             // JSON 문자열을 수동으로 객체로 변환
             ObjectMapper objectMapper = new ObjectMapper();
             ReviewRequestDto.CreateDto dto = objectMapper.readValue(dtoJson, ReviewRequestDto.CreateDto.class);
 
-            return ResponseEntity.ok(reviewService.createReview(dto, shopId, userId, images));
+            return ResponseEntity.ok(reviewService.createReview(dto, shopId, images));
         }
+
+    /**
+     후기 작성 운영용
+     **/
+//        @PostMapping(value = "/{shopId}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//        @Operation(summary = "후기 생성", description = "지정된 가게에 후기를 작성합니다.")
+//        public ResponseEntity<ReviewResponseDto.PreviewDto> createReview(
+//                @PathVariable Long shopId,
+//                @RequestPart("dto") ReviewRequestDto.CreateDto dto,
+//                @RequestPart(value = "images", required = false) List<MultipartFile> images
+//        ) throws IOException {
+//            return ResponseEntity.ok(reviewService.createReview(dto, shopId, images));
+//        }
+
 
 }
