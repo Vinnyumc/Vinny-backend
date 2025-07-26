@@ -38,6 +38,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     SHOP_NOT_FOUND(HttpStatus.BAD_REQUEST, "SHOP4001", "존재하지 않는 Shop입니다."),
 
+    //찜 관련 에러
+    USER_SHOP_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER_SHOP_4001", "찜하지 않은 Shop입니다."),
+    USER_SHOP_EXIST(HttpStatus.BAD_REQUEST, "USER_SHOP_4001", "이미 찜을 누른 Shop입니다."),
 
     ;
 
