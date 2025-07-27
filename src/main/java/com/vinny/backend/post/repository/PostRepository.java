@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -32,4 +33,26 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LEFT JOIN FETCH p.images i",
             countQuery = "SELECT COUNT(p) FROM Post p")
     Page<Post> findAllWithAssociations(Pageable pageable);
+
+    @Query("""
+        SELECT DISTINCT p FROM Post p 
+        JOIN p.styleHashtags sh 
+        JOIN sh.vintageStyle vs 
+        WHERE vs.name = :styleName
+        """)
+    Page<Post> findByStyle(@Param("styleName") String styleType, Pageable pageable);
+
+    @Query("""
+        SELECT DISTINCT p FROM Post p 
+        JOIN p.styleHashtags sh 
+        JOIN sh.vintageStyle vs 
+        WHERE vs.name = :styleName 
+        AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)
+        """)
+    Page<Post> findByStyleAndKeyword(
+            @Param("styleName") String styleType,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 }
+
+
