@@ -1,6 +1,9 @@
 package com.vinny.backend.post.domain;
 
+import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.User.domain.Brand;
 import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.domain.VintageStyle;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.post.domain.mapping.PostBrandHashtag;
 import com.vinny.backend.post.domain.mapping.PostShopHashtag;
@@ -59,4 +62,22 @@ public class Post extends BaseEntity {
     @BatchSize(size = 10)
     @Builder.Default
     private List<PostShopHashtag> shopHashtags = new ArrayList<>();
+
+    public void setTitle(String title) { this.title = title; }
+    public void setContent(String content) { this.content = content; }
+
+    public void clearBrandHashtags() { this.brandHashtags.clear(); }
+    public void addBrandHashtag(Brand brand) {
+        this.brandHashtags.add(new PostBrandHashtag(null, this, brand));
+    }
+
+    public void clearStyleHashtags() { this.styleHashtags.clear(); }
+    public void addStyleHashtag(VintageStyle style) {
+        this.styleHashtags.add(new PostStyleHashtag(null, this, style));
+    }
+
+    public void clearShopHashtags() { this.shopHashtags.clear(); }
+    public void addShopHashtag(Shop shop) {
+        this.shopHashtags.add(new PostShopHashtag(null, this, shop));
+    }
 }
