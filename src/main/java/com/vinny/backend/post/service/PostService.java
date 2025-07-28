@@ -158,4 +158,16 @@ public class PostService {
                 .build();
     }
 
+    @Transactional
+    public PostResponseDto.PostDetailResponseDto getPostDetail(Long postId, Long userId) {
+        Post post = postRepository.findByIdWithAllRelations(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        boolean isLikedByMe = post.getLikes().stream()
+                .anyMatch(like -> like.getUser().getId().equals(userId));
+
+        int likesCount = post.getLikes() != null ? post.getLikes().size() : 0;
+
+        return PostConverter.toDetailDto(post, isLikedByMe, likesCount);
+    }
 }
