@@ -24,7 +24,7 @@ public class Post extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 15, nullable = false)
     private String title;
 
     @Column(length = 255, nullable = false)
@@ -37,21 +37,26 @@ public class Post extends BaseEntity {
 
     // 연관관계
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
+    @Builder.Default
     private List<UserPost> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
+    @Builder.Default
     private List<PostBrandHashtag> brandHashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
+    @Builder.Default
     private List<PostStyleHashtag> styleHashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
+    @Builder.Default
     private List<PostShopHashtag> shopHashtags = new ArrayList<>();
 }
