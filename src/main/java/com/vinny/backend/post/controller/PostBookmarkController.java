@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts/{postId}/bookmarks")
+@RequestMapping("/api/post/{postId}/bookmarks")
 public class PostBookmarkController {
 
     private final PostBookmarkService postBookmarkService;
