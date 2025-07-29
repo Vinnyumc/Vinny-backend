@@ -47,7 +47,7 @@ public class SearchLogService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 키워드 정제 (앞뒤 공백 제거, 소문자 변환 등)
-        String normalizedKeyword = normalizeKeyword(request.getKeyword());
+        String normalizedKeyword = request.getKeyword().trim();
 
         // 중복 검색어 확인
         Optional<SearchLog> existingSearchLog = searchLogRepository
