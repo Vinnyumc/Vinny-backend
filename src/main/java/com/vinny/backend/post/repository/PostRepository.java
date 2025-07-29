@@ -1,6 +1,9 @@
 package com.vinny.backend.post.repository;
 
+import com.vinny.backend.User.domain.User;
 import com.vinny.backend.post.domain.Post;
+import com.vinny.backend.post.domain.mapping.UserPostBookmark;
+import com.vinny.backend.post.domain.mapping.UserPostLike;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
@@ -54,5 +58,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("keyword") String keyword,
             Pageable pageable);
 }
-
 
