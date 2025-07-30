@@ -33,7 +33,9 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> onSuccess(String message, T result) {
-        return new ApiResponse<>(true,SuccessStatus._OK.getCode(), message, result, LocalDateTime.now());
+
+        return new ApiResponse<>(true, SuccessStatus._OK.getCode(), message, result, LocalDateTime.now());
+
     }
 
 
