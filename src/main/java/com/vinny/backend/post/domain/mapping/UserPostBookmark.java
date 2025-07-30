@@ -5,16 +5,18 @@ import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
-@Table(name = "user_post") //like는 예약어라서 변경
+@Table(name = "user_post_bookmark")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
 @Builder
-public class UserPost extends BaseEntity {
+public class UserPostBookmark extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,4 +26,5 @@ public class UserPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
 }
