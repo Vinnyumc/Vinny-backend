@@ -19,7 +19,7 @@ public class MypageService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final UserShopRepository userShopRepository;
-    private final UserPostLikeRepository userSavePostRepository;
+    private final UserPostLikeRepository userPostLikeRepository;
 
     @Transactional(readOnly = true)
     public MypageProfileResponse getMyProfile(Long userId) {
@@ -28,7 +28,7 @@ public class MypageService {
 
         int postCount = postRepository.countByUserId(userId);
         int likedShopCount = userShopRepository.countByUserId(userId);
-        int savedCount = userSavePostRepository.countByUserId(userId);
+        int savedCount = userPostLikeRepository.countByUserId(userId);
 
         return new MypageProfileResponse(
                 user.getId(),
