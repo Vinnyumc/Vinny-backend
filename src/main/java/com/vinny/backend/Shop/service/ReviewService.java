@@ -86,11 +86,16 @@ public class ReviewService {
      * 후기 삭제
      */
     @Transactional
-    public String deleteReview(Long reviewId) {
+    public String deleteReview(Long shopId, Long reviewId) {
         Long userId = getCurrentUserId();
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
+
+        // 리뷰가 해당 shopId에 속한 리뷰인지 검증
+        if (!review.getShop().getId().equals(shopId)) {
+            throw new GeneralException(ErrorStatus.REVIEW_SHOP_MISMATCH);
+        }
 
         if (!review.getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus._FORBIDDEN);

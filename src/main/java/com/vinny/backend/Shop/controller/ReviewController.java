@@ -84,7 +84,7 @@ public class ReviewController {
                 @Parameter(description = "삭제할 후기 ID", required = true)
                 @PathVariable Long reviewId
         ) {
-            String result = reviewService.deleteReview(reviewId);
+            String result = reviewService.deleteReview(shopId, reviewId);
             return ApiResponse.onSuccess(result);
         }
 }
