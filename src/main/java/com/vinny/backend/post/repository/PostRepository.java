@@ -53,6 +53,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("styleName") String styleType,
             @Param("keyword") String keyword,
             Pageable pageable);
+
+    int countByUserId(Long userId);
 }
 
 
