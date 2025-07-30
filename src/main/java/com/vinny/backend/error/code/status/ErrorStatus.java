@@ -42,6 +42,12 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_SHOP_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER_SHOP_4001", "찜하지 않은 Shop입니다."),
     USER_SHOP_EXIST(HttpStatus.BAD_REQUEST, "USER_SHOP_4001", "이미 찜을 누른 Shop입니다."),
 
+    // 검색기록 관련 에러
+    SEARCH_LOG_NOT_FOUND_OR_FORBIDDEN(HttpStatus.NOT_FOUND, "SEARCH_LOG_403", "검색 로그를 찾을 수 없거나 삭제 권한이 없습니다."),
+    NO_SEARCH_LOGS_FOUND(HttpStatus.NOT_FOUND, "SEARCH_LOG_404", "검색 기록이 없습니다."),
+    SEARCH_LOG_DELETE_FAILED(HttpStatus.NOT_FOUND, "SEARCH_LOG_400", "검색어 삭제에 실패했습니다.");
+
+
     ;
 
 
