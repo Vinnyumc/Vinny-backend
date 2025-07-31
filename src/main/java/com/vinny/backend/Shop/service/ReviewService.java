@@ -37,8 +37,6 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
 
-    private final JwtProvider jwtProvider;
-    private final HttpServletRequest request;
 
     /**
      * 가게 후기 작성
@@ -47,10 +45,10 @@ public class ReviewService {
     public ReviewResponseDto.PreviewDto createReview(
             ReviewRequestDto.CreateDto dto,
             Long shopId,
-            List<MultipartFile> imageFiles
+            List<MultipartFile> imageFiles,
+            Long userId
     ) throws IOException {
 
-        Long userId = getCurrentUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -86,9 +84,7 @@ public class ReviewService {
      * 후기 삭제
      */
     @Transactional
-    public String deleteReview(Long shopId, Long reviewId) {
-        Long userId = getCurrentUserId();
-
+    public String deleteReview(Long shopId, Long reviewId, Long userId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
@@ -115,15 +111,5 @@ public class ReviewService {
         return String.format("후기 ID %d가 삭제되었습니다.", reviewId);
     }
 
-    /**
-     * 현재 요청의 JWT 토큰으로부터 userId 추출
-     */
-    private Long getCurrentUserId() {
-        String token = jwtProvider.resolveToken(request);
-        if (token == null || !jwtProvider.validateToken(token)) {
-            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
-        }
-        return jwtProvider.getUserIdFromToken(token);
-    }
 }
 

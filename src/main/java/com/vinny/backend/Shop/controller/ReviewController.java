@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -42,13 +43,16 @@ public class ReviewController {
                         required = true
                 )
                 @RequestPart("dto") String dtoJson,
-                @RequestPart(value = "images", required = false) List<MultipartFile> images
+                @RequestPart(value = "images", required = false) List<MultipartFile> images,
+                @Parameter(hidden = true) @CurrentUser Long userId
         ) throws IOException {
+            List<MultipartFile> imageList = (images != null) ? images : Collections.emptyList();
+
             // JSON 문자열을 수동으로 객체로 변환
             ObjectMapper objectMapper = new ObjectMapper();
             ReviewRequestDto.CreateDto dto = objectMapper.readValue(dtoJson, ReviewRequestDto.CreateDto.class);
 
-            return ResponseEntity.ok(reviewService.createReview(dto, shopId, images));
+            return ResponseEntity.ok(reviewService.createReview(dto, shopId, imageList, userId));
         }
 
     /**
@@ -82,9 +86,10 @@ public class ReviewController {
                 @PathVariable Long shopId,
 
                 @Parameter(description = "삭제할 후기 ID", required = true)
-                @PathVariable Long reviewId
+                @PathVariable Long reviewId,
+                @Parameter(hidden = true) @CurrentUser Long userId
         ) {
-            String result = reviewService.deleteReview(shopId, reviewId);
+            String result = reviewService.deleteReview(shopId, reviewId, userId);
             return ApiResponse.onSuccess(result);
         }
 }
