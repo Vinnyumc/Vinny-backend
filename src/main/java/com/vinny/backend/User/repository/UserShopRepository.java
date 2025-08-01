@@ -14,4 +14,5 @@ public interface UserShopRepository extends JpaRepository<UserShop, Long> {
     Optional<UserShop> findByUserAndShop(User user, Shop shop);
     List<UserShop> findAllByUserAndStatus(User user, UserShopStatus status);
 
+    int countByUserId(Long userId);
 }
