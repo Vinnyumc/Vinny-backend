@@ -85,4 +85,21 @@ public class PostResponseDto {
     public static class CreatePostResponse {
         private Long postId;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PostDetailResponseDto {
+        private Long postId;
+        private AuthorDto author;
+        private String content;
+        private List<String> images;
+        private LocalDateTime createdAt;
+        private int likesCount;
+        private boolean isLikedByMe;
+        private ShopDto shop;
+        private List<StyleDto> styles;
+        private BrandDto brand;
+    }
 }

@@ -160,6 +160,7 @@ public class PostService {
     }
 
 
+
     @Transactional
     public Long updatePost(Long userId, Long postId, com.vinny.backend.post.dto.PostRequestDto.UpdateDto dto) {
         Post post = postRepository.findById(postId)
@@ -227,5 +228,19 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+}
+
+    @Transactional
+    public PostResponseDto.PostDetailResponseDto getPostDetail(Long postId, Long userId) {
+        Post post = postRepository.findByIdWithAllRelations(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        boolean isLikedByMe = post.getLikes().stream()
+                .anyMatch(like -> like.getUser().getId().equals(userId));
+
+        int likesCount = post.getLikes() != null ? post.getLikes().size() : 0;
+
+        return PostConverter.toDetailDto(post, isLikedByMe, likesCount);
     }
 }
