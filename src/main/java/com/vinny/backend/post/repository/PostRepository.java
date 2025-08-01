@@ -62,7 +62,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     int countByUserId(Long userId);
-}
+
 
 
     @Query("""

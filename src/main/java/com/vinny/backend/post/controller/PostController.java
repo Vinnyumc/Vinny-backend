@@ -106,14 +106,33 @@ public class PostController {
                 .body(ApiResponse.onSuccess(response));
     }
 
+    @PatchMapping("/{postId}")
+    @Operation(summary = "게시글 수정", description = "게시글 전체 내용을 수정합니다.")
+    public ResponseEntity<ApiResponse<PostResponseDto.CreatePostResponse>> updatePost(
+            @CurrentUser Long userId,
+            @PathVariable Long postId,
+            @RequestBody @Valid PostRequestDto.UpdateDto dto) {
+        Long updatedId = postService.updatePost(userId, postId, dto);
+        return ResponseEntity.ok(ApiResponse.onSuccess("게시글 수정에 성공했습니다.", new PostResponseDto.CreatePostResponse(updatedId)));
+    }
+
+    @DeleteMapping("/{postId}")
+    @Operation(summary = "게시글 삭제", description = "게시글을 실제 삭제합니다.")
+    public ResponseEntity<ApiResponse<Void>> deletePost(
+            @CurrentUser Long userId,
+            @PathVariable Long postId) {
+        postService.deletePost(userId, postId);
+        return ResponseEntity.ok(ApiResponse.onSuccess("게시글 삭제에 성공했습니다.", null));
+    }
+
     @Operation(summary = "게시글 상세 조회", description = "postId를 통해 게시글을 상세 조회합니다.")
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostResponseDto.PostDetailResponseDto>> getPostDetail(
             @CurrentUser Long userId,
             @PathVariable Long postId) {
-
         PostResponseDto.PostDetailResponseDto response = postService.getPostDetail(postId, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess("게시글 상세 조회에 성공했습니다.", response));
+    }
 
 
     @PostMapping("/{postId}/bookmarks")
