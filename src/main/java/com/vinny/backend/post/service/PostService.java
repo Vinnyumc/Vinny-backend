@@ -197,21 +197,22 @@ public class PostService {
             post.addShopHashtag(shop);
         }
 
-        // 이미지 갱신
-        if (dto.getImages() != null) {
-            List<MultipartFile> images = dto.getImages();
-
-            if (images.size() > 5) {
-                throw new IllegalArgumentException("이미지는 최대 5개까지 업로드할 수 있습니다.");
-            }
-
-            List<String> imageUrls = s3Service.uploadFiles(images);
-            post.getImages().clear();
-
-            for (int i = 0; i < imageUrls.size(); i++) {
-                post.getImages().add(new PostImage(post, imageUrls.get(i), (long) i));
-            }
-        }
+        //필요시 구현 예정(아직 dto에 이미지관련 필드 x)
+//        // 이미지 갱신
+//        if (dto.getImages() != null) {
+//            List<MultipartFile> images = dto.getImages();
+//
+//            if (images.size() > 5) {
+//                throw new IllegalArgumentException("이미지는 최대 5개까지 업로드할 수 있습니다.");
+//            }
+//
+//            List<String> imageUrls = s3Service.uploadFiles(images);
+//            post.getImages().clear();
+//
+//            for (int i = 0; i < imageUrls.size(); i++) {
+//                post.getImages().add(new PostImage(post, imageUrls.get(i), (long) i));
+//            }
+//        }
 
         return post.getId();
     }
