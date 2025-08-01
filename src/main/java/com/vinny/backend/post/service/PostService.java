@@ -160,7 +160,6 @@ public class PostService {
     }
 
 
-
     @Transactional
     public Long updatePost(Long userId, Long postId, com.vinny.backend.post.dto.PostRequestDto.UpdateDto dto) {
         Post post = postRepository.findById(postId)
@@ -229,7 +228,6 @@ public class PostService {
 
         postRepository.delete(post);
     }
-}
 
     @Transactional
     public PostResponseDto.PostDetailResponseDto getPostDetail(Long postId, Long userId) {

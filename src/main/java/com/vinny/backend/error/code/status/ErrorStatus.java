@@ -29,8 +29,6 @@ public enum ErrorStatus implements BaseErrorCode {
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "BRAND404", "존재하지 않는 브랜드입니다."),
     STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "STYLE404", "존재하지 않는 스타일입니다."),
 
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST404", "존재하지 않는 게시글입니다."),
-
 
     // page
     INVALID_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4001", "page는 1 이상의 정수여야 합니다."),
