@@ -1,6 +1,9 @@
 package com.vinny.backend.post.repository;
 
+import com.vinny.backend.User.domain.User;
 import com.vinny.backend.post.domain.Post;
+import com.vinny.backend.post.domain.mapping.UserPostBookmark;
+import com.vinny.backend.post.domain.mapping.UserPostLike;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -56,6 +59,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("styleName") String styleType,
             @Param("keyword") String keyword,
             Pageable pageable);
+
+
+    int countByUserId(Long userId);
+}
+
 
     @Query("""
         SELECT p FROM Post p

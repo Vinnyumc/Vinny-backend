@@ -6,6 +6,8 @@ import com.vinny.backend.post.dto.PostRequestDto;
 import com.vinny.backend.post.dto.PostResponseDto;
 import com.vinny.backend.post.dto.PostSearchResponseDto;
 import com.vinny.backend.post.service.PostService;
+import com.vinny.backend.post.service.PostBookmarkService;
+import com.vinny.backend.post.service.PostLikeService;
 import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +37,8 @@ import java.io.IOException;
 public class PostController {
 
     private final PostService postService;
+    private final PostBookmarkService postBookmarkService;
+    private final PostLikeService postLikeService;
 
 
     @Operation(summary = "게시글 검색", description = "키워드로 게시글을 검색합니다.")
@@ -101,6 +105,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.onSuccess(response));
     }
+
     @Operation(summary = "게시글 상세 조회", description = "postId를 통해 게시글을 상세 조회합니다.")
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostResponseDto.PostDetailResponseDto>> getPostDetail(
@@ -109,5 +114,50 @@ public class PostController {
 
         PostResponseDto.PostDetailResponseDto response = postService.getPostDetail(postId, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess("게시글 상세 조회에 성공했습니다.", response));
+
+
+    @PostMapping("/{postId}/bookmarks")
+    public ResponseEntity<ApiResponse<?>> addBookmark(
+            @CurrentUser Long userId,
+            @PathVariable Long postId
+    ) {
+        postBookmarkService.bookmarkPost(userId, postId);
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess("게시글 북마크 등록에 성공했습니다.")
+        );
+    }
+
+    @DeleteMapping("/{postId}/bookmarks")
+    public ResponseEntity<ApiResponse<?>> removeBookmark(
+            @CurrentUser Long userId,
+            @PathVariable Long postId
+    ) {
+        postBookmarkService.unbookmarkPost(userId, postId);
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess("게시글 북마크 취소에 성공했습니다.")
+        );
+    }
+
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<ApiResponse<?>> addLike(
+            @CurrentUser Long userId,
+            @PathVariable Long postId
+    ) {
+        postLikeService.likePost(userId, postId);
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess("게시글 좋아요 등록에 성공했습니다.")
+        );
+    }
+
+    @DeleteMapping("/{postId}/likes")
+    public ResponseEntity<ApiResponse<?>> removeLike(
+            @CurrentUser Long userId,
+            @PathVariable Long postId
+    ) {
+        postLikeService.unlikePost(userId, postId);
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess("게시글 좋아요 취소에 성공했습니다.")
+        );
+
     }
 }

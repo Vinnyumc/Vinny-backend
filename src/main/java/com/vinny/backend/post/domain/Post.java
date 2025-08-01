@@ -5,7 +5,7 @@ import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.post.domain.mapping.PostBrandHashtag;
 import com.vinny.backend.post.domain.mapping.PostShopHashtag;
 import com.vinny.backend.post.domain.mapping.PostStyleHashtag;
-import com.vinny.backend.post.domain.mapping.UserPost;
+import com.vinny.backend.post.domain.mapping.UserPostLike;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
@@ -45,7 +45,7 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<UserPost> likes = new ArrayList<>();
+    private List<UserPostLike> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)

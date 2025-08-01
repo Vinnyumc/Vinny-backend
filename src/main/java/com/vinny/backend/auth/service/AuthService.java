@@ -60,27 +60,21 @@ public class AuthService {
 
     @Transactional
     public TokenDto reissue(TokenRequestDto requestDto) {
+        String refreshToken = requestDto.getRefreshToken();
+
         // 1. Refresh Token 유효성 검증
-        if (!jwtProvider.validateToken(requestDto.getRefreshToken())) {
+        if (!jwtProvider.validateToken(refreshToken)) {
             throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
 
-        // 2. Access Token에서 사용자 정보 추출
-        Authentication authentication = jwtProvider.getAuthentication(requestDto.getAccessToken());
-        Long userId = Long.parseLong(authentication.getName());
+        // 2. DB에서 Refresh Token으로 사용자 조회
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 Refresh Token 입니다."));
 
-        // 3. DB에서 사용자 조회 및 Refresh Token 일치 여부 확인
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        if (!user.getRefreshToken().equals(requestDto.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
-        }
-
-        // 4. 새로운 토큰 생성
+        // 3. 새로운 토큰 생성 (Refresh Token 순환)
         TokenDto newTokens = jwtProvider.generateTokens(user);
 
-        // 5. DB에 새로운 Refresh Token 업데이트
+        // 4. DB에 새로운 Refresh Token 업데이트
         user.updateRefreshToken(newTokens.getRefreshToken());
 
         return newTokens;
