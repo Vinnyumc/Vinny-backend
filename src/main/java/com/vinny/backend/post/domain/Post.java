@@ -11,7 +11,9 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "post")
@@ -48,15 +50,15 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<PostBrandHashtag> brandHashtags = new ArrayList<>();
+    private Set<PostBrandHashtag> brandHashtags = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<PostStyleHashtag> styleHashtags = new ArrayList<>();
+    private Set<PostStyleHashtag> styleHashtags = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<PostShopHashtag> shopHashtags = new ArrayList<>();
+    private Set<PostShopHashtag> shopHashtags = new HashSet<>();
 }
