@@ -1,5 +1,4 @@
 package com.vinny.backend.Mypage.Service;
-
 import com.vinny.backend.Mypage.dto.MypageLikedShopResponse;
 import com.vinny.backend.Mypage.dto.MypagePostThumbnailResponse;
 import com.vinny.backend.Mypage.dto.MypageProfileResponse;
@@ -7,6 +6,8 @@ import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.Shop.domain.ShopImage;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.domain.mapping.UserShop;
+import com.vinny.backend.Mypage.dto.MypageProfileResponse;
+import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.User.repository.UserShopRepository;
 import com.vinny.backend.error.code.status.ErrorStatus;

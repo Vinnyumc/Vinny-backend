@@ -66,5 +66,4 @@ public class MypageController {
         List<MypageLikedShopResponse> response = mypageService.getLikedShops(userId);
         return ResponseEntity.ok(ApiResponse.onSuccess("찜한 샵 목록 조회 성공" ,response));
     }
-
 }
