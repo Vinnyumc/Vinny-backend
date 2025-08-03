@@ -54,6 +54,7 @@ public class PostService {
         )).toList();
 
     }
+
     public PostResponseDto getAllposts(Pageable pageable, Long currentUserId) {
 //        //정렬 조건 추가
 //        Pageable sortedPageable = PageRequest.of(
@@ -159,4 +160,86 @@ public class PostService {
                 .build();
     }
 
+
+    @Transactional
+    public Long updatePost(Long userId, Long postId, com.vinny.backend.post.dto.PostRequestDto.UpdateDto dto) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.POST_FORBIDDEN);
+        }
+
+        if (dto.getTitle() != null) post.setTitle(dto.getTitle());
+        if (dto.getContent() != null) post.setContent(dto.getContent());
+
+        if (dto.getBrandIds() != null) {
+            post.clearBrandHashtags();
+            for (Long brandId : dto.getBrandIds()) {
+                Brand brand = brandRepository.findById(brandId)
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.BRAND_NOT_FOUND));
+                post.addBrandHashtag(brand);
+            }
+        }
+
+        if (dto.getStyleIds() != null) {
+            post.clearStyleHashtags();
+            for (Long styleId : dto.getStyleIds()) {
+                VintageStyle style = styleRepository.findById(styleId)
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.STYLE_NOT_FOUND));
+                post.addStyleHashtag(style);
+            }
+        }
+
+        if (dto.getShopId() != null) {
+            post.clearShopHashtags();
+            Shop shop = shopRepository.findById(dto.getShopId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
+            post.addShopHashtag(shop);
+        }
+
+        //필요시 구현 예정(아직 dto에 이미지관련 필드 x)
+//        // 이미지 갱신
+//        if (dto.getImages() != null) {
+//            List<MultipartFile> images = dto.getImages();
+//
+//            if (images.size() > 5) {
+//                throw new IllegalArgumentException("이미지는 최대 5개까지 업로드할 수 있습니다.");
+//            }
+//
+//            List<String> imageUrls = s3Service.uploadFiles(images);
+//            post.getImages().clear();
+//
+//            for (int i = 0; i < imageUrls.size(); i++) {
+//                post.getImages().add(new PostImage(post, imageUrls.get(i), (long) i));
+//            }
+//        }
+
+        return post.getId();
+    }
+
+    @Transactional
+    public void deletePost(Long userId, Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.POST_FORBIDDEN);
+        }
+
+        postRepository.delete(post);
+    }
+
+    @Transactional
+    public PostResponseDto.PostDetailResponseDto getPostDetail(Long postId, Long userId) {
+        Post post = postRepository.findByIdWithAllRelations(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        boolean isLikedByMe = post.getLikes().stream()
+                .anyMatch(like -> like.getUser().getId().equals(userId));
+
+        int likesCount = post.getLikes() != null ? post.getLikes().size() : 0;
+
+        return PostConverter.toDetailDto(post, isLikedByMe, likesCount);
+    }
 }

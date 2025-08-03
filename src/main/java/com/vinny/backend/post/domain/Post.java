@@ -1,6 +1,9 @@
 package com.vinny.backend.post.domain;
 
+import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.User.domain.Brand;
 import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.domain.VintageStyle;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.post.domain.mapping.PostBrandHashtag;
 import com.vinny.backend.post.domain.mapping.PostShopHashtag;
@@ -11,7 +14,9 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "post")
@@ -48,15 +53,35 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<PostBrandHashtag> brandHashtags = new ArrayList<>();
+    private Set<PostBrandHashtag> brandHashtags = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<PostStyleHashtag> styleHashtags = new ArrayList<>();
+    private Set<PostStyleHashtag> styleHashtags = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<PostShopHashtag> shopHashtags = new ArrayList<>();
+
+    private Set<PostShopHashtag> shopHashtags = new HashSet<>();
+
+    public void setTitle(String title) { this.title = title; }
+    public void setContent(String content) { this.content = content; }
+
+    public void clearBrandHashtags() { this.brandHashtags.clear(); }
+    public void addBrandHashtag(Brand brand) {
+        this.brandHashtags.add(new PostBrandHashtag(null, this, brand));
+    }
+
+    public void clearStyleHashtags() { this.styleHashtags.clear(); }
+    public void addStyleHashtag(VintageStyle style) {
+        this.styleHashtags.add(new PostStyleHashtag(null, this, style));
+    }
+
+    public void clearShopHashtags() { this.shopHashtags.clear(); }
+    public void addShopHashtag(Shop shop) {
+        this.shopHashtags.add(new PostShopHashtag(null, this, shop));
+    }
+    
 }
