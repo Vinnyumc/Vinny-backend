@@ -1,6 +1,5 @@
 package com.vinny.backend.post.repository;
 
-import com.vinny.backend.User.domain.User;
 import com.vinny.backend.post.domain.Post;
 import com.vinny.backend.post.domain.mapping.UserPostBookmark;
 import com.vinny.backend.post.domain.mapping.UserPostLike;
@@ -63,7 +62,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     int countByUserId(Long userId);
 
-
+    List<Post> findByUserId(Long userId);
 
     @Query("""
         SELECT p FROM Post p

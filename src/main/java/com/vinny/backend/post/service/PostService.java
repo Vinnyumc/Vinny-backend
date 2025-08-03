@@ -46,7 +46,8 @@ public class PostService {
         return posts.stream().map(post -> new PostSearchResponseDto.PostDto(
                 post.getId(),
                 post.getTitle(),
-                post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl(), post.getLikes() != null ? post.getLikes().size() : 0,
+                post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl(),
+                post.getLikes() != null ? post.getLikes().size() : 0,
                 false, // isLiked (Boolean) - 실 사용시 수정 칠요
                 List.of(), //수정 필요
                 post.getUser().getNickname()
