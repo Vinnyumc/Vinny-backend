@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apple Sign-In Test</title>
+    <meta name="appleid-signin-client-id" content="[여기에 Services ID 입력]">
+    <meta name="appleid-signin-scope" content="name email">
+    <meta name="appleid-signin-redirect-uri" content="[여기에 등록한 Return URL 입력]">
+    <meta name="appleid-signin-state" content="vinny-test">
+    <meta name="appleid-signin-use-popup" content="true">
+</head>
+<body>
+<h1>Apple 로그인 테스트 페이지</h1>
+<p>아래 버튼을 클릭하고 Apple ID로 로그인하세요.</p>
+<p>로그인 성공 후, 브라우저의 개발자 도구(F12) '콘솔' 탭에서 code와 id_token을 확인하세요.</p>
+
+<div id="appleid-signin" data-color="black" data-border="true" data-type="sign-in"></div>
+
+<script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+
+<script type="text/javascript">
+    // 로그인 성공 시 콜백
+    document.addEventListener('AppleIDSignInOnSuccess', (data) => {
+        console.log("✅ Apple Login Success!", data.detail);
+
+        const { code, id_token } = data.detail.authorization;
+
+        console.log("--- ⬇️ 백엔드 테스트에 필요한 정보 ⬇️ ---");
+        console.log("Authorization Code:", code);
+        console.log("Identity Token:", id_token);
+
+        alert('로그인 성공! 브라우저 개발자 콘솔(F12)에서 code와 id_token을 확인하세요.');
+    });
+
+    // 로그인 실패 시 콜백
+    document.addEventListener('AppleIDSignInOnFailure', (error) => {
+        console.error("❌ Apple Login Failed!", error);
+        alert('로그인 실패: ' + error.detail.error);
+    });
+</script>
+</body>
+</html>
