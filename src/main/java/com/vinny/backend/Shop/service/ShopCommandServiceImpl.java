@@ -71,7 +71,7 @@ public class ShopCommandServiceImpl implements ShopCommandService{
 
         shopRepository.save(shop);
 
-        return ShopConverter.toResponseDto(shop);
+        return ShopConverter.toPreviewDto(shop);
     }
 
 

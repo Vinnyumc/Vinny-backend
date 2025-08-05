@@ -25,6 +25,7 @@ public class ShopResponseDto {
         private Double longitude;
         private String region;
         private List<ImageDto> images;
+        private List<ShopVintageStyleDto> shopVintageStyleList;
     }
 
 
