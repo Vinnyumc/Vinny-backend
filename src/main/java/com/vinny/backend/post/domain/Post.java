@@ -83,5 +83,7 @@ public class Post extends BaseEntity {
     public void addShopHashtag(Shop shop) {
         this.shopHashtags.add(new PostShopHashtag(null, this, shop));
     }
-    
+    public List<PostImage> getPostImages() {
+        return images;
+    }
 }
