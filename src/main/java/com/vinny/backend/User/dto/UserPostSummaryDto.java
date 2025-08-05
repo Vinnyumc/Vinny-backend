@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public record UserPostSummaryDto(
     Long postId,
-    String content,
+    //String content,
     String imageUrl,
     LocalDateTime createdAt
 ) {}

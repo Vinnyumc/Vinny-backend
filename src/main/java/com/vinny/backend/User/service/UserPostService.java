@@ -35,7 +35,7 @@ public class UserPostService {
         return posts.stream()
                 .map(post -> new UserPostSummaryDto(
                         post.getId(),
-                        post.getContent(),
+                        //post.getContent(),
                         post.getPostImages().isEmpty() ? null : post.getPostImages().get(0).getImageUrl(),
                         post.getCreatedAt()
                 ))
