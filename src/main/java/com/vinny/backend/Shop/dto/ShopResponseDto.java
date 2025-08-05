@@ -47,4 +47,24 @@ public class ShopResponseDto {
         private int totalPages;
         private long totalElements;
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MapThumbnailDto {
+        private Long id;
+        private String name;
+        private String openTime;
+        private String closeTime;
+        private String instagram;
+        private String address;
+        private String addressDetail;
+        private Double latitude;
+        private Double longitude;
+        private String region;
+        private List<ImageDto> images;
+        private List<ShopVintageStyleDto> shopVintageStyleList;
+    }
 }

@@ -73,4 +73,33 @@ public class ShopConverter {
                 .build();
     }
 
+    public static ShopResponseDto.MapThumbnailDto toMapThumbnailDto(Shop shop) {
+        List<ShopResponseDto.ImageDto> images = shop.getShopImages().stream()
+                .map(img -> new ShopResponseDto.ImageDto(img.getImageUrl(), img.isMainImage()))
+                .collect(Collectors.toList());
+
+        List<ShopVintageStyleDto> vintageStyleDtos = shop.getShopVintageStyleList().stream()
+                .map(style -> ShopVintageStyleDto.builder()
+                        .id(style.getId())
+                        .vintageStyleName(style.getVintageStyle() != null ? style.getVintageStyle().getName() : null)
+                        .build())
+                .collect(Collectors.toList());
+
+
+        return ShopResponseDto.MapThumbnailDto.builder()
+                .id(shop.getId())
+                .name(shop.getName())
+                .openTime(shop.getOpenTime() != null ? shop.getOpenTime().toString() : null)
+                .closeTime(shop.getCloseTime() != null ? shop.getCloseTime().toString() : null)
+                .instagram(shop.getInstagram())
+                .address(shop.getAddress())
+                .addressDetail(shop.getAddressDetail())
+                .latitude(shop.getLatitude())
+                .longitude(shop.getLongitude())
+                .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
+                .images(images)
+                .shopVintageStyleList(vintageStyleDtos)
+                .build();
+    }
+
 }
