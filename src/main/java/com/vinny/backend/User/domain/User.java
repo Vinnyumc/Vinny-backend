@@ -3,6 +3,7 @@ package com.vinny.backend.User.domain;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.domain.mapping.*;
+import com.vinny.backend.post.domain.Post;
 import com.vinny.backend.search.domain.SearchLog;
 import jakarta.persistence.*;
 import lombok.*;
@@ -77,6 +78,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserShop> userShopList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
 
     @Column(name = "refresh_token")
     private String refreshToken;

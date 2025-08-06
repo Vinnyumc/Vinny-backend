@@ -66,4 +66,13 @@ public class ShopService {
         return shopConverter.toPreviewDto(shop);
     }
 
+    /**
+     * 지도용 가게 썸네일  조회
+     */
+    public ShopResponseDto.MapThumbnailDto getMapThumbnail(long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
+        return shopConverter.toMapThumbnailDto(shop);
+    }
+
 }
