@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/shop")
+@RequestMapping("/api")
 @Tag(name = "Shop", description = "빈티지 샵 관련 API")
 @RequiredArgsConstructor
 public class ShopController {
@@ -50,7 +50,7 @@ public class ShopController {
 
 
     @Operation(summary = "샵 검색", description = "키워드로 빈티지샵을 검색합니다.")
-    @GetMapping("/search")
+    @GetMapping("/shop/search")
     public ResponseEntity<?> searchShops(
             @Parameter(description = "검색 키워드", required = true)
             @RequestParam String keyword
@@ -67,7 +67,7 @@ public class ShopController {
         );
     }
 
-    @GetMapping("/search/style")
+    @GetMapping("/shop/search/style")
     @Operation(summary = "스타일별 가게 목록 조회 API",
             description = "특정 스타일에 해당하는 가게 목록을 조회하는 API입니다.")
     @ApiResponses({
@@ -92,11 +92,24 @@ public class ShopController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    @GetMapping("/{shopId}")
+    @GetMapping("/shop/{shopId}")
     public ResponseEntity<ApiResponse<ShopResponseDto.PreviewDto>> getShopDetails(
             @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId
     ) {
         ShopResponseDto.PreviewDto shopDetails = shopService.getShopsDetails(shopId);
+        return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
+    }
+
+    @Operation(summary = "지도용 가게 썸네일 조회", description = "특정 가게의 지도용 썸네일 정보를 조회합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @GetMapping("/map/shops/{shopId}")
+    public ResponseEntity<ApiResponse<ShopResponseDto.MapThumbnailDto>> getMapThumbnail(
+            @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId
+    ) {
+        ShopResponseDto.MapThumbnailDto shopDetails = shopService.getMapThumbnail(shopId);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
     }
 
