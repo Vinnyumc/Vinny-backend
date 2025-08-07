@@ -32,6 +32,9 @@ public enum ErrorStatus implements BaseErrorCode {
     TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "POST400", "제목은 필수 입니다."),
     CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "POST401", "내용은 필수 입니다."),
 
+    ALREADY_LIKED(HttpStatus.BAD_REQUEST, "LIKE400", "이미 좋아요를 누른 게시글입니다."),
+    LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "LIKE404", "좋아요한 기록이 없습니다."),
+
     // page
     INVALID_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4001", "page는 1 이상의 정수여야 합니다."),
     MISSING_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4002", "page 파라미터가 필요합니다."),
