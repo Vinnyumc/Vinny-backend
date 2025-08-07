@@ -82,19 +82,20 @@ public class PostService {
     @Transactional
     public PostResponseDto.CreatePostResponse createPost(
             Long userId,
-            String title,
-            String content,
-            List<Long> styleIds,
-            List<Long> brandIds,
-            Long shopId,
+            com.vinny.backend.post.dto.PostRequestDto.CreateDto dto,
             List<MultipartFile> images
     ) throws java.io.IOException {
         // 1. 사용자 조회
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 2. 게시글 기본 정보 세팅
+        String title = dto.getTitle();
+        String content = dto.getContent();
+        List<Long> styleIds = dto.getStyleIds();
+        List<Long> brandIds = dto.getBrandIds();
+        Long shopId = dto.getShopId();
+
         Post post = Post.builder()
                 .title(title)
                 .content(content)

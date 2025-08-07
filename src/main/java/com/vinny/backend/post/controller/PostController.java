@@ -100,7 +100,7 @@ public class PostController {
         PostRequestDto.CreateDto dto = objectMapper.readValue(dtoJson, PostRequestDto.CreateDto.class);
 
         PostResponseDto.CreatePostResponse response =
-                postService.createPost(userId, dto.getTitle(), dto.getContent(), dto.getStyleIds(), dto.getBrandIds(), dto.getShopId(), images);
+                postService.createPost(userId, dto, images);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.onSuccess(response));
