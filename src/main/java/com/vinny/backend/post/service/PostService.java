@@ -101,6 +101,14 @@ public class PostService {
                 .user(user)
                 .build();
 
+        if (title == null || title.isBlank()) {
+            throw new GeneralException(ErrorStatus.TITLE_REQUIRED);
+        }
+
+        if (content == null || content.isBlank()) {
+            throw new GeneralException(ErrorStatus.CONTENT_REQUIRED);
+        }
+
         // 3. 이미지 처리
         if (images != null) {
             if (images.size() > 5) {

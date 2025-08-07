@@ -29,7 +29,8 @@ public enum ErrorStatus implements BaseErrorCode {
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "BRAND404", "존재하지 않는 브랜드입니다."),
     STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "STYLE404", "존재하지 않는 스타일입니다."),
     IMAGE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "IMAGE400", "이미지는 최대 5개까지 업로드할 수 있습니다."),
-
+    TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "POST400", "제목은 필수 입니다."),
+    CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "POST401", "제목은 필수 입니다."),
 
     // page
     INVALID_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4001", "page는 1 이상의 정수여야 합니다."),
