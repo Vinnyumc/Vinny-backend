@@ -14,11 +14,11 @@ import java.util.List;
 @Getter
 public class PostRequestDto {
 
+    @Schema(name = "CreatePostRequest")
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(name = "CreatePostRequest")
     public static class CreateDto {
 
         @Schema(description = "게시글 제목")

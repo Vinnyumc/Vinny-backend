@@ -22,13 +22,23 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4001", "사용자가 없습니다."),
 
-    // 예시,,,
+    // post
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST404", "존재하지 않는 게시글입니다."),
     POST_FORBIDDEN(HttpStatus.FORBIDDEN, "POST403", "해당 게시글에 대한 권한이 없습니다."),
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "BRAND404", "존재하지 않는 브랜드입니다."),
     STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "STYLE404", "존재하지 않는 스타일입니다."),
+    IMAGE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "IMAGE400", "이미지는 최대 5개까지 업로드할 수 있습니다."),
+    TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "POST400", "제목은 필수 입니다."),
+    CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "POST401", "내용은 필수 입니다."),
 
+    //좋아요
+    ALREADY_LIKED(HttpStatus.BAD_REQUEST, "LIKE400", "이미 좋아요를 누른 게시글입니다."),
+    LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "LIKE404", "좋아요한 기록이 없습니다."),
+
+    //북마크
+    ALREADY_BOOKMARKED(HttpStatus.BAD_REQUEST, "BOOKMARK400", "이미 북마크한 게시글입니다."),
+    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKMARK404", "북마크한 기록이 없습니다."),
 
     // page
     INVALID_PAGE_PARAM(HttpStatus.BAD_REQUEST, "PAGEPARAM4001", "page는 1 이상의 정수여야 합니다."),
