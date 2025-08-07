@@ -5,6 +5,8 @@ import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.dto.UserPostSummaryDto;
 import com.vinny.backend.User.dto.UserProfileDto;
 import com.vinny.backend.User.repository.UserRepository;
+import com.vinny.backend.error.code.status.ErrorStatus;
+import com.vinny.backend.error.exception.GeneralException;
 import com.vinny.backend.post.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class UserPostService {
 
     public UserProfileDto getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         return new UserProfileDto(
                 user.getId(),
@@ -30,7 +32,7 @@ public class UserPostService {
 
     public List<UserPostSummaryDto> getUserPosts(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post> posts = user.getPosts();
         return posts.stream()
                 .map(post -> new UserPostSummaryDto(
