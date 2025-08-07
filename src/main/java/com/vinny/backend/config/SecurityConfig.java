@@ -52,7 +52,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 추후 프런트 도메인으로 수정 예정
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",        // 1. 로컬 프론트엔드 개발 환경용
+                "https://app.vinnydesign.net",  // 2. 도메인 사용 시
+                "http://13.209.196.77:8080"     // 3. IP 주소로 직접 접속 시
+        ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
