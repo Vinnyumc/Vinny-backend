@@ -109,7 +109,7 @@ public class PostController {
     @PatchMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "게시글 전체 내용을 수정합니다.")
     public ResponseEntity<ApiResponse<PostResponseDto.CreatePostResponse>> updatePost(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @PathVariable Long postId,
             @RequestBody @Valid PostRequestDto.UpdateDto dto) {
         Long updatedId = postService.updatePost(userId, postId, dto);
@@ -119,7 +119,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제", description = "게시글을 실제 삭제합니다.")
     public ResponseEntity<ApiResponse<Void>> deletePost(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @PathVariable Long postId) {
         postService.deletePost(userId, postId);
         return ResponseEntity.ok(ApiResponse.onSuccess("게시글 삭제에 성공했습니다.", null));
@@ -137,7 +137,7 @@ public class PostController {
 
     @PostMapping("/{postId}/bookmarks")
     public ResponseEntity<ApiResponse<?>> addBookmark(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @PathVariable Long postId
     ) {
         postBookmarkService.bookmarkPost(userId, postId);
@@ -148,7 +148,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}/bookmarks")
     public ResponseEntity<ApiResponse<?>> removeBookmark(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @PathVariable Long postId
     ) {
         postBookmarkService.unbookmarkPost(userId, postId);
@@ -159,7 +159,7 @@ public class PostController {
 
     @PostMapping("/{postId}/likes")
     public ResponseEntity<ApiResponse<?>> addLike(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @PathVariable Long postId
     ) {
         postLikeService.likePost(userId, postId);
@@ -170,7 +170,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}/likes")
     public ResponseEntity<ApiResponse<?>> removeLike(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @PathVariable Long postId
     ) {
         postLikeService.unlikePost(userId, postId);
