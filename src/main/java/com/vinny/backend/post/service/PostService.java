@@ -104,7 +104,7 @@ public class PostService {
         // 3. 이미지 처리
         if (images != null) {
             if (images.size() > 5) {
-                throw new IllegalArgumentException("이미지는 최대 5개까지 업로드할 수 있습니다. ");
+                throw new GeneralException(ErrorStatus.IMAGE_LIMIT_EXCEEDED);
             }
 
             List<String> imageUrls = s3Service.uploadFiles(images);
@@ -118,7 +118,7 @@ public class PostService {
         if (brandIds != null) {
             for (Long brandId : brandIds) {
                 Brand brand = brandRepository.findById(brandId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 브랜드입니다."));
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.BRAND_NOT_FOUND));
                 PostBrandHashtag brandHashtag = PostBrandHashtag.builder()
                         .post(post)
                         .brand(brand)
@@ -130,7 +130,7 @@ public class PostService {
         // 5. 샵 처리 (선택적)
         if (shopId != null) {
             Shop shop = shopRepository.findById(shopId)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 샵입니다."));
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
             PostShopHashtag shopHashtag = PostShopHashtag.builder()
                     .post(post)
                     .shop(shop)
@@ -142,7 +142,7 @@ public class PostService {
         if (styleIds != null) {
             for (Long styleId : styleIds) {
                 VintageStyle style = styleRepository.findById(styleId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스타일입니다."));
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.STYLE_NOT_FOUND));
                 PostStyleHashtag styleHashtag = PostStyleHashtag.builder()
                         .post(post)
                         .vintageStyle(style)
@@ -204,7 +204,7 @@ public class PostService {
 //            List<MultipartFile> images = dto.getImages();
 //
 //            if (images.size() > 5) {
-//                throw new IllegalArgumentException("이미지는 최대 5개까지 업로드할 수 있습니다.");
+//                throw new GeneralException(ErrorStatus.IMAGE_LIMIT_EXCEEDED);
 //            }
 //
 //            List<String> imageUrls = s3Service.uploadFiles(images);
@@ -228,6 +228,7 @@ public class PostService {
         }
 
         postRepository.delete(post);
+
     }
 
     @Transactional

@@ -22,12 +22,13 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4001", "사용자가 없습니다."),
 
-    // 예시,,,
+    // post
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST404", "존재하지 않는 게시글입니다."),
     POST_FORBIDDEN(HttpStatus.FORBIDDEN, "POST403", "해당 게시글에 대한 권한이 없습니다."),
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "BRAND404", "존재하지 않는 브랜드입니다."),
     STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "STYLE404", "존재하지 않는 스타일입니다."),
+    IMAGE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "IMAGE400", "이미지는 최대 5개까지 업로드할 수 있습니다."),
 
 
     // page
