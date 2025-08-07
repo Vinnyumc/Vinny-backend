@@ -81,7 +81,7 @@ public class PostController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "게시글 작성", description = "게시글 내용과 이미지 파일을 업로드합니다.")
     public ResponseEntity<ApiResponse<PostResponseDto.CreatePostResponse>> createPost(
-            @CurrentUser Long userId,
+            @Parameter(hidden = true) @CurrentUser Long userId,
 
             @Parameter(
                     description = "게시글 작성 JSON",
