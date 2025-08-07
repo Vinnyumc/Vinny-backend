@@ -6,7 +6,8 @@ import com.vinny.backend.post.repository.PostRepository;
 import com.vinny.backend.post.repository.UserPostBookmarkRepository;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.vinny.backend.error.code.status.ErrorStatus;
+import com.vinny.backend.error.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +23,12 @@ public class PostBookmarkService {
     @Transactional
     public void bookmarkPost(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         if (userPostBookmarkRepository.existsByUserAndPost(user, post)) {
-            throw new IllegalStateException("이미 북마크한 게시글입니다.");
+            throw new GeneralException(ErrorStatus.ALREADY_BOOKMARKED);
         }
 
         UserPostBookmark bookmark = UserPostBookmark.builder()
@@ -41,12 +42,12 @@ public class PostBookmarkService {
     @Transactional
     public void unbookmarkPost(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         UserPostBookmark bookmark = userPostBookmarkRepository.findByUserAndPost(user, post)
-                .orElseThrow(() -> new IllegalStateException("북마크한 기록이 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND));
 
         userPostBookmarkRepository.delete(bookmark);
     }
