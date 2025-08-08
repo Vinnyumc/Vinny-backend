@@ -30,15 +30,11 @@ public class UserShopService {
     private final UserRepository userRepository;
     private final ShopRepository shopRepository;
     private final UserShopRepository userShopRepository;
-    private final JwtProvider jwtProvider;
-    private final HttpServletRequest request;
-
     /**
      * 가게 찜 추가
      */
     @Transactional
-    public UserShopResponseDto.PreviewDto addFavoriteShop(UserShopRequestDto.LikeDto likeDto) {
-        Long userId = getCurrentUserId();
+    public UserShopResponseDto.PreviewDto addFavoriteShop(Long userId, UserShopRequestDto.LikeDto likeDto) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -60,8 +56,7 @@ public class UserShopService {
      * 가게 찜 삭제
      */
     @Transactional
-    public String removeFavoriteShop(Long shopId) {
-        Long userId = getCurrentUserId();
+    public String removeFavoriteShop(Long userId, Long shopId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -75,14 +70,6 @@ public class UserShopService {
         userShopRepository.delete(userShop);
 
         return String.format("가게 ID %d의 즐겨찾기가 삭제되었습니다.", shopId);
-    }
-
-    /**
-     * 본인 찜 목록 조회
-     */
-    @Transactional(readOnly = true)
-    public List<UserShopResponseDto.PreviewShopDetailDto> getFavoriteShops() {
-        return getFavoriteShops(getCurrentUserId());
     }
 
     /**
@@ -100,16 +87,6 @@ public class UserShopService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 현재 요청의 JWT 토큰으로부터 userId 추출
-     */
-    private Long getCurrentUserId() {
-        String token = jwtProvider.resolveToken(request);
-        if (token == null || !jwtProvider.validateToken(token)) {
-            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
-        }
-        return jwtProvider.getUserIdFromToken(token);
-    }
 }
 
 

@@ -17,7 +17,6 @@ public class ReviewRequestDto {
     public static class CreateDto {
         @NotBlank(message = "title은 비어있을 수 없습니다.")
         private String title;
-
         @NotBlank(message = "content는 비어있을 수 없습니다.")
         private String content;
     }

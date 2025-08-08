@@ -40,13 +40,13 @@ public class ShopController {
     private final ShopService shopService;
     private final ShopCommandService shopCommandService;
 
-    @PostMapping
-    public ResponseEntity<ShopResponseDto.PreviewDto> createShop(
-            @RequestBody @Valid ShopRequestDto.CreateDto requestDto
-    ) {
-        ShopResponseDto.PreviewDto response = shopCommandService.createShop(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+//    @PostMapping
+//    public ResponseEntity<ShopResponseDto.PreviewDto> createShop(
+//            @RequestBody @Valid ShopRequestDto.CreateDto requestDto
+//    ) {
+//        ShopResponseDto.PreviewDto response = shopCommandService.createShop(requestDto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 
 
     @Operation(summary = "샵 검색", description = "키워드로 빈티지샵을 검색합니다.")
@@ -68,19 +68,19 @@ public class ShopController {
     }
 
     @GetMapping("/shop/search/style")
-    @Operation(summary = "스타일별 가게 목록 조회 API",
-            description = "특정 스타일에 해당하는 가게 목록을 조회하는 API입니다.")
+    @Operation(summary = "스타일별 가게 목록 조회",
+            description = "피그마 검색/메인에 있는 카테고리로 모아보기입니다. 스타일별 가게 목록을 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "유효하지 않은 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({
-            @Parameter(name = "name", description = "검색할 스타일 이름"),
-            @Parameter(name = "page", description = "페이지 번호 (0부터 시작)")
+            @Parameter(name = "name", description = "스타일 이름"),
+            @Parameter(name = "page", description = "페이지 번호 (1부터 시작)")
     })
     public ResponseEntity<ApiResponse<ShopResponseDto.ShopPreviewListDto>> searchShopsByStyle(
             @ExistVintageStyle @RequestParam("name") String style,
-            @RequestParam(name = "page", defaultValue = "0") @ValidPageParam Integer page
+            @RequestParam(name = "page", defaultValue = "1") @ValidPageParam Integer page
     ) {
         ShopResponseDto.ShopPreviewListDto shopPreviewListDto = shopService.getShopsByStyle(style, page);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopPreviewListDto));
@@ -100,7 +100,7 @@ public class ShopController {
         return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
     }
 
-    @Operation(summary = "지도용 가게 썸네일 조회", description = "특정 가게의 지도용 썸네일 정보를 조회합니다.")
+    @Operation(summary = "지도 가게 썸네일 조회", description = "특정 가게의 지도용 썸네일 정보를 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
