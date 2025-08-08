@@ -10,7 +10,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -22,7 +22,11 @@ spring:
   logging:
     level:
       org.springframework.boot.autoconfigure.jdbc: DEBUG
-
+  data:
+    redis:
+      host: redis-stack
+      port: 6379
+      password: ${REDDIS_STACK_PASSWORD}
 
   # OAuth2 설정 구조
   security:
