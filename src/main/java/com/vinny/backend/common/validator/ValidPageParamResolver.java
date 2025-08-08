@@ -14,8 +14,10 @@ public class ValidPageParamResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(ValidPageParam.class)
-                && parameter.getParameterType().equals(int.class);
+        boolean annotated = parameter.hasParameterAnnotation(ValidPageParam.class);
+        Class<?> type = parameter.getParameterType();
+        boolean numberType = (type.equals(int.class) || type.equals(Integer.class));
+        return annotated && numberType;
     }
 
     @Override

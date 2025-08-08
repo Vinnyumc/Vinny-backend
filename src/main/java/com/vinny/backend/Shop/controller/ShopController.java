@@ -80,7 +80,7 @@ public class ShopController {
     })
     public ResponseEntity<ApiResponse<ShopResponseDto.ShopPreviewListDto>> searchShopsByStyle(
             @ExistVintageStyle @RequestParam("name") String style,
-            @RequestParam(name = "page", defaultValue = "1") @ValidPageParam Integer page
+            @ValidPageParam Integer page
     ) {
         ShopResponseDto.ShopPreviewListDto shopPreviewListDto = shopService.getShopsByStyle(style, page);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopPreviewListDto));
