@@ -27,10 +27,11 @@ public class UserShopController {
     @PostMapping("/shops/{shopId}/favorite")
     public ApiResponse<UserShopResponseDto.PreviewDto> addFavoriteShop(
             @Parameter(description = "찜할 가게 ID", required = true)
-            @PathVariable Long shopId
+            @PathVariable Long shopId,
+            @Parameter(hidden = true) @CurrentUser Long userId
     ) {
         UserShopRequestDto.LikeDto requestDto = new UserShopRequestDto.LikeDto(shopId);
-        UserShopResponseDto.PreviewDto response = userShopService.addFavoriteShop(requestDto);
+        UserShopResponseDto.PreviewDto response = userShopService.addFavoriteShop(userId, requestDto);
         return ApiResponse.onSuccess(response);
     }
 
@@ -38,20 +39,14 @@ public class UserShopController {
     @PatchMapping("/shops/{shopId}/favorite")
     public ApiResponse<String> removeFavoriteShop(
             @Parameter(description = "삭제할 가게 ID", required = true)
-            @PathVariable Long shopId
+            @PathVariable Long shopId,
+            @Parameter(hidden = true) @CurrentUser Long userId
     ) {
-        String message = userShopService.removeFavoriteShop(shopId);
+        String message = userShopService.removeFavoriteShop(userId, shopId);
         return ApiResponse.onSuccess(message);
     }
 
-    @Operation(summary = "내 찜 목록 조회", description = "현재 로그인한 사용자의 찜 가게 목록을 조회합니다.")
-    @GetMapping("/users/me/shops/favorites")
-    public ApiResponse<List<UserShopResponseDto.PreviewShopDetailDto>> getMyFavoriteShops() {
-        List<UserShopResponseDto.PreviewShopDetailDto> response = userShopService.getFavoriteShops();
-        return ApiResponse.onSuccess(response);
-    }
-
-    @Operation(summary = "특정 사용자 찜 목록 조회", description = "지정된 사용자의 찜 가게 목록을 조회합니다. (관리자 권한 필요할 수 있음)")
+    @Operation(summary = "가게 찜 조회 (다른 사용자)", description = "지정된 사용자의 찜 가게 목록을 조회합니다.")
     @GetMapping("/users/{userId}/shops/favorites")
     public ApiResponse<List<UserShopResponseDto.PreviewShopDetailDto>> getUserFavoriteShops(
             @Parameter(description = "조회할 사용자 ID", required = true)

@@ -34,7 +34,7 @@ public class ReviewController {
     후기 작성 스웨거 용
     **/
         @PostMapping(value = "/{shopId}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        @Operation(summary = "후기 생성", description = "지정된 가게에 후기를 작성합니다.")
+        @Operation(summary = "가게 후기 작성", description = "지정된 가게에 후기를 작성합니다.")
         public ResponseEntity<ReviewResponseDto.PreviewDto> createReview(
                 @PathVariable Long shopId,
                 @Parameter(
@@ -59,7 +59,7 @@ public class ReviewController {
      후기 작성 운영용
      **/
 //        @PostMapping(value = "/{shopId}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//        @Operation(summary = "후기 생성", description = "지정된 가게에 후기를 작성합니다.")
+//        @Operation(summary = "가게 후기 작성", description = "지정된 가게에 후기를 작성합니다.")
 //        public ResponseEntity<ReviewResponseDto.PreviewDto> createReview(
 //                @PathVariable Long shopId,
 //                @RequestPart("dto") ReviewRequestDto.CreateDto dto,

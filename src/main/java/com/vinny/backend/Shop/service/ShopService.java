@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ShopService {
 
     private final ShopRepository shopRepository;
-    private final VintageStyleRepository vintageStyleRepository;
     private final ShopConverter shopConverter;
 
 
