@@ -86,7 +86,13 @@ jobs:
               if ! ss -lntp | grep -q ':8080'; then break; fi
               sleep 1
             done
-            ss -lntp | grep -q ':8080' && { echo "ERROR: 8080 still in use"; docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}' | (grep 8080 || true); exit 1; }
+           
+            if ss -lntp | grep -q ':8080'; then
+              echo "ERROR: 8080 still in use"
+              docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}' | (grep 8080 || true)
+              exit 1
+            fi
+            
 
             # 5) 최신 이미지 pull
             docker pull "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
