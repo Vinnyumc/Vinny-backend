@@ -74,9 +74,9 @@ jobs:
 
             # (옵션) compose로 뜬 것이 있으면 orphans까지 내리기
             # [경로 조정] docker-compose.yml이 있다면 주석 해제
-             if [ -f /home/ubuntu/docker-compose.yml ]; then
-               docker compose -f /home/ubuntu/docker-compose.yml down --remove-orphans
-             fi
+            if [ -f /home/ubuntu/docker-compose.yml ]; then
+              docker compose -f /home/ubuntu/docker-compose.yml down --remove-orphans
+            fi
 
             # 3) 이전 앱 컨테이너 정리 (이름 기준)
             docker rm -f vinny-app || true
