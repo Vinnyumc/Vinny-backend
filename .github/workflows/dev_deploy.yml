@@ -41,39 +41,60 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_SHA
 
-      - name: 🚀 Deploy to EC2
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 30s
+          command_timeout: 10m
+          script_stop: true
+          envs: AWS_DEFAULT_REGION,ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG
           script: |
-            set -e
+            set -Eeuo pipefail
 
-            ECR_REGISTRY="912394945783.dkr.ecr.ap-northeast-2.amazonaws.com"
-            ECR_REPOSITORY="vinny-project"
-            IMAGE_TAG="latest"
+            ECR_REGISTRY="${ECR_REGISTRY:-912394945783.dkr.ecr.ap-northeast-2.amazonaws.com}"
+            ECR_REPOSITORY="${ECR_REPOSITORY:-vinny-project}"
+            IMAGE_TAG="${IMAGE_TAG:-latest}"
+            REGION="${AWS_DEFAULT_REGION:-ap-northeast-2}"
 
-            # 1) EC2에서 ECR 로그인 (AWS CLI 설치 및 권한 필요)
-            aws ecr get-login-password --region ap-northeast-2 \
-            | docker login --username AWS --password-stdin $ECR_REGISTRY
+            # 1) ECR 로그인
+            aws ecr get-login-password --region "$REGION" \
+              | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
-            # 2) 8080 포트 점유 프로세스 종료
-            if ss -ltn | awk '{print $4}' | grep -q ":8080$"; then
-              echo "Port 8080 in use. Killing process..."
-              sudo lsof -t -i :8080 | xargs --no-run-if-empty sudo kill -9
+            # 2) 8080을 publish한 모든 컨테이너 종료/삭제 (compose 포함)
+            MAP_IDS=$(docker ps --format '{{.ID}} {{.Ports}}' \
+              | awk '/(0\.0\.0\.0|::):8080->/ {print $1}')
+            if [ -n "${MAP_IDS:-}" ]; then
+              echo "Stopping containers publishing :8080 -> ${MAP_IDS}"
+              docker rm -f $MAP_IDS
             fi
 
-            # 3) 기존 컨테이너 제거
+            # (옵션) compose로 뜬 것이 있으면 orphans까지 내리기
+            # [경로 조정] docker-compose.yml이 있다면 주석 해제
+             if [ -f /home/ubuntu/docker-compose.yml ]; then
+               docker compose -f /home/ubuntu/docker-compose.yml down --remove-orphans
+             fi
+
+            # 3) 이전 앱 컨테이너 정리 (이름 기준)
             docker rm -f vinny-app || true
 
-            # 4) 최신 이미지 풀
-            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            # 4) 포트 완전 해제 대기 (최대 30초)
+            for i in $(seq 1 30); do
+              if ! ss -lntp | grep -q ':8080'; then break; fi
+              sleep 1
+            done
+            ss -lntp | grep -q ':8080' && { echo "ERROR: 8080 still in use"; docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}' | (grep 8080 || true); exit 1; }
 
-            # 5) prod 프로필로 컨테이너 실행
-            docker run -d --restart always \
+            # 5) 최신 이미지 pull
+            docker pull "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+            # 6) 컨테이너 실행
+            docker run -d --restart=always \
               --name vinny-app \
-              -p 8080:8080 \
               --env-file /home/ubuntu/.env \
               -e SPRING_PROFILES_ACTIVE=prod \
-              $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+              -p 8080:8080 \
+              "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
