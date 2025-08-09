@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   app:
-    image: 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-backend:latest
+    image: 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-project:latest
     container_name: vinny-app
     restart: always
     ports:
@@ -10,6 +10,9 @@ services:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - REDIS_HOST=redis-stack
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
   redis-stack:
     image: redis/redis-stack:latest
     container_name: redis-stack
