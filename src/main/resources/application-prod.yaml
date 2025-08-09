@@ -26,7 +26,7 @@ spring:
     redis:
       host: redis-stack
       port: 6379
-      password: ${REDDIS_STACK_PASSWORD}
+      password: ${REDIS_STACK_PASSWORD}
 
   # OAuth2 설정 구조
   security:
