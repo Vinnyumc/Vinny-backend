@@ -34,14 +34,13 @@ jobs:
       - name: 📦 Build & Push
         run: |
           GIT_SHA=${{ github.sha }}
-          # latest와 SHA 두 태그 모두 푸시
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REPOSITORY:$GIT_SHA .
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REPOSITORY:$GIT_SHA  $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_SHA
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_SHA
 
-      - name: Deploy to EC2
+      - name: 🚀 Deploy to EC2 (Compose only)
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -55,52 +54,23 @@ jobs:
           script: |
             set -Eeuo pipefail
 
-            ECR_REGISTRY="${ECR_REGISTRY:-912394945783.dkr.ecr.ap-northeast-2.amazonaws.com}"
-            ECR_REPOSITORY="${ECR_REPOSITORY:-vinny-project}"
-            IMAGE_TAG="${IMAGE_TAG:-latest}"
             REGION="${AWS_DEFAULT_REGION:-ap-northeast-2}"
+            COMPOSE_DIR="/home/ubuntu"
+            COMPOSE_FILE="$COMPOSE_DIR/docker-compose.yml"
 
-            # 1) ECR 로그인
+            # 1) ECR 로그인 (EC2)
             aws ecr get-login-password --region "$REGION" \
               | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
-            # 2) 8080을 publish한 모든 컨테이너 종료/삭제 (compose 포함)
-            MAP_IDS=$(docker ps --format '{{.ID}} {{.Ports}}' \
-              | awk '/(0\.0\.0\.0|::):8080->/ {print $1}')
-            if [ -n "${MAP_IDS:-}" ]; then
-              echo "Stopping containers publishing :8080 -> ${MAP_IDS}"
-              docker rm -f $MAP_IDS
-            fi
+            # 2) compose에서 사용할 변수 export (compose 파일이 변수화돼 있다면)
+            export ECR_REGISTRY ECR_REPOSITORY IMAGE_TAG
 
-            # (옵션) compose로 뜬 것이 있으면 orphans까지 내리기
-            # [경로 조정] docker-compose.yml이 있다면 주석 해제
-            if [ -f /home/ubuntu/docker-compose.yml ]; then
-              docker compose -f /home/ubuntu/docker-compose.yml down --remove-orphans
-            fi
+            # 3) compose 디렉터리로 이동 (.env 상대경로 보장)
+            cd "$COMPOSE_DIR"
 
-            # 3) 이전 앱 컨테이너 정리 (이름 기준)
-            docker rm -f vinny-app || true
+            # 4) 최신 이미지 pull 후 변경분만 재생성 (네트워크/볼륨 유지)
+            docker compose -f "$COMPOSE_FILE" pull
+            docker compose -f "$COMPOSE_FILE" up -d --remove-orphans --no-build --pull always
 
-            # 4) 포트 완전 해제 대기 (최대 30초)
-            for i in $(seq 1 30); do
-              if ! ss -lntp | grep -q ':8080'; then break; fi
-              sleep 1
-            done
-           
-            if ss -lntp | grep -q ':8080'; then
-              echo "ERROR: 8080 still in use"
-              docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}' | (grep 8080 || true)
-              exit 1
-            fi
-            
-
-            # 5) 최신 이미지 pull
-            docker pull "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-            # 6) 컨테이너 실행
-            docker run -d --restart=always \
-              --name vinny-app \
-              --env-file /home/ubuntu/.env \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              -p 8080:8080 \
-              "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+            # (옵션) 오래된 dangling 이미지 정리
+            docker image prune -f
