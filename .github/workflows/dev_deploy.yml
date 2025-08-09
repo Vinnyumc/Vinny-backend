@@ -2,55 +2,78 @@ name: CI/CD to EC2
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 env:
+  AWS_REGION: ap-northeast-2
   ECR_REGISTRY: 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com
   ECR_REPOSITORY: vinny-project
   IMAGE_TAG: latest
-  AWS_REGION: ap-northeast-2
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ✅ Checkout code
+      - name: ✅ Checkout
         uses: actions/checkout@v4
 
-      - name: 🔐 Configure AWS credentials
+      - name: 🔐 Configure AWS credentials (OIDC 권장)
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: 🐳 Login to Amazon ECR
+      - name: 🐳 Login to Amazon ECR (Runner)
         run: |
           aws ecr get-login-password --region $AWS_REGION \
           | docker login --username AWS --password-stdin $ECR_REGISTRY
 
-      - name: 📦 Build and Push Docker image
+      - name: 📦 Build & Push
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          GIT_SHA=${{ github.sha }}
+          # latest와 SHA 두 태그 모두 푸시
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REPOSITORY:$GIT_SHA .
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REPOSITORY:$GIT_SHA  $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_SHA
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GIT_SHA
 
-      - name: 🚀 Deploy to EC2 via SSH
+      - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull 912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-project:latest
-            docker stop vinny-app || true
-            docker rm vinny-app || true
+            set -e
+
+            ECR_REGISTRY="912394945783.dkr.ecr.ap-northeast-2.amazonaws.com"
+            ECR_REPOSITORY="vinny-project"
+            IMAGE_TAG="latest"
+
+            # 1) EC2에서 ECR 로그인 (AWS CLI 설치 및 권한 필요)
+            aws ecr get-login-password --region ap-northeast-2 \
+            | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+            # 2) 8080 포트 점유 프로세스 종료
+            if ss -ltn | awk '{print $4}' | grep -q ":8080$"; then
+              echo "Port 8080 in use. Killing process..."
+              sudo lsof -t -i :8080 | xargs --no-run-if-empty sudo kill -9
+            fi
+
+            # 3) 기존 컨테이너 제거
+            docker rm -f vinny-app || true
+
+            # 4) 최신 이미지 풀
+            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+            # 5) prod 프로필로 컨테이너 실행
             docker run -d --restart always \
               --name vinny-app \
-              --env-file /home/ubuntu/.env \
               -p 8080:8080 \
-              912394945783.dkr.ecr.ap-northeast-2.amazonaws.com/vinny-project:latest
-          
+              --env-file /home/ubuntu/.env \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
