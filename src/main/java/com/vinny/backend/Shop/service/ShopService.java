@@ -26,24 +26,6 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final ShopConverter shopConverter;
 
-
-    public List<ShopSearchResponseDto.ShopDto> searchShops(String keyword) {
-        List<Shop> shops = shopRepository.searchByNameOrStyleOrRegion(keyword);
-
-        return shops.stream()
-                .map(shop -> new ShopSearchResponseDto.ShopDto(
-                        shop.getId(),
-                        shop.getName(),
-                        shop.getRegion() != null ? shop.getRegion().getName() : null,
-                        shop.getShopVintageStyleList().stream()
-                                .map(svs -> svs.getVintageStyle().getName())
-                                .toList(),
-                        shop.getShopImages().isEmpty() ? null : shop.getShopImages().get(0).getImageUrl()
-                ))
-                .toList();
-    }
-
-
     private static final int PAGE_SIZE = 5;  // 한 페이지당 5개씩 (임시)
 
 

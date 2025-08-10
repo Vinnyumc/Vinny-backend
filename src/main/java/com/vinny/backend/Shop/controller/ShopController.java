@@ -49,24 +49,6 @@ public class ShopController {
 //    }
 
 
-    @Operation(summary = "샵 검색", description = "키워드로 빈티지샵을 검색합니다.")
-    @GetMapping("/shop/search")
-    public ResponseEntity<?> searchShops(
-            @Parameter(description = "검색 키워드", required = true)
-            @RequestParam String keyword
-    ) {
-        List<ShopSearchResponseDto.ShopDto> shops = shopService.searchShops(keyword);
-        return ResponseEntity.ok(
-                Map.of(
-                        "success", true,
-                        "message", "샵 검색 결과입니다.",
-                        "status", 200,
-                        "data", Map.of("shops", shops),
-                        "timestamp", LocalDateTime.now()
-                )
-        );
-    }
-
     @GetMapping("/shop/search/style")
     @Operation(summary = "스타일별 가게 목록 조회",
             description = "피그마 검색/메인에 있는 카테고리로 모아보기입니다. 스타일별 가게 목록을 조회합니다.")
