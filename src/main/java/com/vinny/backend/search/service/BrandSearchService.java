@@ -3,6 +3,9 @@ package com.vinny.backend.search.service;
 import com.vinny.backend.User.repository.BrandRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +27,15 @@ public class BrandSearchService {
     private static final int MAX_SIZE = 10;
 
     // 서버 기동 시 Redis 인덱싱
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
+    @ConditionalOnProperty(name = "feature.autocomplete.init", havingValue = "true", matchIfMissing = false)
     public void init() {
-
-        List<String> brandNames = brandRepository.findAllBrandNames();
-        if (brandNames.isEmpty()) {
-            log.warn("⚠️ [BrandService] 불러온 브랜드명이 없습니다. DB를 확인하세요.");
-        } else {
+        try {
+            List<String> brandNames = brandRepository.findAllBrandNames();
+            if (brandNames.isEmpty()) {
+                log.warn("⚠️ [BrandService] 불러온 브랜드명이 없습니다. DB를 확인하세요.");
+                return;
+            }
             for (String name : brandNames) {
                 redisAutocompleteService.addToSortedSet(name + SUFFIX); // 완성형
                 for (int i = name.length(); i > 0; --i) {
@@ -39,6 +44,8 @@ public class BrandSearchService {
                 log.debug("✔️ Redis에 인덱싱: {}", name);
             }
             log.info("✅ [BrandService] 자동완성 인덱싱 완료 (총 {}개)", brandNames.size());
+        } catch (Exception e) {
+            log.warn("Autocomplete warmup skipped: {}", e.getMessage());
         }
     }
 
