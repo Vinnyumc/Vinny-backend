@@ -39,6 +39,7 @@ public class PostResponseDto {
         private Long userId;
         private String nickname;
         private String profileImageUrl;
+        private String comment;
     }
 
     @Getter
@@ -92,6 +93,7 @@ public class PostResponseDto {
     @Builder
     public static class PostDetailResponseDto {
         private Long postId;
+        private String title;
         private AuthorDto author;
         private String content;
         private List<String> images;
