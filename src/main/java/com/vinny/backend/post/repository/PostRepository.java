@@ -27,6 +27,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         LEFT JOIN st.vintageStyle vs
         WHERE LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(b.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(vs.name) LIKE LOWER(CONCAT('%', :keyword, '%'))

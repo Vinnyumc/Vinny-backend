@@ -2,6 +2,7 @@ package com.vinny.backend.search.controller;
 
 import com.vinny.backend.error.ApiResponse;
 import com.vinny.backend.search.dto.PostResponse;
+import com.vinny.backend.search.dto.PostSearchResponse;
 import com.vinny.backend.search.dto.ShopResponse;
 import com.vinny.backend.search.dto.StyleSearchRequest;
 import com.vinny.backend.search.service.PostSearchService;
@@ -18,6 +19,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/search")
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class SearchController {
     private final ShopSearchService shopSearchService;
 
     // ========== POST 검색 ==========
-    @Operation(summary = "스타일별 게시물 검색", description = "스타일 타입/키워드/지역 등으로 게시물을 검색합니다.")
+    @Operation(summary = "스타일별 카테고리를 이용한 게시물 검색", description = "스타일 타입/키워드/지역 등으로 게시물을 검색합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "검색 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
@@ -45,7 +48,7 @@ public class SearchController {
 
 
     // ========== SHOP 검색 ==========
-    @Operation(summary = "스타일별 매장 검색", description = "스타일 타입/키워드/지역 등으로 매장을 검색합니다.")
+    @Operation(summary = "스타일별 카테고리를 이용한 매장 검색", description = "스타일 타입/키워드/지역 등으로 매장을 검색합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "검색 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
@@ -59,4 +62,41 @@ public class SearchController {
         return ResponseEntity.ok(ApiResponse.onSuccess(
                 request.styleType() + " 스타일 매장 검색 완료", results));
     }
+
+    @Operation(
+            summary = "검색바를 이용한 게시글 검색",
+            description = "키워드(부분 일치)로 게시글을 검색합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "검색 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/posts/search")
+    public ResponseEntity<ApiResponse<List<PostSearchResponse.PostImagesDto>>> searchPostsByKeyword(
+            @Parameter(description = "검색 키워드", required = true, example = "데님")
+            @RequestParam String keyword
+    ) {
+        List<PostSearchResponse.PostImagesDto> posts = postSearchService.searchPosts(keyword);
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess("검색바를 이용한 게시글 검색 완료", posts)
+        );
+    }
+
+    @Operation(summary = "검색바를 이용한 샵 검색", description = "키워드(부분 일치)로 빈티지샵을 검색합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "검색 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/shop/search")
+    public ResponseEntity<ApiResponse<List<ShopResponse>>> searchShops(
+            @Parameter(description = "검색 키워드", required = true, example = "홍대")
+            @RequestParam String keyword
+    ) {
+        List<ShopResponse> shops = shopSearchService.searchShops(keyword);
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess("검색바를 이용한 샵 검색 완료", shops)
+        );
+    }
+
+
 }

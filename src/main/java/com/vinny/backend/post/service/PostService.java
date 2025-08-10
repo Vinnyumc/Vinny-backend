@@ -40,21 +40,6 @@ public class PostService {
     private final VintageStyleRepository styleRepository;
     private final S3Service s3Service;
 
-    public List<PostSearchResponseDto.PostDto> searchPosts(String keyword) {
-        List<Post> posts = postRepository.searchByKeyword(keyword);
-
-        return posts.stream().map(post -> new PostSearchResponseDto.PostDto(
-                post.getId(),
-                post.getTitle(),
-                post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl(),
-                post.getLikes() != null ? post.getLikes().size() : 0,
-                false, // isLiked (Boolean) - 실 사용시 수정 칠요
-                List.of(), //수정 필요
-                post.getUser().getNickname()
-        )).toList();
-
-    }
-
     public PostResponseDto getAllposts(Pageable pageable, Long currentUserId) {
 //        //정렬 조건 추가
 //        Pageable sortedPageable = PageRequest.of(

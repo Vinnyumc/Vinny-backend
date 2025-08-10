@@ -1,6 +1,7 @@
 package com.vinny.backend.Shop.repository;
 
 import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.Shop.domain.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,6 +19,8 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
         LEFT JOIN s.region r
         WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(vs.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(s.address) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(s.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
     List<Shop> searchByNameOrStyleOrRegion(@Param("keyword") String keyword);
@@ -30,7 +33,6 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
         JOIN s.shopVintageStyleList svs 
         JOIN svs.vintageStyle vs 
         WHERE vs.name = :styleName 
-        AND s.status = 'OPEN'
         """)
     Page<Shop> findByStyle(@Param("styleName") String styleType, Pageable pageable);
 

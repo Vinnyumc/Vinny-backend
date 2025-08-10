@@ -41,24 +41,6 @@ public class PostController {
     private final PostLikeService postLikeService;
 
 
-    @Operation(summary = "게시글 검색", description = "키워드로 게시글을 검색합니다.")
-    @GetMapping("/search")
-    public ResponseEntity<?> searchPosts(
-            @Parameter(description = "검색 키워드", required = true)
-            @RequestParam String keyword
-    ) {
-        List<PostSearchResponseDto.PostDto> posts = postService.searchPosts(keyword);
-        return ResponseEntity.ok(
-                Map.of(
-                        "success", true,
-                        "message", "게시글 검색 결과입니다.",
-                        "status", 200,
-                        "data", Map.of("posts", posts),
-                        "timestamp", LocalDateTime.now()
-                )
-        );
-    }
-
     @Operation(summary = "전체 피드 조회", description = "페이징 기반으로 전체 게시글 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<PostResponseDto>> getAllPosts(

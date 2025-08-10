@@ -1,8 +1,10 @@
 package com.vinny.backend.search.service;
 
 import com.vinny.backend.post.domain.Post;
+import com.vinny.backend.post.domain.PostImage;
 import com.vinny.backend.post.repository.PostRepository;
 import com.vinny.backend.search.dto.PostResponse;
+import com.vinny.backend.search.dto.PostSearchResponse;
 import com.vinny.backend.search.dto.StyleSearchRequest;
 import com.vinny.backend.search.dto.UserSearchResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +28,7 @@ public class PostSearchService {
     public Page<PostResponse> searchByStyle(StyleSearchRequest request, Pageable pageable) {
         Page<Post> posts;
 
-        if (request.keyword() != null && !request.keyword().trim().isEmpty()) {
-            posts = postRepository.findByStyleAndKeyword(
-                    request.styleType(), request.keyword(), pageable);
-        } else {
             posts = postRepository.findByStyle(request.styleType(), pageable);
-        }
 
         return posts.map(this::convertToResponse);
     }
@@ -64,5 +61,19 @@ public class PostSearchService {
                 .totalImageCount(imageUrls.size())
                 .likeCount(post.getLikes().size())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostSearchResponse.PostImagesDto> searchPosts(String keyword) {
+        List<Post> posts = postRepository.searchByKeyword(keyword);
+
+        return posts.stream()
+                .map(post -> new PostSearchResponse.PostImagesDto(
+                        post.getId(),
+                        post.getImages().stream()
+                                .map(PostImage::getImageUrl)
+                                .toList()
+                ))
+                .toList();
     }
 }
