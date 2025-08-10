@@ -5,6 +5,7 @@ import com.vinny.backend.User.domain.enums.Provider;
 import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.auth.dto.LoginResponseDto;
+import com.vinny.backend.auth.dto.SessionResponseDto;
 import com.vinny.backend.auth.dto.TokenDto;
 import com.vinny.backend.auth.dto.TokenRequestDto;
 import com.vinny.backend.auth.jwt.JwtProvider;
@@ -78,5 +79,80 @@ public class AuthService {
         user.updateRefreshToken(newTokens.getRefreshToken());
 
         return newTokens;
+    }
+
+    @Transactional(readOnly = true)
+    public SessionResponseDto getSession(String accessToken) {
+        // 0) 토큰 없음 → 로그인 화면
+        if (accessToken == null || accessToken.isBlank()) {
+            return SessionResponseDto.builder()
+                    .status("LOGIN")
+                    .needRefresh(false)
+                    .build();
+        }
+
+        // 1) 유효 토큰 → 유저 상태 조회 후 분기
+        if (jwtProvider.validateToken(accessToken)) {
+            Long userId = jwtProvider.getUserIdFromToken(accessToken);
+            User user = userRepository.findById(userId).orElse(null);
+
+            if (user == null) {
+                return SessionResponseDto.builder()
+                        .status("LOGIN")
+                        .needRefresh(false)
+                        .build();
+            }
+
+            String status;
+            if (user.getUserStatus() == UserStatus.ONBOARDING) {
+                status = "ONBOARD";
+            } else if (user.getUserStatus() == UserStatus.ACTIVE) {
+                status = "HOME";
+            } else {
+                status = "LOGIN"; // INACTIVE, DELETED 등
+            }
+
+            return SessionResponseDto.builder()
+                    .status(status)
+                    .needRefresh(false)
+                    .build();
+        }
+
+        // 2) 유효하지 않은 토큰 → 만료인지, 완전 무효인지 구분
+        try {
+            // parseClaims()가 ExpiredJwtException이면 claims 반환 가능
+            Long userId = jwtProvider.getUserIdFromToken(accessToken);
+            User user = userRepository.findById(userId).orElse(null);
+
+            if (user == null) {
+                // 토큰은 있지만 DB에 유저 없음 → 로그인 필요
+                return SessionResponseDto.builder()
+                        .status("LOGIN")
+                        .needRefresh(false)
+                        .build();
+            }
+
+            // accessToken만 만료된 경우 → 기존 화면 유지 + 재발급 필요
+            String status;
+            if (user.getUserStatus() == UserStatus.ONBOARDING) {
+                status = "ONBOARD";
+            } else if (user.getUserStatus() == UserStatus.ACTIVE) {
+                status = "HOME";
+            } else {
+                status = "LOGIN";
+            }
+
+            return SessionResponseDto.builder()
+                    .status(status)
+                    .needRefresh(true) // 프런트에서 /reissue 호출 후 다시 /session
+                    .build();
+
+        } catch (Exception e) {
+            // 형식 오류, 서명 불일치 등 → 완전 무효
+            return SessionResponseDto.builder()
+                    .status("LOGIN")
+                    .needRefresh(false)
+                    .build();
+        }
     }
 }
