@@ -34,11 +34,17 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/map/shops/favorite").authenticated()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
-
-                                "/api/auth/**", "/h2-console/**", "/api/shop/**","/api/post/**", "/files/**", "/api/map/shops/all", "/health").permitAll() // 로그인 및 H2 콘솔 경로는 모두 허용, 배포 시점에 추후 수정 예정
-                                
-
+                        .requestMatchers("/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api/auth/**",
+                                "/h2-console/**",
+                                "/api/shop/**",
+                                "/api/post/**",
+                                "/files/**",
+                                "/api/map/shops/all",
+                                "/health",
+                                "/api/auth/session").permitAll() // 로그인 및 H2 콘솔 경로는 모두 허용, 배포 시점에 추후 수정 예정
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
