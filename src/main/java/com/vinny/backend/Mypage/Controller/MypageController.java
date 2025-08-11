@@ -1,20 +1,22 @@
 package com.vinny.backend.Mypage.Controller;
 
 import com.vinny.backend.Mypage.Service.MypageService;
-import com.vinny.backend.Mypage.dto.MypageLikedShopResponse;
-import com.vinny.backend.Mypage.dto.MypagePostThumbnailResponse;
-import com.vinny.backend.Mypage.dto.MypageProfileResponse;
+import com.vinny.backend.Mypage.dto.*;
 import com.vinny.backend.error.ApiResponse;
+import com.vinny.backend.error.code.status.ErrorStatus;
+import com.vinny.backend.s3.service.S3Service;
 import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,6 +25,7 @@ import java.util.List;
 public class MypageController {
 
     private final MypageService mypageService;
+    private final S3Service s3Service;
 
     // ========== 마이페이지 프로필 정보 조회 ==========
     @Operation(summary = "마이페이지 프로필 정보 조회", description = "닉네임, 프로필 이미지, 코멘트, 게시글 수, 찜한 샵 수, 저장함 수 등을 조회합니다.")
@@ -65,5 +68,70 @@ public class MypageController {
             @Parameter(hidden = true) @CurrentUser Long userId) {
         List<MypageLikedShopResponse> response = mypageService.getLikedShops(userId);
         return ResponseEntity.ok(ApiResponse.onSuccess("찜한 샵 목록 조회 성공" ,response));
+    }
+
+    @PatchMapping
+    @Operation(
+            summary = "프로필 수정",
+            description = "닉네임/코멘트만 부분 수정합니다. null 필드는 무시됩니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.
+                    ApiResponse(responseCode = "200", description = "프로필 수정 성공"),
+            @io.swagger.v3.oas.annotations.responses.
+                    ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.
+                    ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
+    public ResponseEntity<ApiResponse<MypageUserProfileDto>> updateMe(
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @Valid @RequestBody MypageUpdateProfileRequest request
+    ) {
+        MypageUserProfileDto dto = mypageService.updateProfile(userId, request);
+        return ResponseEntity.ok(ApiResponse.onSuccess(dto));
+    }
+
+    @PatchMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "프로필 이미지 변경(업로드 포함)",
+            description = "파일을 바로 받아 S3에 업로드하고, 업로드된 URL로 프로필 이미지를 갱신합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필 이미지 변경 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
+    public ResponseEntity<ApiResponse<MypageUserProfileDto>> updateProfileImage(
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @Parameter(description = "업로드할 이미지 파일", required = true)
+            @RequestPart("file") MultipartFile file
+    ) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.onFailure(
+                            ErrorStatus.FILE_IS_EMPTY.getCode(),
+                            ErrorStatus.FILE_IS_EMPTY.getMessage(),
+                            null
+                    )
+            );
+        }
+        try {
+            // 1) S3 업로드 -> URL 확보
+            String fileUrl = s3Service.uploadFile(file);
+
+            // 2) URL로 프로필 이미지 갱신
+            MypageUserProfileDto dto =
+                    mypageService.updateProfileImage(userId, new MypageUpdateProfileImageRequest(fileUrl));
+
+            return ResponseEntity.ok(ApiResponse.onSuccess("프로필 이미지가 변경되었습니다.", dto));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body(
+                    ApiResponse.onFailure(
+                            ErrorStatus.S3_UPLOAD_FAILED.getCode(),
+                            ErrorStatus.S3_UPLOAD_FAILED.getMessage(),
+                            null
+                    )
+            );
+        }
     }
 }

@@ -100,4 +100,6 @@ public class User extends BaseEntity {
     public void changeStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
     }
+
+    public void updateProfileImage(String imageUrl){ this.profileImage = imageUrl; }
 }

@@ -1,13 +1,12 @@
 package com.vinny.backend.Mypage.Service;
-import com.vinny.backend.Mypage.dto.MypageLikedShopResponse;
-import com.vinny.backend.Mypage.dto.MypagePostThumbnailResponse;
-import com.vinny.backend.Mypage.dto.MypageProfileResponse;
+import com.vinny.backend.Mypage.dto.*;
 import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.Shop.domain.ShopImage;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.domain.mapping.UserShop;
 import com.vinny.backend.Mypage.dto.MypageProfileResponse;
 import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.dto.UserProfileDto;
 import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.User.repository.UserShopRepository;
 import com.vinny.backend.error.code.status.ErrorStatus;
@@ -98,4 +97,39 @@ public class MypageService {
                 .toList();
     }
 
+    /*
+    Mypage 유저 정보 수정 api
+     */
+    @Transactional
+    public MypageUserProfileDto updateProfile(Long userId, MypageUpdateProfileRequest req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        if (req.nickname() != null && !req.nickname().isBlank()) {
+            user.updateNickname(req.nickname());
+        }
+        if (req.comment() != null) {
+            user.updateComment(req.comment());
+        }
+
+        return toProfileDto(user);
+    }
+
+    private MypageUserProfileDto toProfileDto(User u) {
+        return new MypageUserProfileDto(
+                u.getId(),
+                u.getNickname(),
+                u.getProfileImage(),
+                u.getComment()
+        );
+    }
+
+    @Transactional
+    public MypageUserProfileDto updateProfileImage(Long userId,  MypageUpdateProfileImageRequest req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        user.updateProfileImage(req.imageUrl());
+        return toProfileDto(user);
+    }
 }
