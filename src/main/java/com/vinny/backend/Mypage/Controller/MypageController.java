@@ -134,4 +134,20 @@ public class MypageController {
             );
         }
     }
+
+    @GetMapping("/saved-posts/images")
+    @Operation(
+            summary = "저장한 게시글 첫 이미지 리스트 조회",
+            description = "로그인 사용자가 저장(좋아요)한 게시글에서 각 게시글의 첫 번째 이미지 URL만 추출하여, 좋아요 시점 최신순으로 평평한 리스트로 반환합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "저장한 게시글 첫 이미지 리스트 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
+    public ResponseEntity<ApiResponse<List<String>>> getSavedPostsFirstImageList(
+            @Parameter(hidden = true) @CurrentUser Long userId
+    ) {
+        List<String> images = mypageService.getSavedPostsFirstImageList(userId);
+        return ResponseEntity.ok(ApiResponse.onSuccess("저장한 게시글의 첫 이미지 리스트를 조회했습니다.", images));
+    }
 }
