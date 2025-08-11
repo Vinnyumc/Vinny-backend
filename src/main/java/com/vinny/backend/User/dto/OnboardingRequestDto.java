@@ -15,7 +15,12 @@ import java.util.List;
 @Setter
 public class OnboardingRequestDto {
 
-//    private String nickname;
+    @NotEmpty(message = "닉네임은 필수입니다.")
+    @Size(max = 50, message = "닉네임은 50자 이하로 입력해주세요.")
+    private String nickname; // 닉네임
+
+    @Size(max = 255, message = "코멘트는 255자 이하로 입력해주세요.")
+    private String comment; // 코멘트
 
     @NotEmpty(message = "선호하는 빈티지 스타일을 최소 1개 이상 선택해야 합니다.")
     @Size(min = 1, max = 3, message = "선호하는 빈티지 스타일은 최대 3개까지 선택할 수 있습니다.")
