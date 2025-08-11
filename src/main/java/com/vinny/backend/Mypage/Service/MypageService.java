@@ -132,4 +132,9 @@ public class MypageService {
         user.updateProfileImage(req.imageUrl());
         return toProfileDto(user);
     }
+
+    @Transactional(readOnly = true)
+    public List<String> getSavedPostsFirstImageList(Long userId) {
+        return userPostLikeRepository.findFirstImageUrlsOfLikedPostsOrderByLikedAtDesc(userId);
+    }
 }
