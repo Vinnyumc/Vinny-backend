@@ -62,4 +62,8 @@ where s.id in :ids and s.status = com.vinny.backend.Shop.domain.enums.Status.OPE
     List<ShopResponseDto.HomeForYouThumbnailDto> findHomeForYouByIds(@Param("ids") List<Long> ids);
 
 
+    @Query("select s.name from Shop s")
+    List<String> findAllShopNames();
+
+
 }

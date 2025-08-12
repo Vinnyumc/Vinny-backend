@@ -9,7 +9,6 @@ public record ShopResponse(
         Long id,
         String name,
         String address,
-        String addressDetail,
         String region,
         List<String> styles,
         String imageUrl,

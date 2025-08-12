@@ -23,7 +23,9 @@ import com.vinny.backend.s3.service.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,16 +42,17 @@ public class PostService {
     private final VintageStyleRepository styleRepository;
     private final S3Service s3Service;
 
-    public PostResponseDto getAllposts(Pageable pageable, Long currentUserId) {
-//        //정렬 조건 추가
-//        Pageable sortedPageable = PageRequest.of(
-//                pageable.getPageNumber(),
-//                pageable.getPageSize(),
-//                Sort.by(Sort.Direction.DESC, "createdAt")
-//        );
+    public PostResponseDto getAllPosts(Pageable pageable, Long currentUserId) {
+        Pageable effectivePageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
 
-        Page<Post> posts = postRepository.findAllWithAssociations(pageable); // ← repository에서 JOIN FETCH
-        List<PostResponseDto.PostDto> postDtos = posts.map(post -> PostConverter.toDto(post, currentUserId)).toList();
+        Page<Post> posts = postRepository.findAllWithAssociations(effectivePageable);
+        List<PostResponseDto.PostDto> postDtos = posts
+                .map(post -> PostConverter.toDto(post, currentUserId))
+                .toList();
 
         PostResponseDto.PageInfoDto pageInfo = PostResponseDto.PageInfoDto.builder()
                 .page(posts.getNumber())
@@ -63,6 +66,53 @@ public class PostService {
                 .pageInfo(pageInfo)
                 .build();
     }
+
+    public PostResponseDto getAllPostsOrderByLikes(Pageable pageable, Long currentUserId) {
+        // 1) 먼저 like 수 기준으로 정렬된 Post ID만 페이지네이션으로 가져온다
+        Page<Long> idPage = postRepository.findPostIdsOrderByLikes(pageable);
+
+        if (idPage.isEmpty()) {
+            return PostResponseDto.builder()
+                    .posts(List.of())
+                    .pageInfo(PostResponseDto.PageInfoDto.builder()
+                            .page(idPage.getNumber())
+                            .size(idPage.getSize())
+                            .totalPages(idPage.getTotalPages())
+                            .totalElements(idPage.getTotalElements())
+                            .build())
+                    .build();
+        }
+
+        List<Long> ids = idPage.getContent();
+
+        // 2) 연관관계 JOIN FETCH로 본문 로딩 (id IN …)
+        List<Post> fetched = postRepository.findAllWithAssociationsByIdIn(ids);
+
+        // 3) IN 절은 정렬이 보장되지 않으므로, idPage 순서대로 재정렬
+        java.util.Map<Long, Integer> orderIndex = new java.util.HashMap<>();
+        for (int i = 0; i < ids.size(); i++) orderIndex.put(ids.get(i), i);
+        fetched.sort(java.util.Comparator.comparingInt(p -> orderIndex.getOrDefault(p.getId(), Integer.MAX_VALUE)));
+
+        // 4) DTO 변환
+        List<PostResponseDto.PostDto> postDtos = fetched.stream()
+                .map(post -> PostConverter.toDto(post, currentUserId))
+                .toList();
+
+        // 5) PageInfo 구성은 idPage 메타데이터 사용
+        PostResponseDto.PageInfoDto pageInfo = PostResponseDto.PageInfoDto.builder()
+                .page(idPage.getNumber())
+                .size(idPage.getSize())
+                .totalPages(idPage.getTotalPages())
+                .totalElements(idPage.getTotalElements())
+                .build();
+
+        return PostResponseDto.builder()
+                .posts(postDtos)
+                .pageInfo(pageInfo)
+                .build();
+    }
+
+
 
     @Transactional
     public PostResponseDto.CreatePostResponse createPost(
@@ -235,6 +285,9 @@ public class PostService {
 
         int likesCount = post.getLikes() != null ? post.getLikes().size() : 0;
 
-        return PostConverter.toDetailDto(post, isLikedByMe, likesCount);
+        boolean isBookmarkedByMe = post.getBookmarks().stream()
+                .anyMatch(Bookmark -> Bookmark.getUser().getId().equals(userId));
+
+        return PostConverter.toDetailDto(post, isLikedByMe, likesCount, isBookmarkedByMe);
     }
 }

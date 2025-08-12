@@ -30,4 +30,8 @@ public interface UserPostLikeRepository extends JpaRepository<UserPostLike, Long
            order by upl.createdAt desc
            """)
     List<String> findFirstImageUrlsOfLikedPostsOrderByLikedAtDesc(Long userId);
+
+
+
+
 }

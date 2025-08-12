@@ -48,6 +48,9 @@ public class User extends BaseEntity {
     @Column(name = "profile_image", length = 255)
     private String profileImage; // 프로필사진
 
+    @Column(name = "background_image", length = 255)
+    private String backgroundImage; // 프로필 배경사진
+
     @Column(length = 255)
     private String comment; // 코멘트
 
@@ -102,4 +105,6 @@ public class User extends BaseEntity {
     }
 
     public void updateProfileImage(String imageUrl){ this.profileImage = imageUrl; }
+
+    public void updateBackgroundImage(String imageUrl) { this.backgroundImage = imageUrl; }
 }

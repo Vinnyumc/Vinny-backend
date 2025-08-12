@@ -5,8 +5,11 @@ import com.vinny.backend.auth.jwt.JwtProvider;
 import com.vinny.backend.auth.service.AuthService;
 import com.vinny.backend.auth.service.KakaoAuthService;
 import com.vinny.backend.error.ApiResponse;
+import com.vinny.backend.error.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -107,5 +110,38 @@ public class AuthController {
         String accessToken = jwtProvider.resolveToken(request);
         SessionResponseDto response = authService.getSession(accessToken);
         return ApiResponse.onSuccess(response);
+    }
+
+    @PostMapping("/logout")
+    @Operation(
+            summary = "로그아웃",
+            description = "로그아웃 요청 시, 해당 사용자의 refreshToken을 null로 설정하여 로그아웃 처리합니다."
+    )
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
+        // 현재 요청에 포함된 accessToken을 추출
+        String accessToken = jwtProvider.resolveToken(request);
+
+        // accessToken이 없거나 유효하지 않으면 로그아웃 실패
+        if (accessToken == null || !jwtProvider.validateToken(accessToken)) {
+            // 401 Unauthorized 상태 코드 자동 처리
+            ApiResponse<String> response = ApiResponse.onFailure(
+                    ErrorStatus._UNAUTHORIZED.getReasonHttpStatus().getCode(),
+                    ErrorStatus._UNAUTHORIZED.getReasonHttpStatus().getMessage(),
+                    null
+            );
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED) // 401 상태 코드를 자동으로 처리
+                    .body(response);  // 응답 본문 설정
+        }
+
+        // 토큰에서 userId 추출
+        Long userId = jwtProvider.getUserIdFromToken(accessToken);
+
+        // 로그아웃 처리: 해당 사용자의 refreshToken을 null로 설정
+        authService.logout(userId);  // try-catch 없이 바로 호출
+
+        // 로그아웃 성공
+        ApiResponse<String> response = ApiResponse.onSuccess("Logout successful.", "로그아웃이 정상적으로 처리되었습니다.");
+        return ResponseEntity.ok(response);  // 200 상태 코드 자동 처리
     }
 }
