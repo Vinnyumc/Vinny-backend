@@ -34,7 +34,6 @@ public class ShopSearchService {
                 .id(shop.getId())
                 .name(shop.getName())
                 .address(shop.getAddress())
-                .addressDetail(shop.getAddressDetail())
                 .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
                 .styles(shop.getShopVintageStyleList().stream()
                         .map(style -> style.getVintageStyle().getName())
@@ -53,8 +52,7 @@ public class ShopSearchService {
                 .map(shop -> ShopResponse.builder()
                         .id(shop.getId())
                         .name(shop.getName())
-                        .address(shop.getAddress())                // 엔티티 필드명에 맞게 조정
-                        .addressDetail(shop.getAddressDetail())    // 엔티티 필드명에 맞게 조정
+                        .address(shop.getAddress())                // 엔티티 필드명에 맞게 조정// 엔티티 필드명에 맞게 조정
                         .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
                         .styles(shop.getShopVintageStyleList().stream()
                                 .map(svs -> svs.getVintageStyle().getName())

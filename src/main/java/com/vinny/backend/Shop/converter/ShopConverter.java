@@ -24,7 +24,6 @@ public class ShopConverter {
                 .closeTime(dto.getCloseTime())
                 .instagram(dto.getInstagram())
                 .address(dto.getAddress())
-                .addressDetail(dto.getAddressDetail())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .build();
@@ -66,7 +65,6 @@ public class ShopConverter {
                 .closeTime(shop.getCloseTime() != null ? shop.getCloseTime().toString() : null)
                 .instagram(shop.getInstagram())
                 .address(shop.getAddress())
-                .addressDetail(shop.getAddressDetail())
                 .latitude(shop.getLatitude())
                 .longitude(shop.getLongitude())
                 .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
@@ -95,7 +93,6 @@ public class ShopConverter {
                 .closeTime(shop.getCloseTime() != null ? shop.getCloseTime().toString() : null)
                 .instagram(shop.getInstagram())
                 .address(shop.getAddress())
-                .addressDetail(shop.getAddressDetail())
                 .latitude(shop.getLatitude())
                 .longitude(shop.getLongitude())
                 .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
