@@ -23,7 +23,9 @@ import com.vinny.backend.s3.service.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,15 +43,16 @@ public class PostService {
     private final S3Service s3Service;
 
     public PostResponseDto getAllposts(Pageable pageable, Long currentUserId) {
-//        //정렬 조건 추가
-//        Pageable sortedPageable = PageRequest.of(
-//                pageable.getPageNumber(),
-//                pageable.getPageSize(),
-//                Sort.by(Sort.Direction.DESC, "createdAt")
-//        );
+        Pageable effectivePageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
 
-        Page<Post> posts = postRepository.findAllWithAssociations(pageable); // ← repository에서 JOIN FETCH
-        List<PostResponseDto.PostDto> postDtos = posts.map(post -> PostConverter.toDto(post, currentUserId)).toList();
+        Page<Post> posts = postRepository.findAllWithAssociations(effectivePageable);
+        List<PostResponseDto.PostDto> postDtos = posts
+                .map(post -> PostConverter.toDto(post, currentUserId))
+                .toList();
 
         PostResponseDto.PageInfoDto pageInfo = PostResponseDto.PageInfoDto.builder()
                 .page(posts.getNumber())
@@ -63,6 +66,8 @@ public class PostService {
                 .pageInfo(pageInfo)
                 .build();
     }
+
+
 
     @Transactional
     public PostResponseDto.CreatePostResponse createPost(
