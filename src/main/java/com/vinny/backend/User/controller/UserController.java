@@ -3,6 +3,7 @@ package com.vinny.backend.User.controller;
 import com.vinny.backend.User.service.UserService;
 import com.vinny.backend.User.dto.OnboardingRequestDto;
 import com.vinny.backend.error.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "User", description = "유저 관련 API")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
