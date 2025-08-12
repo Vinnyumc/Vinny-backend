@@ -59,6 +59,7 @@ public class PostConverter {
     public static PostDetailResponseDto toDetailDto(Post post, boolean isLikedByMe, int likesCount) {
         return PostDetailResponseDto.builder()
                 .postId(post.getId())
+                .title(post.getTitle())
                 .author(AuthorDto.builder()
                         .userId(post.getUser().getId())
                         .nickname(post.getUser().getNickname())
