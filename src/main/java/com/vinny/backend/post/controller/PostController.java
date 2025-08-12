@@ -44,20 +44,16 @@ public class PostController {
     @Operation(summary = "전체 피드 조회", description = "페이징 기반으로 전체 게시글 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<PostResponseDto>> getAllPosts(
-            // TODO: 추후 로그인 인증 구현 후 활성화
-            // @Parameter(hidden = true)
-            // @AuthenticationPrincipal CustomUserDetails userDetails,
 
+            // @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         // createdAt DESC 기준으로 정렬 고정
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        // TODO: 로그인 인증 구현 전까지는 임시 userId 사용
-        Long userId = 0L;
-
-        PostResponseDto response = postService.getAllposts(pageable, userId);
+        PostResponseDto response = postService.getAllPosts(pageable, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -160,5 +156,16 @@ public class PostController {
                 ApiResponse.onSuccess("게시글 좋아요 취소에 성공했습니다.")
         );
 
+    }
+    @Operation(summary = "전체 피드 인기순 조회", description = "좋아요 순으로 전체 게시글 목록을 조회합니다.")
+    @GetMapping("/popular")
+    public ResponseEntity<ApiResponse<PostResponseDto>> getPopularPosts(
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        PostResponseDto response = postService.getAllPostsOrderByLikes(pageable, userId);
+        return ResponseEntity.ok(ApiResponse.onSuccess("좋아요순 피드 조회 성공", response));
     }
 }
