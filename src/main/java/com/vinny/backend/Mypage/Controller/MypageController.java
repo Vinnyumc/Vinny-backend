@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/mypage")
 @RequiredArgsConstructor
+@Slf4j
 public class MypageController {
 
     private final MypageService mypageService;
@@ -144,10 +146,11 @@ public class MypageController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "저장한 게시글 첫 이미지 리스트 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
     })
-    public ResponseEntity<ApiResponse<List<String>>> getSavedPostsFirstImageList(
+    public ResponseEntity<ApiResponse<List<MypageBookmarkPostResponse>>> getSavedPostsFirstImageList(
             @Parameter(hidden = true) @CurrentUser Long userId
     ) {
-        List<String> images = mypageService.getSavedPostsFirstImageList(userId);
-        return ResponseEntity.ok(ApiResponse.onSuccess("저장한 게시글의 첫 이미지 리스트를 조회했습니다.", images));
+        List<MypageBookmarkPostResponse> response = mypageService.list(userId);
+        log.info("list() userId={}", userId);
+        return ResponseEntity.ok(ApiResponse.onSuccess("저장한 게시글 목록(1장 이미지 포함) 조회 성공", response));
     }
 }
