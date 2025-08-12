@@ -14,6 +14,7 @@ public class ShopResponseDto {
     public static class PreviewDto {
         private Long id;
         private String name;
+        private String intro;
         private String description;
         private String status;
         private String openTime;

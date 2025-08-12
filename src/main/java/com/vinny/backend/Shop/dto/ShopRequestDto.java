@@ -23,6 +23,8 @@ public class ShopRequestDto {
         @NotBlank(message = "가게 이름은 필수입니다.")
         private String name;
 
+        private String intro;
+
         private String description;
 
         @NotNull(message = "상태는 필수 값입니다.")
