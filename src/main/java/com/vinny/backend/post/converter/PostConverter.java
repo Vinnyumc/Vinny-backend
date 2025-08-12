@@ -32,6 +32,8 @@ public class PostConverter {
                 .likesCount(post.getLikes().size())
                 .isLikedByMe(post.getLikes().stream()
                         .anyMatch(like -> like.getUser().getId().equals(currentUserId)))
+                .bookmarkedByMe(post.getBookmarks().stream()
+                        .anyMatch(bookmark -> bookmark.getUser().getId().equals(currentUserId)))
                 .shop(post.getShopHashtags().stream()
                         .findFirst()
                         .map(PostShopHashtag::getShop)
@@ -59,7 +61,7 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostDetailResponseDto toDetailDto(Post post, boolean isLikedByMe, int likesCount) {
+    public static PostDetailResponseDto toDetailDto(Post post, boolean isLikedByMe, int likesCount, boolean isBookmarkedByMe) {
         return PostDetailResponseDto.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
@@ -76,6 +78,7 @@ public class PostConverter {
                 .createdAtRelative(getRelativeTime(post.getCreatedAt()))
                 .likesCount(likesCount)
                 .isLikedByMe(isLikedByMe)
+                .bookmarkedByMe(isBookmarkedByMe)
                 .shop(post.getShopHashtags().stream()
                         .findFirst()
                         .map(PostShopHashtag::getShop)

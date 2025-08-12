@@ -28,6 +28,7 @@ public class PostResponseDto {
         private String createdAtRelative;
         private int likesCount;
         private boolean isLikedByMe;
+        private boolean bookmarkedByMe;
         private ShopDto shop;
         private StyleDto style;
         private BrandDto brand; // nullable
@@ -103,6 +104,7 @@ public class PostResponseDto {
         private String createdAtRelative;
         private int likesCount;
         private boolean isLikedByMe;
+        private boolean bookmarkedByMe;
         private ShopDto shop;
         private List<StyleDto> styles;
         private BrandDto brand;
