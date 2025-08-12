@@ -21,6 +21,7 @@ public class PostResponseDto {
     public static class PostDto {
         private Long postId;
         private AuthorDto author;
+        private String title;
         private String content;
         private List<String> images;
         private LocalDateTime createdAt;

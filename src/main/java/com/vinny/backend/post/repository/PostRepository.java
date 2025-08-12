@@ -78,4 +78,26 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         WHERE p.id = :postId
     """)
     Optional<Post> findByIdWithAllRelations(@Param("postId") Long postId);
+    @Query("""
+        SELECT p.id
+        FROM Post p
+        LEFT JOIN p.likes l
+        GROUP BY p.id
+        ORDER BY COUNT(l) DESC, p.createdAt DESC
+    """)
+    Page<Long> findPostIdsOrderByLikes(Pageable pageable);
+
+    @Query("""
+        SELECT DISTINCT p FROM Post p
+        LEFT JOIN FETCH p.user u
+        LEFT JOIN FETCH p.images i
+        LEFT JOIN FETCH p.brandHashtags bh
+        LEFT JOIN FETCH bh.brand b
+        LEFT JOIN FETCH p.shopHashtags sh
+        LEFT JOIN FETCH sh.shop s
+        LEFT JOIN FETCH p.styleHashtags sth
+        LEFT JOIN FETCH sth.vintageStyle vs
+        WHERE p.id IN :ids
+    """)
+    List<Post> findAllWithAssociationsByIdIn(@Param("ids") List<Long> ids);
 }

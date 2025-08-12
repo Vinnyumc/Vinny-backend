@@ -57,7 +57,7 @@ public class PostController {
         // TODO: 로그인 인증 구현 전까지는 임시 userId 사용
         Long userId = 0L;
 
-        PostResponseDto response = postService.getAllposts(pageable, userId);
+        PostResponseDto response = postService.getAllPosts(pageable, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -160,5 +160,14 @@ public class PostController {
                 ApiResponse.onSuccess("게시글 좋아요 취소에 성공했습니다.")
         );
 
+    }
+
+    @GetMapping("/api/posts/popular")
+    public ResponseEntity<ApiResponse<PostResponseDto>> getPopularPosts(
+            Pageable pageable,
+            @CurrentUser Long userId
+    ) {
+        PostResponseDto response = postService.getAllPostsOrderByLikes(pageable, userId);
+        return ResponseEntity.ok(ApiResponse.onSuccess("좋아요순 피드 조회 성공", response));
     }
 }

@@ -20,6 +20,7 @@ public class PostConverter {
                         .nickname(post.getUser().getNickname())
                         .profileImageUrl(post.getUser().getProfileImage())
                         .build())
+                .title(post.getTitle())
                 .content(post.getContent())
                 .images(post.getImages().stream()
                         .map(PostImage::getImageUrl)
