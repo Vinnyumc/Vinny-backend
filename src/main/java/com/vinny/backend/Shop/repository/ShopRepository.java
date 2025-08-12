@@ -50,4 +50,7 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
             @Param("region") String region,
             Pageable pageable);
 
+    @Query("select s.name from Shop s")
+    List<String> findAllShopNames();
+
 }
