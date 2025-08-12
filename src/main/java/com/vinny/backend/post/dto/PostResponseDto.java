@@ -25,6 +25,7 @@ public class PostResponseDto {
         private String content;
         private List<String> images;
         private LocalDateTime createdAt;
+        private String createdAtRelative;
         private int likesCount;
         private boolean isLikedByMe;
         private ShopDto shop;
@@ -99,6 +100,7 @@ public class PostResponseDto {
         private String content;
         private List<String> images;
         private LocalDateTime createdAt;
+        private String createdAtRelative;
         private int likesCount;
         private boolean isLikedByMe;
         private ShopDto shop;
