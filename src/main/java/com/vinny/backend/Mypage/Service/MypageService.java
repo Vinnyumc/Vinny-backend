@@ -120,6 +120,7 @@ public class MypageService {
                 u.getId(),
                 u.getNickname(),
                 u.getProfileImage(),
+                u.getBackgroundImage(),
                 u.getComment()
         );
     }
@@ -130,6 +131,15 @@ public class MypageService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         user.updateProfileImage(req.imageUrl());
+        return toProfileDto(user);
+    }
+
+    @Transactional
+    public MypageUserProfileDto updateBackgroundImage(Long userId,  MypageUpdateProfileImageRequest req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        user.updateBackgroundImage(req.imageUrl());
         return toProfileDto(user);
     }
 

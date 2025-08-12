@@ -1,10 +1,9 @@
 package com.vinny.backend.Mypage.dto;
 
-public record MypageUserProfileDto (
+public record MypageUserBackgroundDto (
         Long userId,
         String nickname,
         String profileImage,
-        String backgroundImage,
         String comment
 )
 {}
