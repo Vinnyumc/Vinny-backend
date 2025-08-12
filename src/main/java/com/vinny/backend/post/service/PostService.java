@@ -285,6 +285,9 @@ public class PostService {
 
         int likesCount = post.getLikes() != null ? post.getLikes().size() : 0;
 
-        return PostConverter.toDetailDto(post, isLikedByMe, likesCount);
+        boolean isBookmarkedByMe = post.getBookmarks().stream()
+                .anyMatch(Bookmark -> Bookmark.getUser().getId().equals(userId));
+
+        return PostConverter.toDetailDto(post, isLikedByMe, likesCount, isBookmarkedByMe);
     }
 }
