@@ -157,12 +157,14 @@ public class PostController {
         );
 
     }
-
-    @GetMapping("/api/posts/popular")
+    @Operation(summary = "전체 피드 인기순 조회", description = "좋아요 순으로 전체 게시글 목록을 조회합니다.")
+    @GetMapping("/popular")
     public ResponseEntity<ApiResponse<PostResponseDto>> getPopularPosts(
-            Pageable pageable,
-            @Parameter(hidden = true) @CurrentUser Long userId
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
+        Pageable pageable = PageRequest.of(page, size);
         PostResponseDto response = postService.getAllPostsOrderByLikes(pageable, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess("좋아요순 피드 조회 성공", response));
     }
