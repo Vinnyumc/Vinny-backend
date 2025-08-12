@@ -108,4 +108,28 @@ public class AuthController {
         SessionResponseDto response = authService.getSession(accessToken);
         return ApiResponse.onSuccess(response);
     }
+
+    @PostMapping("/logout")
+    @Operation(
+            summary = "로그아웃",
+            description = "로그아웃 요청 시, 해당 사용자의 refreshToken을 null로 설정하여 로그아웃 처리합니다."
+    )
+    public ApiResponse<String> logout(HttpServletRequest request) {
+
+        String accessToken = jwtProvider.resolveToken(request);
+
+        if (accessToken == null || !jwtProvider.validateToken(accessToken)) {
+            return ApiResponse.onFailure("Invalid or expired access token.", "로그인 상태가 아닙니다.", null);
+        }
+
+        Long userId = jwtProvider.getUserIdFromToken(accessToken);
+
+        // 로그아웃 처리: 해당 사용자의 refreshToken을 null로 설정
+        try {
+            authService.logout(userId);
+            return ApiResponse.onSuccess("Logout successful.", "로그아웃이 정상적으로 처리되었습니다.");
+        } catch (Exception e) {
+            return ApiResponse.onFailure("Logout Error", "로그아웃 처리 중 오류가 발생했습니다.", null);
+        }
+    }
 }

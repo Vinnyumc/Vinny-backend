@@ -155,4 +155,17 @@ public class AuthService {
                     .build();
         }
     }
+
+    @Transactional
+    public void logout(Long userId) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 사용자의 refreshToken을 null로 설정하여 로그아웃 처리
+        user.updateRefreshToken(null);
+
+        // DB에 변경 사항 저장
+        userRepository.save(user);
+    }
 }
