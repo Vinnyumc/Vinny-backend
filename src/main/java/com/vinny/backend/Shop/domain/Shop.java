@@ -25,6 +25,9 @@ public class Shop extends BaseEntity {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    @Column(name = "intro", nullable = false, length = 100)
+    private String intro;
+
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 

@@ -17,6 +17,7 @@ public class ShopConverter {
     public static Shop toEntity(ShopRequestDto.CreateDto dto) {
         return Shop.builder()
                 .name(dto.getName())
+                .intro(dto.getIntro())
                 .description(dto.getDescription())
                 .status(Status.valueOf(String.valueOf(dto.getStatus())))
                 .openTime(dto.getOpenTime())
@@ -58,6 +59,7 @@ public class ShopConverter {
         return ShopResponseDto.PreviewDto.builder()
                 .id(shop.getId())
                 .name(shop.getName())
+                .intro(shop.getIntro())
                 .description(shop.getDescription())
                 .status(shop.getStatus().name())
                 .openTime(shop.getOpenTime() != null ? shop.getOpenTime().toString() : null)
