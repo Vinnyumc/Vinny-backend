@@ -60,4 +60,5 @@ public class ShopService {
      * 홈 취향저격 가게 추천
      */
 
+
 }

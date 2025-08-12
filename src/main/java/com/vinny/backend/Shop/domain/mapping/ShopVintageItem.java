@@ -1,4 +1,4 @@
-package com.vinny.backend.Shop.mapping;
+package com.vinny.backend.Shop.domain.mapping;
 
 import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.User.domain.VintageItem;
