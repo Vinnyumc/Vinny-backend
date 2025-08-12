@@ -56,4 +56,9 @@ public class ShopService {
         return shopConverter.toMapThumbnailDto(shop);
     }
 
+    /**
+     * 홈 취향저격 가게 추천
+     */
+
+
 }
