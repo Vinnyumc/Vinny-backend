@@ -135,6 +135,53 @@ public class MypageController {
         }
     }
 
+    @PatchMapping(value = "/background-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "프로필 배경 이미지 변경(업로드 포함)",
+            description = "파일을 받아 S3에 업로드하고, 업로드된 URL로 프로필 배경 이미지를 갱신합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "배경 이미지 변경 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
+    public ResponseEntity<ApiResponse<MypageUserProfileDto>> updateBackgroundImage(
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @Parameter(description = "업로드할 배경 이미지 파일", required = true)
+            @RequestPart("file") MultipartFile file
+    ) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.onFailure(
+                            ErrorStatus.FILE_IS_EMPTY.getCode(),
+                            ErrorStatus.FILE_IS_EMPTY.getMessage(),
+                            null
+                    )
+            );
+        }
+        try {
+            // 1) S3 업로드 -> URL 확보
+            String fileUrl = s3Service.uploadFile(file);
+
+            // (선택) 기존 배경 이미지가 있다면 삭제 로직 고려
+            // mypageService.deleteOldBackgroundImageIfExists(userId);
+
+            // 2) URL로 배경 이미지 갱신
+            MypageUserProfileDto dto =
+                    mypageService.updateBackgroundImage(userId, new MypageUpdateProfileImageRequest(fileUrl));
+
+            return ResponseEntity.ok(ApiResponse.onSuccess("프로필 배경 이미지가 변경되었습니다.", dto));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body(
+                    ApiResponse.onFailure(
+                            ErrorStatus.S3_UPLOAD_FAILED.getCode(),
+                            ErrorStatus.S3_UPLOAD_FAILED.getMessage(),
+                            null
+                    )
+            );
+        }
+    }
+
     @GetMapping("/saved-posts/images")
     @Operation(
             summary = "저장한 게시글 첫 이미지 리스트 조회",
