@@ -100,4 +100,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         WHERE p.id IN :ids
     """)
     List<Post> findAllWithAssociationsByIdIn(@Param("ids") List<Long> ids);
+
+
+    @Query("SELECT COUNT(b) FROM UserPostBookmark b WHERE b.user.id = :userId")
+    int countBookmarksByUserId(@Param("userId") Long userId);
 }
