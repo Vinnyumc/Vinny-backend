@@ -50,7 +50,6 @@ public class ShopCommandServiceImpl implements ShopCommandService{
                 .closeTime(dto.getCloseTime())
                 .instagram(dto.getInstagram())
                 .address(dto.getAddress())
-                .addressDetail(dto.getAddressDetail())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .region(region)

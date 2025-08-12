@@ -47,9 +47,6 @@ public class Shop extends BaseEntity {
     @Column(name = "address", nullable = false, length = 255)
     private String address;
 
-    @Column(name = "address_detail", length = 255)
-    private String addressDetail;
-
     @Column(name = "latitude", nullable = false)
     private Double latitude;
 
