@@ -113,6 +113,7 @@ public class PostController {
     }
 
 
+    @Operation(summary = "게시글 북마크 추가", description = "해당게시글을 북마크에 추가합니다.")
     @PostMapping("/{postId}/bookmarks")
     public ResponseEntity<ApiResponse<?>> addBookmark(
             @Parameter(hidden = true) @CurrentUser Long userId,
@@ -124,6 +125,7 @@ public class PostController {
         );
     }
 
+    @Operation(summary = "게시글 북마크 삭제", description = "해당 게시글을 북마크에서 삭제합니다.")
     @DeleteMapping("/{postId}/bookmarks")
     public ResponseEntity<ApiResponse<?>> removeBookmark(
             @Parameter(hidden = true) @CurrentUser Long userId,
@@ -134,7 +136,7 @@ public class PostController {
                 ApiResponse.onSuccess("게시글 북마크 취소에 성공했습니다.")
         );
     }
-
+    @Operation(summary = "게시글 좋아요 추가", description = "해당 게시글에 좋아요를 누릅니다.")
     @PostMapping("/{postId}/likes")
     public ResponseEntity<ApiResponse<?>> addLike(
             @Parameter(hidden = true) @CurrentUser Long userId,
@@ -146,6 +148,7 @@ public class PostController {
         );
     }
 
+    @Operation(summary = "게시글 좋아요 삭제", description = "해당 게시글 좋아요를 취소합니다.")
     @DeleteMapping("/{postId}/likes")
     public ResponseEntity<ApiResponse<?>> removeLike(
             @Parameter(hidden = true) @CurrentUser Long userId,
