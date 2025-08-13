@@ -54,7 +54,7 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     @Query("""
 select new com.vinny.backend.Shop.dto.ShopResponseDto$HomeForYouThumbnailDto(
     s.id, s.name, s.openTime, s.closeTime, s.instagram,
-    s.address, s.addressDetail
+    s.address
 )
 from Shop s
 where s.id in :ids and s.status = com.vinny.backend.Shop.domain.enums.Status.OPEN
