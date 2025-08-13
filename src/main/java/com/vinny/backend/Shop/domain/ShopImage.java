@@ -21,7 +21,7 @@ public class ShopImage extends BaseEntity {
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
 
-    @Column(name = "image_url", nullable = false, length = 255)
+    @Column(name = "image_url", nullable = false, length = 1024)
     private String imageUrl;
 
     @Column(name = "is_main_image", nullable = false)

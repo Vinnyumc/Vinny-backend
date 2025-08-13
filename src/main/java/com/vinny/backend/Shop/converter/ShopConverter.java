@@ -132,7 +132,6 @@ public class ShopConverter {
                 .closeTime(s.getCloseTime() != null ? s.getCloseTime().toString() : null)
                 .instagram(s.getInstagram())
                 .address(s.getAddress())
-                .addressDetail(s.getAddressDetail())
                 .images(mainImage) // 대표 이미지 하나만
                 .shopVintageStyleList(vintageStyleDtos)
                 .build();

@@ -22,7 +22,6 @@ public class ShopResponseDto {
         private String closeTime;
         private String instagram;
         private String address;
-        private String addressDetail;
         private Double latitude;
         private Double longitude;
         private String region;
@@ -62,7 +61,6 @@ public class ShopResponseDto {
         private String closeTime;
         private String instagram;
         private String address;
-        private String addressDetail;
         private Double latitude;
         private Double longitude;
         private String region;
@@ -83,20 +81,18 @@ public class ShopResponseDto {
         private String closeTime;
         private String instagram;
         private String address;
-        private String addressDetail;
         private ImageDto images;
         private List<ShopVintageStyleDto> shopVintageStyleList;
 
         public HomeForYouThumbnailDto(Long id, String name,
                                       LocalTime openTime, LocalTime closeTime,
-                                      String instagram, String address, String addressDetail) {
+                                      String instagram, String address) {
             this.id = id;
             this.name = name;
             this.openTime = openTime != null ? openTime.toString() : null;
             this.closeTime = closeTime != null ? closeTime.toString() : null;
             this.instagram = instagram;
             this.address = address;
-            this.addressDetail = addressDetail;
         }
     }
 
