@@ -1,9 +1,11 @@
 package com.vinny.backend.Shop.controller;
 
 import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.Shop.dto.ShopRankingResponse;
 import com.vinny.backend.Shop.dto.ShopRequestDto;
 import com.vinny.backend.Shop.dto.ShopResponseDto;
 import com.vinny.backend.Shop.service.ShopCommandService;
+import com.vinny.backend.Shop.service.ShopRankingService;
 import com.vinny.backend.User.validation.annotation.ExistVintageStyle;
 import com.vinny.backend.common.validator.ValidPageParam;
 import com.vinny.backend.error.ApiResponse;
@@ -41,6 +43,7 @@ public class ShopController {
 
     private final ShopService shopService;
     private final ShopCommandService shopCommandService;
+    private final ShopRankingService shopRankingService;
 
 //    @PostMapping
 //    public ResponseEntity<ShopResponseDto.PreviewDto> createShop(
@@ -100,6 +103,32 @@ public class ShopController {
     ) {
         ShopResponseDto.MapThumbnailDto shopDetails = shopService.getMapThumbnail(shopId);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
+    }
+
+    @Operation(
+            summary = "방문수 랭킹 조회 (QueryDSL)",
+            description = """
+                visitCount 내림차순으로 샵을 반환합니다.
+                - region: (선택) '홍대','성수','강남' 등 키워드 (Region.name/주소 부분매치)
+                - style:  (선택) '밀리터리','아메카지' 등 VintageStyle 이름
+                - page/size: 페이징
+                """
+    )
+    @GetMapping("/shops/ranking")
+    public ResponseEntity<ApiResponse<List<ShopRankingResponse>>> ranking(
+            @Parameter(description = "0-base 페이지", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size,
+            @Parameter(description = "지역 필터", example = "홍대")
+            @RequestParam(required = false) String region,
+            @Parameter(description = "스타일 필터", example = "밀리터리")
+            @RequestParam(required = false) String style
+    ) {
+        // 선택적 매핑 (원하면 여기서 '홍대/성수/강남' 등의 별칭 정규화)
+        if (region != null && region.isBlank()) region = null;
+        if (style != null && style.isBlank()) style = null;
+
+        List<ShopRankingResponse> result = shopRankingService.getRanking(region, style, page, size);
+        return ResponseEntity.ok(ApiResponse.onSuccess("방문수 랭킹 조회 성공", result));
     }
 
 
