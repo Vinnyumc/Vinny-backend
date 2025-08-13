@@ -1,6 +1,7 @@
 package com.vinny.backend.Shop.converter;
 
 import com.vinny.backend.Shop.domain.Shop;
+import com.vinny.backend.Shop.domain.ShopImage;
 import com.vinny.backend.Shop.domain.enums.Status;
 import com.vinny.backend.Shop.dto.ShopRequestDto;
 import com.vinny.backend.Shop.dto.ShopResponseDto;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.vinny.backend.Shop.domain.QShop.shop;
 
 @Component
 public class ShopConverter {
@@ -97,6 +100,39 @@ public class ShopConverter {
                 .longitude(shop.getLongitude())
                 .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
                 .images(images)
+                .shopVintageStyleList(vintageStyleDtos)
+                .build();
+    }
+
+    /**
+     * Shop -> HomeForYouThumbnailDto
+     */
+    public ShopResponseDto.HomeForYouThumbnailDto toHomeForYouThumbnailDto(Shop s) {
+        if (s == null) return null;
+
+        // 대표 이미지: isMainImage == true 중 첫 번째
+        ShopResponseDto.ImageDto mainImage = s.getShopImages().stream()
+                .filter(ShopImage::isMainImage)
+                .findFirst()
+                .map(img -> new ShopResponseDto.ImageDto(img.getImageUrl(), img.isMainImage()))
+                .orElse(null);
+
+        // 빈티지 스타일 변환
+        List<ShopVintageStyleDto> vintageStyleDtos = s.getShopVintageStyleList().stream()
+                .map(style -> ShopVintageStyleDto.builder()
+                        .id(style.getId())
+                        .vintageStyleName(style.getVintageStyle() != null ? style.getVintageStyle().getName() : null)
+                        .build())
+                .collect(Collectors.toList());
+
+        return ShopResponseDto.HomeForYouThumbnailDto.builder()
+                .id(s.getId())
+                .name(s.getName())
+                .openTime(s.getOpenTime() != null ? s.getOpenTime().toString() : null)
+                .closeTime(s.getCloseTime() != null ? s.getCloseTime().toString() : null)
+                .instagram(s.getInstagram())
+                .address(s.getAddress())
+                .images(mainImage) // 대표 이미지 하나만
                 .shopVintageStyleList(vintageStyleDtos)
                 .build();
     }
