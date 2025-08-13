@@ -83,12 +83,9 @@ public class ShopController {
     public ResponseEntity<ApiResponse<ShopResponseDto.PreviewDto>> getShopDetails(
             @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId
     ) {
-        Optional<Shop> findedShop = shopService.getShop(shopId);
-        findedShop.ifPresent(shop -> {
-            Integer shopcounts =  shop.getVisitCount();
-            shopcounts = shopcounts + 1;
-        });
+
         ShopResponseDto.PreviewDto shopDetails = shopService.getShopsDetails(shopId);
+        shopDetails = shopService.getShopDetailsAndIncreaseVisit(shopId);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
     }
 

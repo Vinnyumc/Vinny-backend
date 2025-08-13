@@ -68,4 +68,11 @@ public class Shop extends BaseEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShopImage> shopImages = new ArrayList<>();
 
+
+    // Shop.java
+    public void increaseVisitCount() {
+        if (this.visitCount == null) this.visitCount = 0;
+        this.visitCount = this.visitCount + 1;
+    }
+
 }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,16 @@ public class ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
         return Optional.of(shop);
+    }
+
+    @Transactional // ✅ write 트랜잭션
+    public ShopResponseDto.PreviewDto getShopDetailsAndIncreaseVisit(Long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new IllegalArgumentException("Shop not found: " + shopId));
+
+        shop.increaseVisitCount(); // ✅ 엔티티 필드 변경 -> 커밋 시 자동 업데이트
+
+        return getShopsDetails(shopId); // 기존 DTO 생성 로직 재사용
     }
 
 
