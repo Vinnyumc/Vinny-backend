@@ -56,9 +56,12 @@ public class ShopService {
         return shopConverter.toMapThumbnailDto(shop);
     }
 
-    /**
-     * 홈 취향저격 가게 추천
-     */
+    public Optional<Shop> getShop(long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
+        return Optional.of(shop);
+    }
 
 
 }
+

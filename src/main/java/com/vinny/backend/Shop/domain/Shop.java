@@ -57,6 +57,9 @@ public class Shop extends BaseEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
+    @Column(name = "visit_count")
+    private Integer visitCount;
+
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShopVintageStyle> shopVintageStyleList = new ArrayList<>();

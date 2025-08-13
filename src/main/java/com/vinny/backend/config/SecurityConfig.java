@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/files/**",
                                 "/api/map/shops/all",
                                 "/health",
-                                "/api/auth/session").permitAll() // 로그인 및 H2 콘솔 경로는 모두 허용, 배포 시점에 추후 수정 예정
+                                "/api/auth/session",
+                                "/api/shops/ranking").permitAll() // 로그인 및 H2 콘솔 경로는 모두 허용, 배포 시점에 추후 수정 예정
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
