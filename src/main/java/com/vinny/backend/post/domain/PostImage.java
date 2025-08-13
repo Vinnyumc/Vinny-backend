@@ -19,7 +19,7 @@ public class PostImage extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "image_url", nullable = false, length = 255)
+    @Column(name = "image_url", nullable = false, length = 1024)
     private String imageUrl;
 
     public PostImage(Post post, String imageUrl, Long sequence) {
