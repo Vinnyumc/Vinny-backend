@@ -1,5 +1,6 @@
 package com.vinny.backend.Shop.controller;
 
+import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.Shop.dto.ShopRequestDto;
 import com.vinny.backend.Shop.dto.ShopResponseDto;
 import com.vinny.backend.Shop.service.ShopCommandService;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -78,6 +80,11 @@ public class ShopController {
     public ResponseEntity<ApiResponse<ShopResponseDto.PreviewDto>> getShopDetails(
             @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId
     ) {
+        Optional<Shop> findedShop = shopService.getShop(shopId);
+        findedShop.ifPresent(shop -> {
+            Integer shopcounts =  shop.getVisitCount();
+            shopcounts = shopcounts + 1;
+        });
         ShopResponseDto.PreviewDto shopDetails = shopService.getShopsDetails(shopId);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
     }

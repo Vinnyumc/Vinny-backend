@@ -31,7 +31,6 @@ public class UserShopResponseDto {
                 .userId(userShop.getUser().getId())
                 .shopId(userShop.getShop().getId())
                 .status(userShop.getStatus())
-                .visitCount(userShop.getVisitCount())
                 .build();
     }
 

@@ -21,7 +21,6 @@ public class ShopResponseDto {
         private String closeTime;
         private String instagram;
         private String address;
-        private String addressDetail;
         private Double latitude;
         private Double longitude;
         private String region;

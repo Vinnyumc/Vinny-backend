@@ -33,15 +33,13 @@ public class UserShop extends BaseEntity {
     @Column(name = "status")
     private UserShopStatus status;
 
-    @Column(name = "visit_count")
-    private Integer visitCount;
+
 
     public static UserShop create(User user, Shop shop, UserShopStatus status, Integer visitCount) {
         return UserShop.builder()
                 .user(user)
                 .shop(shop)
                 .status(status)
-                .visitCount(visitCount)
                 .build();
     }
 
@@ -50,7 +48,6 @@ public class UserShop extends BaseEntity {
                 .user(user)
                 .shop(shop)
                 .status(status)
-                .visitCount(0) // 기본값 설정
                 .build();
     }
 

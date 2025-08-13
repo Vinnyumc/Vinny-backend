@@ -56,4 +56,12 @@ public class ShopService {
         return shopConverter.toMapThumbnailDto(shop);
     }
 
+    public Optional<Shop> getShop(long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
+        return Optional.of(shop);
+    }
+
+
 }
+
