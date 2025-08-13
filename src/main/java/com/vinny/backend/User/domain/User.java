@@ -45,10 +45,10 @@ public class User extends BaseEntity {
     @Column(length = 100)
     private String email; // 이메일
 
-    @Column(name = "profile_image", length = 255)
+    @Column(name = "profile_image", length = 1024)
     private String profileImage; // 프로필사진
 
-    @Column(name = "background_image", length = 255)
+    @Column(name = "background_image", length = 1024)
     private String backgroundImage; // 프로필 배경사진
 
     @Column(length = 255)
