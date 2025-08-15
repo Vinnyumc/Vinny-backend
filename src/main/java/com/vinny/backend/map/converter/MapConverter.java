@@ -25,7 +25,7 @@ public class MapConverter {
                 .latitude(shop.getLatitude())
                 .longitude(shop.getLongitude())
                 .vintageStyleList(toVintageStyleDtos(shop.getShopVintageStyleList()))
-                .mainVintageStyle(toMainVintageStyleDto(shop.getMainVintageStyle())) // 👈 이 줄을 추가해야 합니다.
+                .mainVintageStyle(toMainVintageStyleDto(shop.getMainVintageStyle()))
                 .build();
     }
 
@@ -39,11 +39,9 @@ public class MapConverter {
     }
 
     private VintageStyleDto toMainVintageStyleDto(VintageStyle mainStyle) {
-        // 대표 스타일이 없는 경우(null)를 안전하게 처리
         if (mainStyle == null) {
             return null;
         }
-        // 엔티티를 DTO로 변환
         return VintageStyleDto.builder()
                 .id(mainStyle.getId())
                 .vintageStyleName(mainStyle.getName())
