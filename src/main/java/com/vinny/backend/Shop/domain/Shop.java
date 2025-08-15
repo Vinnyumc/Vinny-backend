@@ -2,6 +2,7 @@ package com.vinny.backend.Shop.domain;
 
 import com.vinny.backend.Shop.domain.mapping.ShopVintageStyle;
 import com.vinny.backend.User.domain.Region;
+import com.vinny.backend.User.domain.VintageStyle;
 import com.vinny.backend.common.domain.BaseEntity;
 import com.vinny.backend.Shop.domain.enums.Status;
 import jakarta.persistence.*;
@@ -59,6 +60,10 @@ public class Shop extends BaseEntity {
 
     @Column(name = "visit_count")
     private Integer visitCount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "main_vintage_style_id")
+    private VintageStyle mainVintageStyle;
 
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,6 +2,7 @@ package com.vinny.backend.map.converter;
 
 import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.Shop.domain.mapping.ShopVintageStyle;
+import com.vinny.backend.User.domain.VintageStyle;
 import com.vinny.backend.map.dto.MapResponseDto.VintageStyleDto;
 import com.vinny.backend.map.dto.MapResponseDto.MapListDto;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class MapConverter {
                 .latitude(shop.getLatitude())
                 .longitude(shop.getLongitude())
                 .vintageStyleList(toVintageStyleDtos(shop.getShopVintageStyleList()))
+                .mainVintageStyle(toMainVintageStyleDto(shop.getMainVintageStyle()))
                 .build();
     }
 
@@ -34,5 +36,15 @@ public class MapConverter {
                         .vintageStyleName(mapping.getVintageStyle().getName())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private VintageStyleDto toMainVintageStyleDto(VintageStyle mainStyle) {
+        if (mainStyle == null) {
+            return null;
+        }
+        return VintageStyleDto.builder()
+                .id(mainStyle.getId())
+                .vintageStyleName(mainStyle.getName())
+                .build();
     }
 }
