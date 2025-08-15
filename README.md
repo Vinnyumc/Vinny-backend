@@ -3,9 +3,10 @@
 > 취향 기반 빈티지샵 탐색 & 스타일 공유 서비스의 백엔드 저장소입니다.
 > 
 
+## 시스템 아키텍쳐
 ---
 
-<img width="1810" height="1561" alt="cloud io drawio" src="https://github.com/user-attachments/assets/69dc4ab3-24c4-4878-871c-44f44563b09c" />
+<img width="1810" height="1561" alt="cloud io drawio (1)" src="https://github.com/user-attachments/assets/e233ba12-9bff-4010-aa79-1238028d1225" />
 
 ---
 
