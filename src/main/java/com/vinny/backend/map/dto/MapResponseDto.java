@@ -1,6 +1,7 @@
 package com.vinny.backend.map.dto;
 
 import com.vinny.backend.Shop.domain.mapping.ShopVintageStyle;
+import com.vinny.backend.User.domain.VintageStyle;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class MapResponseDto {
         private Double latitude;
         private Double longitude;
         private List<VintageStyleDto> vintageStyleList;
+        private VintageStyleDto mainVintageStyle;
     }
 
     @Getter
