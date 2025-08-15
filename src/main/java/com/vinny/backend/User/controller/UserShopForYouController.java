@@ -56,35 +56,35 @@ public class UserShopForYouController {
         List<ShopResponseDto.HomeForYouThumbnailDto> body = userWeeklyShopService.getThisWeekForYou(userId);
         return ResponseEntity.ok(body);
     }
-
-    @Operation(
-            summary = "홈 취향저격 가게 추천 재생성",
-            description = "이번 주 추천 샵 데이터를 재생성한 뒤 목록을 반환합니다."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "OK, 성공",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShopResponseDto.HomeForYouThumbnailDto.class)))
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "400",
-                    description = "유효하지 않은 요청",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))
-            )
-    })
-    @Parameters({
-            @Parameter(name = "limit", description = "재생성 후 반환 개수"),
-            @Parameter(name = "userId", hidden = true)
-    })
-    @PostMapping("/regenerate")
-    public ResponseEntity<List<ShopResponseDto.HomeForYouThumbnailDto>> regenerate(
-            @Parameter(hidden = true) @CurrentUser Long userId
-    ) {
-        List<ShopResponseDto.HomeForYouThumbnailDto> body =
-                userWeeklyShopService.regenerateThisWeek(userId);
-        return ResponseEntity.ok(body);
-    }
+//
+//    @Operation(
+//            summary = "홈 취향저격 가게 추천 재생성",
+//            description = "이번 주 추천 샵 데이터를 재생성한 뒤 목록을 반환합니다."
+//    )
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+//                    responseCode = "200",
+//                    description = "OK, 성공",
+//                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShopResponseDto.HomeForYouThumbnailDto.class)))
+//            ),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+//                    responseCode = "400",
+//                    description = "유효하지 않은 요청",
+//                    content = @Content(schema = @Schema(implementation = ApiResponse.class))
+//            )
+//    })
+//    @Parameters({
+//            @Parameter(name = "limit", description = "재생성 후 반환 개수"),
+//            @Parameter(name = "userId", hidden = true)
+//    })
+//    @PostMapping("/regenerate")
+//    public ResponseEntity<List<ShopResponseDto.HomeForYouThumbnailDto>> regenerate(
+//            @Parameter(hidden = true) @CurrentUser Long userId
+//    ) {
+//        List<ShopResponseDto.HomeForYouThumbnailDto> body =
+//                userWeeklyShopService.regenerateThisWeek(userId);
+//        return ResponseEntity.ok(body);
+//    }
 
 }
 
