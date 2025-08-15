@@ -5,6 +5,8 @@
 
 ---
 
+<img width="1810" height="1561" alt="cloud io drawio" src="https://github.com/user-attachments/assets/69dc4ab3-24c4-4878-871c-44f44563b09c" />
+
 ---
 
 ## 🛠️ 개발 환경
