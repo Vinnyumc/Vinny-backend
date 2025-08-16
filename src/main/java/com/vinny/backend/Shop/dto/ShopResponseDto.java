@@ -25,6 +25,7 @@ public class ShopResponseDto {
         private Double latitude;
         private Double longitude;
         private String region;
+        private String logoImage;
         private List<ImageDto> images;
         private List<ShopVintageStyleDto> shopVintageStyleList;
     }
@@ -64,6 +65,7 @@ public class ShopResponseDto {
         private Double latitude;
         private Double longitude;
         private String region;
+        private String logoImage;
         private List<ImageDto> images;
         private List<ShopVintageStyleDto> shopVintageStyleList;
     }
@@ -81,6 +83,7 @@ public class ShopResponseDto {
         private String closeTime;
         private String instagram;
         private String address;
+        private String logoImage;
         private ImageDto images;
         private List<ShopVintageStyleDto> shopVintageStyleList;
 

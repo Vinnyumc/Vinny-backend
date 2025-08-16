@@ -70,6 +70,7 @@ public class ShopConverter {
                 .address(shop.getAddress())
                 .latitude(shop.getLatitude())
                 .longitude(shop.getLongitude())
+                .logoImage(shop.getLogoImage())
                 .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
                 .images(images)
                 .shopVintageStyleList(vintageStyleDtos)
@@ -98,6 +99,7 @@ public class ShopConverter {
                 .address(shop.getAddress())
                 .latitude(shop.getLatitude())
                 .longitude(shop.getLongitude())
+                .logoImage(shop.getLogoImage())
                 .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
                 .images(images)
                 .shopVintageStyleList(vintageStyleDtos)
@@ -132,6 +134,7 @@ public class ShopConverter {
                 .closeTime(s.getCloseTime() != null ? s.getCloseTime().toString() : null)
                 .instagram(s.getInstagram())
                 .address(s.getAddress())
+                .logoImage(s.getLogoImage())
                 .images(mainImage) // 대표 이미지 하나만
                 .shopVintageStyleList(vintageStyleDtos)
                 .build();
