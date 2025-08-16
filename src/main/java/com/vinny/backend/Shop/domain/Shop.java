@@ -61,7 +61,7 @@ public class Shop extends BaseEntity {
     @Column(name = "visit_count")
     private Integer visitCount;
 
-    @Column(name = "logo_image")
+    @Column(name = "logo_image", length = 1024)
     private String logoImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
