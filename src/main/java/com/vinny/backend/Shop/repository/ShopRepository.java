@@ -51,15 +51,6 @@ public interface ShopRepository extends JpaRepository<Shop, Long>, ShopRankingQu
             @Param("region") String region,
             Pageable pageable);
 
-    @Query("""
-select new com.vinny.backend.Shop.dto.ShopResponseDto$HomeForYouThumbnailDto(
-    s.id, s.name, s.openTime, s.closeTime, s.instagram,
-    s.address
-)
-from Shop s
-where s.id in :ids and s.status = com.vinny.backend.Shop.domain.enums.Status.OPEN
-""")
-    List<ShopResponseDto.HomeForYouThumbnailDto> findHomeForYouByIds(@Param("ids") List<Long> ids);
 
 
     @Query("select s.name from Shop s")

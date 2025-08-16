@@ -61,6 +61,9 @@ public class Shop extends BaseEntity {
     @Column(name = "visit_count")
     private Integer visitCount;
 
+    @Column(name = "logo_image")
+    private String logoImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_vintage_style_id")
     private VintageStyle mainVintageStyle;
