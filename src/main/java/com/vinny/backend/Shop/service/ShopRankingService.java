@@ -24,7 +24,7 @@ public class ShopRankingService {
 
     private final ShopRepository shopRepository;
 
-    public List<ShopRankingResponse> getRanking(String region, String style, int page, int size) {
+    public List<ShopRankingResponse> getRanking(List<String> region, List<String> style, int page, int size) {
         Page<Shop> pageData = shopRepository.searchRankedByVisit(region, style, PageRequest.of(page, size));
         return pageData.getContent().stream()
                 .map(this::toShopRankingResponse)

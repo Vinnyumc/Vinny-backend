@@ -116,13 +116,13 @@ public class ShopController {
             @Parameter(description = "0-base 페이지", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") int size,
             @Parameter(description = "지역 필터", example = "홍대")
-            @RequestParam(required = false) String region,
+            @RequestParam(required = false) List<String> region,
             @Parameter(description = "스타일 필터", example = "밀리터리")
-            @RequestParam(required = false) String style
+            @RequestParam(required = false) List<String> style
     ) {
         // 선택적 매핑 (원하면 여기서 '홍대/성수/강남' 등의 별칭 정규화)
-        if (region != null && region.isBlank()) region = null;
-        if (style != null && style.isBlank()) style = null;
+        if (region != null && region.isEmpty()) region = null;
+        if (style != null && style.isEmpty()) style = null;
 
         List<ShopRankingResponse> result = shopRankingService.getRanking(region, style, page, size);
         return ResponseEntity.ok(ApiResponse.onSuccess("방문수 랭킹 조회 성공", result));

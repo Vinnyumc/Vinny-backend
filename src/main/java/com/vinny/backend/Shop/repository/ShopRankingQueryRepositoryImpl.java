@@ -28,24 +28,36 @@ public class ShopRankingQueryRepositoryImpl implements ShopRankingQueryRepositor
     private static final QVintageStyle vs = QVintageStyle.vintageStyle;
 
     @Override
-    public Page<Shop> searchRankedByVisit(String regionKeyword, String styleName, Pageable pageable) {
-        // 동적 조건
+    public Page<Shop> searchRankedByVisit(List<String> regionKeywords, List<String> styleNames, Pageable pageable) {
         BooleanBuilder where = new BooleanBuilder();
-        if (regionKeyword != null && !regionKeyword.isBlank()) {
-            where.and(r.name.contains(regionKeyword).or(s.address.contains(regionKeyword)));
+
+        // 지역 필터
+        if (regionKeywords != null && !regionKeywords.isEmpty()) {
+            // region.name OR shop.address 에 여러 키워드 적용
+            BooleanBuilder regionCond = new BooleanBuilder();
+            for (String keyword : regionKeywords) {
+                regionCond.or(r.name.contains(keyword))
+                        .or(s.address.contains(keyword));
+            }
+            where.and(regionCond);
         }
-        if (styleName != null && !styleName.isBlank()) {
+
+        // 스타일 필터
+        if (styleNames != null && !styleNames.isEmpty()) {
             where.and(
                     JPAExpressions
                             .selectOne()
                             .from(svs)
                             .join(svs.vintageStyle, vs)
-                            .where(svs.shop.eq(s).and(vs.name.eq(styleName)))
+                            .where(
+                                    svs.shop.eq(s)
+                                            .and(vs.name.in(styleNames))   // ✅ eq → in
+                            )
                             .exists()
             );
         }
 
-        // 1) ID 페이지 조회 (컬렉션 fetch-join과 페이지네이션 충돌 방지)
+        // 1) ID만 조회
         List<Long> ids = query
                 .select(s.id)
                 .from(s)
@@ -68,7 +80,7 @@ public class ShopRankingQueryRepositoryImpl implements ShopRankingQueryRepositor
                 .where(where)
                 .fetchOne();
 
-        // 3) 상세 로딩 (연관 fetch) + distinct로 중복 제거
+        // 3) 상세 로딩
         List<Shop> content = query
                 .selectFrom(s)
                 .leftJoin(s.region, r).fetchJoin()
@@ -78,9 +90,10 @@ public class ShopRankingQueryRepositoryImpl implements ShopRankingQueryRepositor
                 .distinct()
                 .fetch();
 
-        // 4) ID 순서대로 정렬 (단순 비교, 별도 Map 사용 안 함)
+        // 4) 원래 순서 유지
         content.sort((a, b) -> Integer.compare(ids.indexOf(a.getId()), ids.indexOf(b.getId())));
 
         return new PageImpl<>(content, pageable, total == null ? 0 : total);
     }
+
 }
