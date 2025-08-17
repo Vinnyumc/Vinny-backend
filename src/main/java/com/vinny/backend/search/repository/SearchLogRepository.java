@@ -66,5 +66,22 @@ public interface SearchLogRepository extends JpaRepository<SearchLog, Long> {
     int deleteByIdAndUserId(@Param("searchLogId") Long searchLogId, @Param("userId") Long userId);
 
     Optional<SearchLog> findSearchLogIdByUserAndKeyword(User user, String normalizedKeyword);
+
+
+    interface KeywordScoreRow {
+        String getKeyword();
+        Double getScore();
+    }
+
+    /** 오늘 TOP N (00:00 이후) */
+    @Query(value = """
+        SELECT keyword AS keyword, COUNT(*) AS score
+          FROM search_log
+         WHERE searched_at >= CURDATE()
+         GROUP BY keyword
+         ORDER BY score DESC
+         LIMIT :limit
+    """, nativeQuery = true)
+    List<KeywordScoreRow> findTodayTop(@Param("limit") int limit);
 }
 

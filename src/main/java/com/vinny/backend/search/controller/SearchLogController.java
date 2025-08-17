@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/search-logs")
 @RequiredArgsConstructor
@@ -82,6 +84,14 @@ public class SearchLogController {
 
         searchLogService.deleteAllSearchLogs(userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(null));
+    }
+
+    @Operation(summary = "오늘의 추천 검색어 TOP N")
+    @GetMapping("/trending/today")
+    public ResponseEntity<ApiResponse<List<TrendingKeywordResponse>>> today(
+            @Parameter(example = "10") @RequestParam(defaultValue = "10") int limit
+    ) {
+        return ResponseEntity.ok(ApiResponse.onSuccess(searchLogService.getTodayTop(limit)));
     }
 
 
