@@ -288,6 +288,8 @@ public class PostService {
         boolean isBookmarkedByMe = post.getBookmarks().stream()
                 .anyMatch(Bookmark -> Bookmark.getUser().getId().equals(userId));
 
-        return PostConverter.toDetailDto(post, isLikedByMe, likesCount, isBookmarkedByMe);
+        boolean isMyPost = post.getUser().getId().equals(userId);
+
+        return PostConverter.toDetailDto(post, isLikedByMe, likesCount, isBookmarkedByMe, isMyPost);
     }
 }

@@ -108,5 +108,6 @@ public class PostResponseDto {
         private ShopDto shop;
         private List<StyleDto> styles;
         private BrandDto brand;
+        private boolean isMyPost;
     }
 }

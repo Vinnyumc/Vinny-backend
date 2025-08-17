@@ -61,7 +61,7 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostDetailResponseDto toDetailDto(Post post, boolean isLikedByMe, int likesCount, boolean isBookmarkedByMe) {
+    public static PostDetailResponseDto toDetailDto(Post post, boolean isLikedByMe, int likesCount, boolean isBookmarkedByMe, boolean isMyPost) {
         return PostDetailResponseDto.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
@@ -79,6 +79,7 @@ public class PostConverter {
                 .likesCount(likesCount)
                 .isLikedByMe(isLikedByMe)
                 .bookmarkedByMe(isBookmarkedByMe)
+                .isMyPost(isMyPost)
                 .shop(post.getShopHashtags().stream()
                         .findFirst()
                         .map(PostShopHashtag::getShop)
