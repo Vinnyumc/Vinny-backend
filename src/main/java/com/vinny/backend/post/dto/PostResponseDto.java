@@ -30,8 +30,8 @@ public class PostResponseDto {
         private boolean isLikedByMe;
         private boolean bookmarkedByMe;
         private ShopDto shop;
-        private StyleDto style;
-        private BrandDto brand; // nullable
+        private List<StyleDto> styles;
+        private List<BrandDto> brands;
     }
 
     @Getter
@@ -107,7 +107,7 @@ public class PostResponseDto {
         private boolean bookmarkedByMe;
         private ShopDto shop;
         private List<StyleDto> styles;
-        private BrandDto brand;
+        private List<BrandDto> brands;
         private boolean isMyPost;
     }
 }

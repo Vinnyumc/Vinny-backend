@@ -42,22 +42,20 @@ public class PostConverter {
                                 .shopName(shop.getName())
                                 .build())
                         .orElse(null))
-                .style(post.getStyleHashtags().stream()
-                        .findFirst()
+                .styles(post.getStyleHashtags().stream()
                         .map(PostStyleHashtag::getVintageStyle)
                         .map(style -> StyleDto.builder()
                                 .styleId(style.getId())
                                 .styleName(style.getName())
                                 .build())
-                        .orElse(null))
-                .brand(post.getBrandHashtags().stream()
-                        .findFirst()
+                        .collect(Collectors.toList()))
+                .brands(post.getBrandHashtags().stream()
                         .map(PostBrandHashtag::getBrand)
                         .map(brand -> BrandDto.builder()
                                 .brandId(brand.getId())
                                 .brandName(brand.getName())
                                 .build())
-                        .orElse(null))
+                        .collect(Collectors.toList()))
                 .build();
     }
 
@@ -95,14 +93,13 @@ public class PostConverter {
                                 .styleName(style.getName())
                                 .build())
                         .collect(Collectors.toList()))
-                .brand(post.getBrandHashtags().stream()
-                        .findFirst()
+                .brands(post.getBrandHashtags().stream()
                         .map(PostBrandHashtag::getBrand)
                         .map(brand -> BrandDto.builder()
                                 .brandId(brand.getId())
                                 .brandName(brand.getName())
                                 .build())
-                        .orElse(null))
+                        .collect(Collectors.toList()))
                 .build();
     }
     private static String getRelativeTime(LocalDateTime createdAt) {
