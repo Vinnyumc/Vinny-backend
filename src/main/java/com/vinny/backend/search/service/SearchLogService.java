@@ -1,15 +1,11 @@
 package com.vinny.backend.search.service;
 
-import com.vinny.backend.search.dto.RecentSearchListResponse;
-import com.vinny.backend.search.dto.RecentSearchResponse;
-import com.vinny.backend.search.dto.SearchLogDeleteResponse;
+import com.vinny.backend.search.dto.*;
 import com.vinny.backend.search.domain.SearchLog;
 import com.vinny.backend.User.domain.User;
 import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.error.code.status.ErrorStatus;
 import com.vinny.backend.error.exception.GeneralException;
-import com.vinny.backend.search.dto.SearchLogCreateRequest;
-import com.vinny.backend.search.dto.SearchLogResponse;
 import com.vinny.backend.search.repository.SearchLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -206,5 +202,11 @@ public class SearchLogService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<TrendingKeywordResponse> getTodayTop(int limit) {
+        return searchLogRepository.findTodayTop(limit).stream()
+                .map(r -> new TrendingKeywordResponse(r.getKeyword(), r.getScore()))
+                .toList();
+    }
 
 }

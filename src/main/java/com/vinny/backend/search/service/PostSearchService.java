@@ -7,6 +7,7 @@ import com.vinny.backend.search.dto.PostResponse;
 import com.vinny.backend.search.dto.PostSearchResponse;
 import com.vinny.backend.search.dto.StyleSearchRequest;
 import com.vinny.backend.search.dto.UserSearchResponse;
+import com.vinny.backend.search.repository.SearchLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,11 +25,12 @@ import java.util.stream.Collectors;
 public class PostSearchService {
 
     private final PostRepository postRepository;
+    private final SearchLogRepository searchLogRepository;
 
     public Page<PostResponse> searchByStyle(StyleSearchRequest request, Pageable pageable) {
         Page<Post> posts;
 
-            posts = postRepository.findByStyle(request.styleType(), pageable);
+        posts = postRepository.findByStyle(request.styleType(), pageable);
 
         return posts.map(this::convertToResponse);
     }
@@ -76,4 +78,5 @@ public class PostSearchService {
                 ))
                 .toList();
     }
+
 }

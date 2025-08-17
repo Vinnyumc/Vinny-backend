@@ -1,11 +1,12 @@
 package com.vinny.backend.search.controller;
 
+import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.repository.UserRepository;
 import com.vinny.backend.error.ApiResponse;
-import com.vinny.backend.search.dto.PostResponse;
-import com.vinny.backend.search.dto.PostSearchResponse;
-import com.vinny.backend.search.dto.ShopResponse;
-import com.vinny.backend.search.dto.StyleSearchRequest;
+import com.vinny.backend.search.annotation.CurrentUser;
+import com.vinny.backend.search.dto.*;
 import com.vinny.backend.search.service.PostSearchService;
+import com.vinny.backend.search.service.SearchLogService;
 import com.vinny.backend.search.service.ShopSearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/search")
@@ -29,6 +31,8 @@ public class SearchController {
 
     private final PostSearchService postSearchService;
     private final ShopSearchService shopSearchService;
+    private final UserRepository userRepository;
+    private final SearchLogService searchLogService;
 
     // ========== POST 검색 ==========
     @Operation(summary = "스타일별 카테고리를 이용한 게시물 검색", description = "스타일 타입/키워드/지역 등으로 게시물을 검색합니다.")
@@ -73,9 +77,12 @@ public class SearchController {
     })
     @GetMapping("/posts/search")
     public ResponseEntity<ApiResponse<List<PostSearchResponse.PostImagesDto>>> searchPostsByKeyword(
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @Parameter(description = "검색 키워드", required = true, example = "데님")
             @RequestParam String keyword
     ) {
+        SearchLogCreateRequest sr = new SearchLogCreateRequest(keyword);
+        searchLogService.addSearchLog(userId, sr);
         List<PostSearchResponse.PostImagesDto> posts = postSearchService.searchPosts(keyword);
         return ResponseEntity.ok(
                 ApiResponse.onSuccess("검색바를 이용한 게시글 검색 완료", posts)
@@ -89,9 +96,12 @@ public class SearchController {
     })
     @GetMapping("/shop/search")
     public ResponseEntity<ApiResponse<List<ShopResponse>>> searchShops(
+            @Parameter(hidden = true) @CurrentUser Long userId,
             @Parameter(description = "검색 키워드", required = true, example = "홍대")
             @RequestParam String keyword
     ) {
+        SearchLogCreateRequest sr = new SearchLogCreateRequest(keyword);
+        searchLogService.addSearchLog(userId, sr);
         List<ShopResponse> shops = shopSearchService.searchShops(keyword);
         return ResponseEntity.ok(
                 ApiResponse.onSuccess("검색바를 이용한 샵 검색 완료", shops)
