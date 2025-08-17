@@ -4,6 +4,7 @@ public record MypageProfileResponse(
         Long userId,
         String nickname,
         String profileImage,
+        String backgroundImage,
         String comment,
         int postCount,
         int likedShopCount,

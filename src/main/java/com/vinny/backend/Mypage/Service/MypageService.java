@@ -50,6 +50,7 @@ public class MypageService {
                 user.getId(),
                 user.getNickname(),
                 user.getProfileImage(),
+                user.getBackgroundImage(),
                 user.getComment(),
                 postCount,
                 likedShopCount,
@@ -142,7 +143,7 @@ public class MypageService {
     }
 
     @Transactional
-    public MypageUserProfileDto updateBackgroundImage(Long userId,  MypageUpdateProfileImageRequest req) {
+    public MypageUserProfileDto updateBackgroundImage(Long userId,  MypageUpdateBackgroundImageRequest req) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 

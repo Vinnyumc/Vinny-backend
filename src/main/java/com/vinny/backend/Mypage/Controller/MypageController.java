@@ -172,7 +172,7 @@ public class MypageController {
 
             // 2) URL로 배경 이미지 갱신
             MypageUserProfileDto dto =
-                    mypageService.updateBackgroundImage(userId, new MypageUpdateProfileImageRequest(fileUrl));
+                    mypageService.updateBackgroundImage(userId, new MypageUpdateBackgroundImageRequest(fileUrl));
 
             return ResponseEntity.ok(ApiResponse.onSuccess("프로필 배경 이미지가 변경되었습니다.", dto));
         } catch (IOException e) {
