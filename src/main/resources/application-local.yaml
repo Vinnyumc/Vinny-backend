@@ -44,7 +44,7 @@ spring:
             client-id: ${APPLE_CLIENT_ID}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: https://your-domain.com/api/auth/login/apple/callback # 임시 도메인
+            redirect-uri: https://app.vinnydesign.net/login/oauth2/code/apple
             scope:
               - name
               - email
@@ -55,6 +55,7 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
           apple:
+            authorization-uri: https://appleid.apple.com/auth/authorize
             token-uri: https://appleid.apple.com/auth/token
             jwk-set-uri: https://appleid.apple.com/auth/keys
 

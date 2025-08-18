@@ -14,7 +14,7 @@ import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 public class AppleJwtUtils {
 
