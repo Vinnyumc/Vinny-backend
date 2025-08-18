@@ -73,9 +73,10 @@ public class ReviewController {
         @GetMapping("/{shopId}/reviews")
         public ApiResponse<List<ReviewResponseDto.PreviewDto>> getReviewsByShop(
                 @Parameter(description = "후기를 조회할 가게 ID", required = true)
-                @PathVariable Long shopId
+                @PathVariable Long shopId,
+                @Parameter(hidden = true) @CurrentUser Long userId
         ) {
-            List<ReviewResponseDto.PreviewDto> response = reviewService.getReviewsByShop(shopId);
+            List<ReviewResponseDto.PreviewDto> response = reviewService.getReviewsByShop(shopId, userId);
             return ApiResponse.onSuccess(response);
         }
 

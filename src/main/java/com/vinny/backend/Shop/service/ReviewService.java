@@ -68,16 +68,19 @@ public class ReviewService {
      * 가게 후기 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<ReviewResponseDto.PreviewDto> getReviewsByShop(Long shopId) {
+    public List<ReviewResponseDto.PreviewDto> getReviewsByShop(Long shopId, Long userId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
 
-        List<Review> reviews = reviewRepository.findAllByShop(shop);
+        // N+1 방지
+        List<Review> reviews = reviewRepository.findAllByShopWithUserAndImages(shop);
 
+        LocalDateTime now = LocalDateTime.now();
         return reviews.stream()
-                .map(review -> ReviewConverter.toPreviewDto(review, LocalDateTime.now()))
+                .map(r -> ReviewConverter.toPreviewDto(r, now, userId))
                 .collect(Collectors.toList());
     }
+
 
 
     /**

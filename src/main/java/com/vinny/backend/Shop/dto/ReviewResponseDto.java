@@ -14,6 +14,9 @@ public class ReviewResponseDto {
     @AllArgsConstructor
     public static class PreviewDto {
         private Long reviewId;
+        private String userProfileImage;
+        private String userComment;
+        private boolean isMyPost;
         private String title;
         private String content;
         private String userName;
