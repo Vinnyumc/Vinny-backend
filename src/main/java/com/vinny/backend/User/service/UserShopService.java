@@ -46,7 +46,7 @@ public class UserShopService {
             throw new GeneralException(ErrorStatus.USER_SHOP_EXIST);
         }
 
-        UserShop userShop = UserShop.create(user, shop, UserShopStatus.FAVORITE);
+        UserShop userShop = UserShop.create(user, shop, true);
         userShopRepository.save(userShop);
 
         return UserShopResponseDto.toPreviewDto(userShop);
@@ -80,7 +80,7 @@ public class UserShopService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<UserShop> favoriteShops = userShopRepository.findAllByUserAndStatus(user, UserShopStatus.FAVORITE);
+        List<UserShop> favoriteShops = userShopRepository.findAllByUserAndSaved(user, true);
 
         return favoriteShops.stream()
                 .map(UserShopResponseDto.PreviewShopDetailDto::from)

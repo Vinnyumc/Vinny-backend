@@ -41,7 +41,7 @@ public class MapService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        List<UserShop> userShopList = userShopRepository.findAllByUserAndStatus(user, UserShopStatus.FAVORITE);
+        List<UserShop> userShopList = userShopRepository.findAllByUserAndSaved(user, true);
 
         List<Shop> favoriteShopList = userShopList.stream()
                 .map(UserShop::getShop)

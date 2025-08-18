@@ -6,8 +6,11 @@ import com.vinny.backend.Shop.domain.enums.Status;
 import com.vinny.backend.Shop.dto.ShopRequestDto;
 import com.vinny.backend.Shop.dto.ShopResponseDto;
 import com.vinny.backend.Shop.dto.ShopVintageStyleDto;
+import com.vinny.backend.User.domain.User;
+import com.vinny.backend.User.domain.mapping.UserShop;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +46,42 @@ public class ShopConverter {
                 shopPage.getTotalPages(),
                 shopPage.getTotalElements()
         );
+    }
+
+    public static ShopResponseDto.PreviewDto toPreviewDto(Shop shop, UserShop userShop) {
+        List<ShopResponseDto.ImageDto> images = shop.getShopImages().stream()
+                .map(img -> new ShopResponseDto.ImageDto(img.getImageUrl(), img.isMainImage()))
+                .collect(Collectors.toList());
+
+        List<ShopVintageStyleDto> vintageStyleDtos = shop.getShopVintageStyleList().stream()
+                .map(style -> ShopVintageStyleDto.builder()
+                        .id(style.getId())
+                        .vintageStyleName(style.getVintageStyle() != null ? style.getVintageStyle().getName() : null)
+                        .build())
+                .collect(Collectors.toList());
+
+        boolean isSave = userShop.isSaved();
+
+
+
+        return ShopResponseDto.PreviewDto.builder()
+                .id(shop.getId())
+                .name(shop.getName())
+                .intro(shop.getIntro())
+                .description(shop.getDescription())
+                .status(shop.getStatus().name())
+                .openTime(shop.getOpenTime() != null ? shop.getOpenTime().toString() : null)
+                .closeTime(shop.getCloseTime() != null ? shop.getCloseTime().toString() : null)
+                .instagram(shop.getInstagram())
+                .address(shop.getAddress())
+                .latitude(shop.getLatitude())
+                .longitude(shop.getLongitude())
+                .logoImage(shop.getLogoImage())
+                .region(shop.getRegion() != null ? shop.getRegion().getName() : null)
+                .images(images)
+                .shopVintageStyleList(vintageStyleDtos)
+                .saved(isSave)
+                .build();
     }
 
     public static ShopResponseDto.PreviewDto toPreviewDto(Shop shop) {

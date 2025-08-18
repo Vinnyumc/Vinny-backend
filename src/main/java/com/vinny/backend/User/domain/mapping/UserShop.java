@@ -29,25 +29,16 @@ public class UserShop extends BaseEntity {
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private UserShopStatus status;
+    @Column(name = "is_save")
+    private boolean saved;
 
 
 
-    public static UserShop create(User user, Shop shop, UserShopStatus status, Integer visitCount) {
+    public static UserShop create(User user, Shop shop, boolean isSave) {
         return UserShop.builder()
                 .user(user)
                 .shop(shop)
-                .status(status)
-                .build();
-    }
-
-    public static UserShop create(User user, Shop shop, UserShopStatus status) {
-        return UserShop.builder()
-                .user(user)
-                .shop(shop)
-                .status(status)
+                .saved(isSave)
                 .build();
     }
 

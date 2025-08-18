@@ -19,7 +19,7 @@ public class UserShopResponseDto {
     public static class PreviewDto {
         private Long userId;
         private Long shopId;
-        private UserShopStatus status;
+        private boolean save;
         private Integer visitCount;
     }
 
@@ -30,7 +30,7 @@ public class UserShopResponseDto {
         return PreviewDto.builder()
                 .userId(userShop.getUser().getId())
                 .shopId(userShop.getShop().getId())
-                .status(userShop.getStatus())
+                .save(userShop.isSaved())
                 .build();
     }
 
