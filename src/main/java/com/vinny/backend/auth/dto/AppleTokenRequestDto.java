@@ -9,4 +9,5 @@ public class AppleTokenRequestDto {
 
     private String authorizationCode;
     private String identityToken; // 클라이언트(iOS)가 받은 identityToken
+    private String platform;
 }

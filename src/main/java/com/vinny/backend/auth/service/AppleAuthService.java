@@ -35,19 +35,36 @@ public class AppleAuthService {
     private final WebClient webClient = WebClient.create();
     private final ObjectMapper objectMapper;
 
-    @Value("${spring.security.oauth2.client.registration.apple.client-id}")
-    private String clientId;
+//    @Value("${spring.security.oauth2.client.registration.apple.client-id}")
+//    private String clientId;
+
+    @Value("${apple.web-client-id}")
+    private String webClientId;
+    @Value("${apple.ios-bundle-id}")
+    private String iosBundleId;
+
     @Value("${spring.security.oauth2.client.provider.apple.token-uri}")
     private String tokenUri;
     @Value("${spring.security.oauth2.client.provider.apple.jwk-set-uri}")
     private String applePublicKeyUri;
 
     public LoginResponseDto processAppleLogin(AppleTokenRequestDto requestDto) throws Exception {
+        String clientId;
+        if ("ios".equalsIgnoreCase(requestDto.getPlatform())) {
+            clientId = iosBundleId;
+        } else {
+            clientId = webClientId; // 기본값은 web
+        }
+
         // 1. client_secret 생성
-        String clientSecret = appleJwtUtils.createClientSecret();
+//        String clientSecret = appleJwtUtils.createClientSecret();
+        String clientSecret = appleJwtUtils.createClientSecret(clientId);
+
 
         // 2. authorizationCode로 애플 서버에서 토큰(id_token 포함) 받아오기
-        AppleTokenResponse tokenResponse = getAppleToken(requestDto.getAuthorizationCode(), clientSecret).block();
+//        AppleTokenResponse tokenResponse = getAppleToken(requestDto.getAuthorizationCode(), clientSecret).block();
+        AppleTokenResponse tokenResponse = getAppleToken(requestDto.getAuthorizationCode(), clientSecret, clientId).block();
+
         String serverIdentityToken = tokenResponse.getIdToken();
 
         // 3. 서버가 직접 받은 id_token의 서명을 검증하고 payload 추출
@@ -69,7 +86,7 @@ public class AppleAuthService {
         return authService.socialLogin(provider, providerId, email);
     }
 
-    private Mono<AppleTokenResponse> getAppleToken(String code, String clientSecret) {
+    private Mono<AppleTokenResponse> getAppleToken(String code, String clientSecret, String clientId) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", clientId);
         formData.add("client_secret", clientSecret);
