@@ -1,5 +1,6 @@
 package com.vinny.backend.Shop.dto;
 
+import com.vinny.backend.User.domain.enums.UserShopStatus;
 import lombok.*;
 
 import java.time.LocalTime;
@@ -26,6 +27,7 @@ public class ShopResponseDto {
         private Double longitude;
         private String region;
         private String logoImage;
+        private boolean saved;
         private List<ImageDto> images;
         private List<ShopVintageStyleDto> shopVintageStyleList;
     }

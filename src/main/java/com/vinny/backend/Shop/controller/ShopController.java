@@ -9,6 +9,7 @@ import com.vinny.backend.Shop.service.ShopRankingService;
 import com.vinny.backend.User.validation.annotation.ExistVintageStyle;
 import com.vinny.backend.common.validator.ValidPageParam;
 import com.vinny.backend.error.ApiResponse;
+import com.vinny.backend.search.annotation.CurrentUser;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -81,11 +82,12 @@ public class ShopController {
     })
     @GetMapping("/shop/{shopId}")
     public ResponseEntity<ApiResponse<ShopResponseDto.PreviewDto>> getShopDetails(
-            @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId
+            @Parameter(description = "가게 ID", required = true) @PathVariable Long shopId,
+            @Parameter(hidden = true) @CurrentUser Long userId
     ) {
 
-        ShopResponseDto.PreviewDto shopDetails = shopService.getShopsDetails(shopId);
-        shopDetails = shopService.getShopDetailsAndIncreaseVisit(shopId);
+//        ShopResponseDto.PreviewDto shopDetails = shopService.getShopsDetails(shopId,userId);
+        ShopResponseDto.PreviewDto shopDetails = shopService.getShopDetailsAndIncreaseVisit(shopId, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(shopDetails));
     }
 

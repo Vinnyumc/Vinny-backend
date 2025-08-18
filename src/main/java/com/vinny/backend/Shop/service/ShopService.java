@@ -6,6 +6,8 @@ import com.vinny.backend.Shop.dto.ShopResponseDto;
 import com.vinny.backend.Shop.dto.ShopSearchResponseDto;
 import com.vinny.backend.Shop.repository.ShopRepository;
 import com.vinny.backend.User.domain.VintageStyle;
+import com.vinny.backend.User.domain.mapping.UserShop;
+import com.vinny.backend.User.repository.UserShopRepository;
 import com.vinny.backend.User.repository.VintageStyleRepository;
 import com.vinny.backend.error.code.status.ErrorStatus;
 import com.vinny.backend.error.exception.GeneralException;
@@ -26,6 +28,7 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ShopConverter shopConverter;
+    private final UserShopRepository userShopRepository;
 
     private static final int PAGE_SIZE = 5;  // 한 페이지당 5개씩 (임시)
 
@@ -42,7 +45,15 @@ public class ShopService {
     /**
      * 가게 상세 조회
      */
-    public ShopResponseDto.PreviewDto getShopsDetails(long shopId) {
+    public ShopResponseDto.PreviewDto getShopsDetails(Long shopId, Long userId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
+        UserShop usershop = userShopRepository.findByShop_idAndUser_id(shopId,userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_SHOP_NOT_FOUND));
+        return shopConverter.toPreviewDto(shop,usershop);
+    }
+
+    public ShopResponseDto.PreviewDto getShopsDetails(Long shopId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
         return shopConverter.toPreviewDto(shop);
@@ -64,13 +75,13 @@ public class ShopService {
     }
 
     @Transactional // ✅ write 트랜잭션
-    public ShopResponseDto.PreviewDto getShopDetailsAndIncreaseVisit(Long shopId) {
+    public ShopResponseDto.PreviewDto getShopDetailsAndIncreaseVisit(Long shopId, Long userId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new IllegalArgumentException("Shop not found: " + shopId));
 
         shop.increaseVisitCount(); // ✅ 엔티티 필드 변경 -> 커밋 시 자동 업데이트
 
-        return getShopsDetails(shopId); // 기존 DTO 생성 로직 재사용
+        return getShopsDetails(shopId, userId); // 기존 DTO 생성 로직 재사용
     }
 
 
