@@ -2,8 +2,11 @@ package com.vinny.backend.search.controller;
 
 import com.vinny.backend.Shop.domain.Shop;
 import com.vinny.backend.Shop.service.ShopService;
+import com.vinny.backend.User.domain.Brand;
+import com.vinny.backend.brand.service.BrandService;
 import com.vinny.backend.error.ApiResponse;
 import com.vinny.backend.search.annotation.CurrentUser;
+import com.vinny.backend.search.dto.AutocompleteBrandResponse;
 import com.vinny.backend.search.dto.AutocompleteShopResponse;
 import com.vinny.backend.search.service.AutocompleteSearchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +25,7 @@ public class AutocompleteController {
 
     private final AutocompleteSearchService autocompleteSearchService;
     private final ShopService shopService;
+    private final BrandService brandService;
 
     @GetMapping("/brands")
     @Operation(
@@ -32,14 +36,26 @@ public class AutocompleteController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "자동완성 결과 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청 (keyword 파라미터가 누락 등)")
     })
-    public ResponseEntity<ApiResponse<List<String>>> brandAutocomplete(
+    public ResponseEntity<ApiResponse<List<AutocompleteBrandResponse>>> brandAutocomplete(
             @Parameter(hidden = true) @CurrentUser Long userId,
             @Parameter(description = "자동완성에 사용할 키워드", example = "ni", required = true)
             @RequestParam String keyword
     ) {
         List<String> result = autocompleteSearchService.autocompleteBrandName(keyword);
-        return ResponseEntity.ok(ApiResponse.onSuccess(result));
+
+        List<Brand> brands = brandService.getBrandByName(result);
+
+        List<AutocompleteBrandResponse> response = brands.stream()
+                .map(brand -> new AutocompleteBrandResponse(
+                        brand.getName(),
+                        brand.getBrandImage()// 엔티티에 logo 필드 있다고 가정
+                ))
+                .toList();
+
+
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
+
 
 
     @GetMapping("/shops")

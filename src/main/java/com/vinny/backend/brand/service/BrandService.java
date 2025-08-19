@@ -1,6 +1,7 @@
 
 package com.vinny.backend.brand.service;
 
+import com.vinny.backend.User.domain.Brand;
 import com.vinny.backend.brand.dto.BrandDto;
 import com.vinny.backend.User.repository.BrandRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -33,4 +35,12 @@ public class BrandService {
                 .map(BrandDto::from)
                 .toList();
     }
+
+    public List<Brand> getBrandByName(List<String> names) {
+        if (names == null || names.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return brandRepository.findByNameIn(names);
+    }
+
 }
