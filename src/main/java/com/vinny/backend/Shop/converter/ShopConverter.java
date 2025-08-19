@@ -60,9 +60,8 @@ public class ShopConverter {
                         .build())
                 .collect(Collectors.toList());
 
-        boolean isSave = userShop.isSaved();
-
-
+        // userShop이 null일 경우 false로 처리
+        boolean isSave = (userShop != null && userShop.isSaved());
 
         return ShopResponseDto.PreviewDto.builder()
                 .id(shop.getId())

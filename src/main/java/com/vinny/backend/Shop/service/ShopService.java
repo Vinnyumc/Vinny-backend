@@ -49,9 +49,12 @@ public class ShopService {
     public ShopResponseDto.PreviewDto getShopsDetails(Long shopId, Long userId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
-        UserShop usershop = userShopRepository.findByShop_idAndUser_id(shopId,userId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_SHOP_NOT_FOUND));
-        return shopConverter.toPreviewDto(shop,usershop);
+
+        // UserShop 조회, 없으면 null 반환
+        UserShop userShop = userShopRepository.findByShop_idAndUser_id(shopId, userId)
+                .orElse(null);
+
+        return shopConverter.toPreviewDto(shop, userShop);
     }
 
     public ShopResponseDto.PreviewDto getShopsDetails(Long shopId) {
