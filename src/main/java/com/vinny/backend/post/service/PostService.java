@@ -185,7 +185,12 @@ public class PostService {
         // 6. 스타일 처리 (선택적, 여러 개 가능)
         if (styleNames != null) {
             for (String styleName : styleNames) {
-                VintageStyle style = styleRepository.findByName(styleName)
+                String normalizedStyleName = (styleName == null) ? null : styleName.trim();
+                if (normalizedStyleName == null || normalizedStyleName.isEmpty()) {
+                    continue;
+                }
+                VintageStyle style = styleRepository.findByName(normalizedStyleName)
+                        .or(() -> styleRepository.findByNameSuffix(normalizedStyleName))
                         .orElseThrow(() -> new GeneralException(ErrorStatus.STYLE_NOT_FOUND));
                 PostStyleHashtag styleHashtag = PostStyleHashtag.builder()
                         .post(post)
@@ -229,7 +234,12 @@ public class PostService {
         if (dto.getStyleNames() != null) {
             post.clearStyleHashtags();
             for (String styleName : dto.getStyleNames()) {
-                VintageStyle style = styleRepository.findByName(styleName)
+                String normalizedStyleName = (styleName == null) ? null : styleName.trim();
+                if (normalizedStyleName == null || normalizedStyleName.isEmpty()) {
+                    continue;
+                }
+                VintageStyle style = styleRepository.findByName(normalizedStyleName)
+                        .or(() -> styleRepository.findByNameSuffix(normalizedStyleName))
                         .orElseThrow(() -> new GeneralException(ErrorStatus.STYLE_NOT_FOUND));
                 post.addStyleHashtag(style);
             }
