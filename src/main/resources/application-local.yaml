@@ -39,23 +39,25 @@ spring:
               - profile_nickname
               - profile_image
               - account_email
-        #          apple:
-        #            client-id: ${APPLE_CLIENT_ID}
-        #            client-authentication-method: client_secret_post
-        #            authorization-grant-type: authorization_code
-        #            redirect-uri: https://your-domain.com/api/auth/login/apple/callback # 임시 도메인
-        #            scope:
-        #              - name
-        #              - email
+
+          apple:
+            client-id: ${APPLE_CLIENT_ID}
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: https://app.vinnydesign.net/login/oauth2/code/apple
+            scope:
+              - name
+              - email
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-#          apple:
-#            token-uri: https://appleid.apple.com/auth/token
-#            jwk-set-uri: https://appleid.apple.com/auth/keys
+          apple:
+            authorization-uri: https://appleid.apple.com/auth/authorize
+            token-uri: https://appleid.apple.com/auth/token
+            jwk-set-uri: https://appleid.apple.com/auth/keys
 
 jwt:
   secret: ${JWT_SECRET}
@@ -65,10 +67,12 @@ jwt:
   refresh-token-expiration-milliseconds: 604800000 # 7일 (이건 그대로 둡니다)
 
 # Apple 로그인 전용 설정값
-#apple:
-#  team-id: ${APPLE_TEAM_ID}
-#  key-id: ${APPLE_KEY_ID}
-#  private-key-path: ${APPLE_PRIVATE_KEY_PATH}
+apple:
+  team-id: ${APPLE_TEAM_ID}
+  key-id: ${APPLE_KEY_ID}
+  private-key-path: ${APPLE_PRIVATE_KEY_PATH}
+  web-client-id: ${APPLE_WEB_CLIENT_ID}
+  ios-bundle-id: ${APPLE_IOS_BUNDLE_ID}
 
 cloud:
   aws:
@@ -81,3 +85,12 @@ cloud:
       static: "ap-northeast-2"
     stack:
       auto: false
+
+#server:
+#  port: 8443  # http 포트와 겹치지 않게 8443으로 설정
+#  ssl:
+#    enabled: true
+#    key-store-type: PKCS12
+#    key-store: classpath:keystore.p12 # 프로젝트에 생성된 인증서 파일
+#    key-store-password: 123456    # 3번에서 설정한 비밀번호
+#    key-alias: vinny-ssl            # 3번에서 설정한 alias

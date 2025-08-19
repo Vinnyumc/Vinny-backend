@@ -2,6 +2,7 @@ package com.vinny.backend.auth.controller;
 
 import com.vinny.backend.auth.dto.*;
 import com.vinny.backend.auth.jwt.JwtProvider;
+import com.vinny.backend.auth.service.AppleAuthService;
 import com.vinny.backend.auth.service.AuthService;
 import com.vinny.backend.auth.service.KakaoAuthService;
 import com.vinny.backend.error.ApiResponse;
@@ -28,6 +29,7 @@ public class AuthController {
     private final AuthService authService;
     private final KakaoAuthService kakaoAuthService;
     private final JwtProvider jwtProvider;
+    private final AppleAuthService appleAuthService;
 
     @PostMapping("/login/kakao")
     @Operation(
@@ -53,6 +55,38 @@ public class AuthController {
             @RequestBody KakaoTokenRequestDto requestDto
     ) {
         LoginResponseDto responseDto = kakaoAuthService.processKakaoLogin(requestDto.getAccessToken());
+        return ApiResponse.onSuccess(responseDto);
+    }
+
+    @PostMapping("/login/apple")
+    @Operation(
+            summary = "애플 소셜 로그인",
+            description = """
+            애플에서 발급받은 authorizationCode와 identityToken으로 로그인합니다.
+            - **platform** 필드에 'ios' 또는 'web'을 명시해야 합니다.
+            - 신규 유저: User를 생성하고 UserStatus=ONBOARDING으로 저장
+            - 기존 유저: 기존 User로 토큰 재발급
+            응답으로 우리 서버의 JWT(access/refresh)를 반환합니다.
+            """
+    )
+    public ApiResponse<LoginResponseDto> appleMobileLogin(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "애플 로그인 요청 정보",
+                    content = @Content(
+                            schema = @Schema(implementation = AppleTokenRequestDto.class),
+                            examples = @ExampleObject(value = """
+                        {
+                          "authorizationCode": "cabc123...",
+                          "identityToken": "eyJhbGciOi...",
+                          "platform": "ios"
+                        }
+                    """)
+                    )
+            )
+            @RequestBody AppleTokenRequestDto requestDto
+    ) throws Exception {
+        LoginResponseDto responseDto = appleAuthService.processAppleLogin(requestDto);
         return ApiResponse.onSuccess(responseDto);
     }
 

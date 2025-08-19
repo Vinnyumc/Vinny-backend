@@ -14,12 +14,12 @@ import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 public class AppleJwtUtils {
 
-    @Value("${spring.security.oauth2.client.registration.apple.client-id}")
-    private String clientId;
+//    @Value("${spring.security.oauth2.client.registration.apple.client-id}")
+//    private String clientId;
     @Value("${apple.team-id}")
     private String teamId;
     @Value("${apple.key-id}")
@@ -27,7 +27,7 @@ public class AppleJwtUtils {
     @Value("${apple.private-key-path}")
     private String privateKeyPath;
 
-    public String createClientSecret() throws Exception {
+    public String createClientSecret(String clientId) throws Exception {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + 3600 * 1000); // 1시간 유효
 
