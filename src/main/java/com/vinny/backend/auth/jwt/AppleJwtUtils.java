@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -24,8 +25,8 @@ public class AppleJwtUtils {
     private String teamId;
     @Value("${apple.key-id}")
     private String keyId;
-    @Value("${apple.private-key-path}")
-    private String privateKeyPath;
+    @Value("${apple.private-key}")
+    private String privateKeyString;
 
     public String createClientSecret(String clientId) throws Exception {
         Date now = new Date();
@@ -44,11 +45,11 @@ public class AppleJwtUtils {
     }
 
     private PrivateKey getPrivateKey() throws Exception {
-        ClassPathResource resource = new ClassPathResource(privateKeyPath);
-        InputStream inputStream = resource.getInputStream();
-        String privateKeyString = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-        String key = privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replaceAll("\\s+", "");
-        byte[] keyBytes = java.util.Base64.getDecoder().decode(key);
+        String key = privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "")
+                .replace("-----END PRIVATE KEY-----", "")
+                .replaceAll("\\s+", "");
+
+        byte[] keyBytes = Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
         return keyFactory.generatePrivate(keySpec);
