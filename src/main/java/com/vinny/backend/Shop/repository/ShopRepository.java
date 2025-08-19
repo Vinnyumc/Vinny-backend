@@ -62,4 +62,6 @@ public interface ShopRepository extends JpaRepository<Shop, Long>, ShopRankingQu
 
 
     Optional<List<Object>> findShopByNameIn(Collection<String> names);
+
+    Optional<Shop> findByName(String name);
 }

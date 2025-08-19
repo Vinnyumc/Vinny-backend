@@ -27,14 +27,14 @@ public class PostRequestDto {
         @Schema(description = "게시글 내용")
         private String content;
 
-        @Schema(description = "스타일 ID")
-        private List<Long> styleIds;
+        @Schema(description = "스타일 이름 목록")
+        private List<String> styleNames;
 
-        @Schema(description = "브랜드 ID")
-        private List<Long> brandIds;
+        @Schema(description = "브랜드 이름 목록")
+        private List<String> brandNames;
 
-        @Schema(description = "샵 ID")
-        private Long shopId;
+        @Schema(description = "샵 이름")
+        private String shopName;
     }
 
     //일단 전체 필드 수정 가능하도록
@@ -51,13 +51,13 @@ public class PostRequestDto {
         @Schema(description = "게시글 내용")
         private String content;
 
-        @Schema(description = "스타일 ID 목록")
-        private List<Long> styleIds;
+        @Schema(description = "스타일 이름 목록")
+        private List<String> styleNames;
 
-        @Schema(description = "브랜드 ID 목록")
-        private List<Long> brandIds;
+        @Schema(description = "브랜드 이름 목록")
+        private List<String> brandNames;
 
-        @Schema(description = "샵 ID")
-        private Long shopId;
+        @Schema(description = "샵 이름")
+        private String shopName;
     }
 }

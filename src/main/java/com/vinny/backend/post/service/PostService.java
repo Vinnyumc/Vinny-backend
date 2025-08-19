@@ -127,9 +127,9 @@ public class PostService {
         // 2. 게시글 기본 정보 세팅
         String title = dto.getTitle();
         String content = dto.getContent();
-        List<Long> styleIds = dto.getStyleIds();
-        List<Long> brandIds = dto.getBrandIds();
-        Long shopId = dto.getShopId();
+        List<String> styleNames = dto.getStyleNames();
+        List<String> brandNames = dto.getBrandNames();
+        String shopName = dto.getShopName();
 
         Post post = Post.builder()
                 .title(title)
@@ -159,9 +159,9 @@ public class PostService {
         }
 
         // 4. 브랜드 처리 (선택적, 여러 개 가능)
-        if (brandIds != null) {
-            for (Long brandId : brandIds) {
-                Brand brand = brandRepository.findById(brandId)
+        if (brandNames != null) {
+            for (String brandName : brandNames) {
+                Brand brand = brandRepository.findByName(brandName)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BRAND_NOT_FOUND));
                 PostBrandHashtag brandHashtag = PostBrandHashtag.builder()
                         .post(post)
@@ -172,8 +172,8 @@ public class PostService {
         }
 
         // 5. 샵 처리 (선택적)
-        if (shopId != null) {
-            Shop shop = shopRepository.findById(shopId)
+        if (shopName != null && !shopName.isBlank()) {
+            Shop shop = shopRepository.findByName(shopName)
                     .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
             PostShopHashtag shopHashtag = PostShopHashtag.builder()
                     .post(post)
@@ -183,9 +183,9 @@ public class PostService {
         }
 
         // 6. 스타일 처리 (선택적, 여러 개 가능)
-        if (styleIds != null) {
-            for (Long styleId : styleIds) {
-                VintageStyle style = styleRepository.findById(styleId)
+        if (styleNames != null) {
+            for (String styleName : styleNames) {
+                VintageStyle style = styleRepository.findByName(styleName)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.STYLE_NOT_FOUND));
                 PostStyleHashtag styleHashtag = PostStyleHashtag.builder()
                         .post(post)
@@ -217,27 +217,27 @@ public class PostService {
         if (dto.getTitle() != null) post.setTitle(dto.getTitle());
         if (dto.getContent() != null) post.setContent(dto.getContent());
 
-        if (dto.getBrandIds() != null) {
+        if (dto.getBrandNames() != null) {
             post.clearBrandHashtags();
-            for (Long brandId : dto.getBrandIds()) {
-                Brand brand = brandRepository.findById(brandId)
+            for (String brandName : dto.getBrandNames()) {
+                Brand brand = brandRepository.findByName(brandName)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BRAND_NOT_FOUND));
                 post.addBrandHashtag(brand);
             }
         }
 
-        if (dto.getStyleIds() != null) {
+        if (dto.getStyleNames() != null) {
             post.clearStyleHashtags();
-            for (Long styleId : dto.getStyleIds()) {
-                VintageStyle style = styleRepository.findById(styleId)
+            for (String styleName : dto.getStyleNames()) {
+                VintageStyle style = styleRepository.findByName(styleName)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.STYLE_NOT_FOUND));
                 post.addStyleHashtag(style);
             }
         }
 
-        if (dto.getShopId() != null) {
+        if (dto.getShopName() != null && !dto.getShopName().isBlank()) {
             post.clearShopHashtags();
-            Shop shop = shopRepository.findById(dto.getShopId())
+            Shop shop = shopRepository.findByName(dto.getShopName())
                     .orElseThrow(() -> new GeneralException(ErrorStatus.SHOP_NOT_FOUND));
             post.addShopHashtag(shop);
         }

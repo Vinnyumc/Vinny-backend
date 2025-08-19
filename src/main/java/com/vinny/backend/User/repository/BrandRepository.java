@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
+import java.util.Optional;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Long> {
@@ -19,4 +20,5 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     List<Brand> findByNameContainingIgnoreCaseOrderByNameAsc(String name, Pageable pageable);
 
     List<Brand> findByNameIn(List<String> names);
+    Optional<Brand> findByName(String name);
 }
