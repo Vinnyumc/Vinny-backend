@@ -91,3 +91,12 @@ cloud:
 feature:
   autocomplete:
     init: true
+
+#server:
+#  port: 8443  # http 포트와 겹치지 않게 8443으로 설정
+#  ssl:
+#    enabled: true
+#    key-store-type: PKCS12
+#    key-store: classpath:keystore.p12 # 프로젝트에 생성된 인증서 파일
+#    key-store-password: 123456    # 3번에서 설정한 비밀번호
+#    key-alias: vinny-ssl            # 3번에서 설정한 alias
