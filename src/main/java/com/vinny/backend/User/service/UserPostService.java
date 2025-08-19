@@ -32,7 +32,9 @@ public class UserPostService {
                 user.getNickname(),
                 user.getComment(),
                 postCount,
-                bookmarkCount
+                bookmarkCount,
+                user.getProfileImage(),
+                user.getBackgroundImage()
         );
     }
 
