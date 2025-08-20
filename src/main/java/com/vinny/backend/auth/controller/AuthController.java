@@ -63,7 +63,6 @@ public class AuthController {
             summary = "애플 소셜 로그인",
             description = """
             애플에서 발급받은 authorizationCode와 identityToken으로 로그인합니다.
-            - **platform** 필드에 'ios' 또는 'web'을 명시해야 합니다.
             - 신규 유저: User를 생성하고 UserStatus=ONBOARDING으로 저장
             - 기존 유저: 기존 User로 토큰 재발급
             응답으로 우리 서버의 JWT(access/refresh)를 반환합니다.
@@ -78,8 +77,7 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                         {
                           "authorizationCode": "cabc123...",
-                          "identityToken": "eyJhbGciOi...",
-                          "platform": "ios"
+                          "identityToken": "eyJhbGciOi..."
                         }
                     """)
                     )

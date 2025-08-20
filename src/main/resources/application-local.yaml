@@ -41,7 +41,7 @@ spring:
               - account_email
 
           apple:
-            client-id: ${APPLE_CLIENT_ID}
+            client-id: ${APPLE_IOS_BUNDLE_ID}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             redirect-uri: https://app.vinnydesign.net/login/oauth2/code/apple
@@ -85,12 +85,3 @@ cloud:
       static: "ap-northeast-2"
     stack:
       auto: false
-
-#server:
-#  port: 8443  # http 포트와 겹치지 않게 8443으로 설정
-#  ssl:
-#    enabled: true
-#    key-store-type: PKCS12
-#    key-store: classpath:keystore.p12 # 프로젝트에 생성된 인증서 파일
-#    key-store-password: 123456    # 3번에서 설정한 비밀번호
-#    key-alias: vinny-ssl            # 3번에서 설정한 alias

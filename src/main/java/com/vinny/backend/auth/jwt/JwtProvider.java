@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
@@ -29,7 +30,8 @@ public class JwtProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
 
-    private final Key key;
+//    private final Key key;
+    private final SecretKey key;
     private final long accessTokenExpirationMilliseconds;
     private final long refreshTokenExpirationMilliseconds;
 
@@ -53,13 +55,15 @@ public class JwtProvider {
                 .setSubject(subject)
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
+//                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key)
                 .compact();
 
         String refreshToken = Jwts.builder()
                 .setSubject(subject)
                 .setExpiration(new Date(now + this.refreshTokenExpirationMilliseconds))
-                .signWith(key, SignatureAlgorithm.HS512)
+//                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key)
                 .compact();
 
         return TokenDto.builder()
@@ -82,7 +86,8 @@ public class JwtProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
@@ -98,7 +103,8 @@ public class JwtProvider {
 
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+//            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parser().verifyWith(key).build().parseSignedClaims(accessToken).getPayload();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

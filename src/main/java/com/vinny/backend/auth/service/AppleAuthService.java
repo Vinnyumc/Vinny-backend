@@ -9,7 +9,9 @@ import com.vinny.backend.auth.service.AuthService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,7 +27,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Map;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AppleAuthService {
@@ -35,13 +37,8 @@ public class AppleAuthService {
     private final WebClient webClient = WebClient.create();
     private final ObjectMapper objectMapper;
 
-//    @Value("${spring.security.oauth2.client.registration.apple.client-id}")
-//    private String clientId;
-
-    @Value("${apple.web-client-id}")
-    private String webClientId;
     @Value("${apple.ios-bundle-id}")
-    private String iosBundleId;
+    private String clientId;
 
     @Value("${spring.security.oauth2.client.provider.apple.token-uri}")
     private String tokenUri;
@@ -49,21 +46,13 @@ public class AppleAuthService {
     private String applePublicKeyUri;
 
     public LoginResponseDto processAppleLogin(AppleTokenRequestDto requestDto) throws Exception {
-        String clientId;
-        if ("ios".equalsIgnoreCase(requestDto.getPlatform())) {
-            clientId = iosBundleId;
-        } else {
-            clientId = webClientId; // 기본값은 web
-        }
 
         // 1. client_secret 생성
-//        String clientSecret = appleJwtUtils.createClientSecret();
-        String clientSecret = appleJwtUtils.createClientSecret(clientId);
+        String clientSecret = appleJwtUtils.createClientSecret();
 
 
         // 2. authorizationCode로 애플 서버에서 토큰(id_token 포함) 받아오기
-//        AppleTokenResponse tokenResponse = getAppleToken(requestDto.getAuthorizationCode(), clientSecret).block();
-        AppleTokenResponse tokenResponse = getAppleToken(requestDto.getAuthorizationCode(), clientSecret, clientId).block();
+        AppleTokenResponse tokenResponse = getAppleToken(requestDto.getAuthorizationCode(), clientSecret).block();
 
         String serverIdentityToken = tokenResponse.getIdToken();
 
@@ -86,7 +75,22 @@ public class AppleAuthService {
         return authService.socialLogin(provider, providerId, email);
     }
 
-    private Mono<AppleTokenResponse> getAppleToken(String code, String clientSecret, String clientId) {
+//    private Mono<AppleTokenResponse> getAppleToken(String code, String clientSecret, String clientId) {
+//        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+//        formData.add("client_id", clientId);
+//        formData.add("client_secret", clientSecret);
+//        formData.add("code", code);
+//        formData.add("grant_type", "authorization_code");
+//
+//        return webClient.post()
+//                .uri(tokenUri)
+//                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//                .body(BodyInserters.fromFormData(formData))
+//                .retrieve()
+//                .bodyToMono(AppleTokenResponse.class);
+//    }
+
+    private Mono<AppleTokenResponse> getAppleToken(String code, String clientSecret) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", clientId);
         formData.add("client_secret", clientSecret);
@@ -95,9 +99,17 @@ public class AppleAuthService {
 
         return webClient.post()
                 .uri(tokenUri)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                // ⭐️ HTTP 헤더를 명시적으로 설정합니다.
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .body(BodyInserters.fromFormData(formData))
                 .retrieve()
+                // ⭐️ 4xx 또는 5xx 에러 발생 시 로그를 남깁니다.
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        response -> response.bodyToMono(String.class)
+                                .doOnNext(body -> log.error("Apple server error: {}", body))
+                                .then(Mono.error(new RuntimeException("Apple server returned an error.")))
+                )
                 .bodyToMono(AppleTokenResponse.class);
     }
 
@@ -109,11 +121,11 @@ public class AppleAuthService {
             ApplePublicKeyResponse.ApplePublicKey publicKey = getMatchingPublicKey(kid).block();
             if (publicKey == null) throw new RuntimeException("Apple Public Key not found for kid: " + kid);
 
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(createPublicKey(publicKey))
+            Claims claims = Jwts.parser()
+                    .verifyWith(createPublicKey(publicKey))
                     .build()
-                    .parseClaimsJws(identityToken)
-                    .getBody();
+                    .parseSignedClaims(identityToken)
+                    .getPayload();
 
             return objectMapper.convertValue(claims, AppleUserPayload.class);
         } catch (Exception e) {

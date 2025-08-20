@@ -19,8 +19,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AppleJwtUtils {
 
-//    @Value("${spring.security.oauth2.client.registration.apple.client-id}")
-//    private String clientId;
+    @Value("${apple.ios-bundle-id}")
+    private String clientId;
     @Value("${apple.team-id}")
     private String teamId;
     @Value("${apple.key-id}")
@@ -28,7 +28,7 @@ public class AppleJwtUtils {
     @Value("${apple.private-key}")
     private String privateKeyString;
 
-    public String createClientSecret(String clientId) throws Exception {
+    public String createClientSecret() throws Exception {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + 3600 * 1000); // 1시간 유효
 
@@ -40,14 +40,16 @@ public class AppleJwtUtils {
                 .setExpiration(expiration)
                 .setAudience("https://appleid.apple.com")
                 .setSubject(clientId)
-                .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
+//                .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
+                .signWith(getPrivateKey())
                 .compact();
     }
 
     private PrivateKey getPrivateKey() throws Exception {
         String key = privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
-                .replaceAll("\\s+", "");
+                .replace("\"", "")
+                .replaceAll("\\s", "");
 
         byte[] keyBytes = Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
