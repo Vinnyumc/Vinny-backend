@@ -287,8 +287,16 @@ public class PostService {
 
     @Transactional
     public PostResponseDto.PostDetailResponseDto getPostDetail(Long postId, Long userId) {
-        Post post = postRepository.findByIdWithAllRelations(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        // Initialize lazy collections to avoid JOIN multiplication and still keep separate selects
+        if (post.getImages() != null) post.getImages().size();
+        if (post.getBrandHashtags() != null) post.getBrandHashtags().size();
+        if (post.getStyleHashtags() != null) post.getStyleHashtags().size();
+        if (post.getShopHashtags() != null) post.getShopHashtags().size();
+        if (post.getLikes() != null) post.getLikes().size();
+        if (post.getBookmarks() != null) post.getBookmarks().size();
 
         boolean isLikedByMe = post.getLikes().stream()
                 .anyMatch(like -> like.getUser().getId().equals(userId));
