@@ -31,7 +31,7 @@ public class UserShopForYouController {
 
     @Operation(
             summary = "홈 취향저격 가게 추천",
-            description = "홈 취향저격 가게 추천 목록을 조회합니다. 저장된 데이터가 없으면 생성 후 반환합니다."
+            description = "홈 취향저격 가게 추천 목록을 조회합니다. 매 조회시 생성된 리스트 중 랜덤으로 3개를 반환합니다. "
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -46,7 +46,6 @@ public class UserShopForYouController {
             )
     })
     @Parameters({
-            @Parameter(name = "limit", description = "반환 개수"),
             @Parameter(name = "userId", hidden = true)
     })
     @GetMapping

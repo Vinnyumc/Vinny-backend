@@ -11,4 +11,7 @@ public interface UserShopForYouRepository extends JpaRepository<UserWeeklyShop, 
     List<UserWeeklyShop> findByUser_IdAndWeekStart(Long userId, LocalDate weekStart);
 
     void deleteByUser_IdAndWeekStartLessThan(Long userId, LocalDate weekStart);
+
+    boolean existsByUser_IdAndWeekStartAndShop_Id(Long userId, LocalDate weekStart, Long shopId);
+
 }

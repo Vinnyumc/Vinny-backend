@@ -12,6 +12,7 @@ import com.vinny.backend.User.repository.UserShopForYouRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
@@ -39,35 +41,35 @@ public class UserShopForYouService {
      */
     @Transactional
     public List<ShopResponseDto.HomeForYouThumbnailDto> getThisWeekForYou(Long userId) {
-        // 지난 주 이전 데이터 정리만 수행 (이번 주는 건드리지 않음)
+        // 지난 주 이전 데이터 정리만 수행
         deleteOldWeeklyShops(userId);
 
         LocalDate weekStart = getCurrentWeekStart();
 
-        // 이번 주 데이터 있으면 그대로 반환
+        // 이번 주 데이터 조회(없으면 생성)
         List<UserWeeklyShop> saved = weeklyRepo.findByUser_IdAndWeekStart(userId, weekStart);
         if (saved == null || saved.isEmpty()) {
-            // 없을 때만 생성 (현재 주 삭제 없음)
             saved = generateAndPersistWeekly(userId, weekStart);
         }
 
-        List<Long> idsInOrder = saved.stream()
-                .map(uws -> uws.getShop().getId())
+        // 저장된 후보에서 매 호출마다 랜덤 샘플 3개
+        List<Shop> shops = saved.stream()
+                .map(UserWeeklyShop::getShop)
                 .filter(Objects::nonNull)
                 .toList();
-        if (idsInOrder.isEmpty()) return List.of();
 
-        Map<Long,Integer> order = new HashMap<>();
-        for (int i = 0; i < idsInOrder.size(); i++) order.put(idsInOrder.get(i), i);
+        if (shops.isEmpty()) return List.of();
 
-        List<Shop> shops = shopRepository.findAllById(idsInOrder);
+        // 섞을 수 있도록 변경 가능한 리스트로 만들기
+        List<Shop> shuffled = new ArrayList<>(shops);
+        Collections.shuffle(shuffled, ThreadLocalRandom.current());
 
-        return shops.stream()
-                .sorted(Comparator.comparingInt(s -> order.getOrDefault(s.getId(), Integer.MAX_VALUE)))
+        return shuffled.stream()
+                .limit(DEFAULT_LIMIT) // 최대 3개
                 .map(shopConverter::toHomeForYouThumbnailDto)
-                .limit(DEFAULT_LIMIT)
                 .toList();
     }
+
 
 
     /**
@@ -77,8 +79,9 @@ public class UserShopForYouService {
     public List<ShopResponseDto.HomeForYouThumbnailDto> regenerateThisWeek(Long userId) {
         LocalDate weekStart = getCurrentWeekStart();
 
-        // 이번 주 데이터만 지우고 재생성
         weeklyRepo.deleteByUser_IdAndWeekStart(userId, weekStart);
+        em.flush();
+
         List<UserWeeklyShop> saved = generateAndPersistWeekly(userId, weekStart);
 
         List<Long> shopIdsInOrder = saved.stream()
@@ -116,16 +119,31 @@ public class UserShopForYouService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
-        List<Long> matchedIds = new ArrayList<>(shopQueryRepository.findMatchedShopIdsRandomByUser(userId));
-        if (matchedIds.size() > DEFAULT_LIMIT) {
-            matchedIds = matchedIds.subList(0, DEFAULT_LIMIT);
+        // 1) 후보 조회
+        List<Long> rawIds = new ArrayList<>(shopQueryRepository.findMatchedShopIdsRandomByUser(userId));
+
+        // 2) null 제거 + 중복 제거(순서 유지)
+        LinkedHashSet<Long> dedup = new LinkedHashSet<>();
+        for (Long id : rawIds) {
+            if (id != null) dedup.add(id);
         }
+
+        // 3) limit 적용 (중복 제거 후 적용해야 함)
+        List<Long> matchedIds = dedup.stream()
+                .limit(DEFAULT_LIMIT)
+                .toList();
+
         if (matchedIds.isEmpty()) return List.of();
 
         List<UserWeeklyShop> saved = new ArrayList<>(matchedIds.size());
+
         for (Long shopId : matchedIds) {
             Shop shop = shopRepository.findById(shopId).orElse(null);
             if (shop == null) continue;
+
+            // 4) 혹시 남아있는 동일 row가 있다면 방어적으로 skip
+            boolean exists = weeklyRepo.existsByUser_IdAndWeekStartAndShop_Id(userId, weekStart, shopId);
+            if (exists) continue;
 
             saved.add(weeklyRepo.save(
                     UserWeeklyShop.builder()
@@ -135,6 +153,7 @@ public class UserShopForYouService {
                             .build()
             ));
         }
+
         em.flush();
         return saved;
     }
