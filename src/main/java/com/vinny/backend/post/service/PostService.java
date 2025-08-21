@@ -50,6 +50,7 @@ public class PostService {
         );
 
         Page<Post> posts = postRepository.findAllWithAssociations(effectivePageable);
+
         List<PostResponseDto.PostDto> postDtos = posts
                 .map(post -> PostConverter.toDto(post, currentUserId))
                 .toList();

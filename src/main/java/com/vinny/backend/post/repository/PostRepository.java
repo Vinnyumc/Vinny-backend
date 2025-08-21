@@ -19,11 +19,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
         SELECT DISTINCT p FROM Post p
         LEFT JOIN p.user u
-        LEFT JOIN p.brandHashtags bh ON bh.post = p
+        LEFT JOIN p.brandHashtags bh
         LEFT JOIN bh.brand b
-        LEFT JOIN p.shopHashtags sh ON sh.post = p
+        LEFT JOIN p.shopHashtags sh
         LEFT JOIN sh.shop s
-        LEFT JOIN p.styleHashtags st ON st.post = p
+        LEFT JOIN p.styleHashtags st
         LEFT JOIN st.vintageStyle vs
         WHERE LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))

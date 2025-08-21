@@ -39,6 +39,7 @@ public class Post extends BaseEntity {
 
     // 연관관계
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id.sequence ASC")
     @Builder.Default
     private List<PostImage> images = new ArrayList<>();
 
