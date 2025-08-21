@@ -3,8 +3,8 @@ package com.vinny.backend.User.service;
 import com.vinny.backend.User.domain.*;
 import com.vinny.backend.User.domain.enums.UserStatus;
 import com.vinny.backend.User.domain.mapping.*;
+import com.vinny.backend.User.dto.*;
 import com.vinny.backend.User.repository.*;
-import com.vinny.backend.User.dto.OnboardingRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +63,70 @@ public class UserService {
         }
 
         // 5. Region 정보 저장 (위와 동일한 패턴)
+        if (requestDto.getRegionIds() != null && !requestDto.getRegionIds().isEmpty()) {
+            List<Region> regions = regionRepository.findAllById(requestDto.getRegionIds());
+            List<UserRegion> userRegions = regions.stream()
+                    .map(region -> UserRegion.builder().user(user).region(region).build())
+                    .collect(Collectors.toList());
+            user.getUserRegionList().clear();
+            user.getUserRegionList().addAll(userRegions);
+        }
+    }
+
+    @Transactional
+    public void resetVintageStyle(Long userId, UserVintageStyleRequestDto requestDto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("취향 재설정 중인 사용자를 찾을 수 없습니다."));
+
+        if (requestDto.getVintageStyleIds() != null && !requestDto.getVintageStyleIds().isEmpty()) {
+            List<VintageStyle> vintageStyles = vintageStyleRepository.findAllById(requestDto.getVintageStyleIds());
+            List<UserVintageStyle> userVintageStyles = vintageStyles.stream()
+                    .map(style -> UserVintageStyle.builder().user(user).vintageStyle(style).build())
+                    .collect(Collectors.toList());
+            user.getUserVintageStyleList().clear(); // 기존 정보가 있다면 초기화
+            user.getUserVintageStyleList().addAll(userVintageStyles);
+        }
+    }
+
+    @Transactional
+    public void resetBrand(Long userId, UserBrandRequestDto requestDto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("취향 재설정 중인 사용자를 찾을 수 없습니다."));
+
+        if (requestDto.getBrandIds() != null && !requestDto.getBrandIds().isEmpty()) {
+            List<Brand> brands = brandRepository.findAllById(requestDto.getBrandIds());
+            List<UserBrand> userBrands = brands.stream()
+                    .map(brand -> UserBrand.builder().user(user).brand(brand).build())
+                    .collect(Collectors.toList());
+            user.getUserBrandList().clear();
+            user.getUserBrandList().addAll(userBrands);
+        }
+    }
+
+    @Transactional
+    public void resetVintageItem(Long userId, UserVintageItemRequestDto requestDto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("취향 재설정 중인 사용자를 찾을 수 없습니다."));
+
+        if (requestDto.getVintageItemIds() != null && !requestDto.getVintageItemIds().isEmpty()) {
+            List<VintageItem> vintageItems = vintageItemRepository.findAllById(requestDto.getVintageItemIds());
+            List<UserVintageItem> userVintageItems = vintageItems.stream()
+                    .map(item -> UserVintageItem.builder().user(user).vintageItem(item).build())
+                    .collect(Collectors.toList());
+            user.getUserVintageItemList().clear();
+            user.getUserVintageItemList().addAll(userVintageItems);
+        }
+    }
+
+    @Transactional
+    public void resetRegion(Long userId, UserRegionRequestDto requestDto) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("취향 재설정 중인 사용자를 찾을 수 없습니다."));
+
         if (requestDto.getRegionIds() != null && !requestDto.getRegionIds().isEmpty()) {
             List<Region> regions = regionRepository.findAllById(requestDto.getRegionIds());
             List<UserRegion> userRegions = regions.stream()
