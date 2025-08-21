@@ -51,13 +51,6 @@ public class PostService {
 
         Page<Post> posts = postRepository.findAllWithAssociations(effectivePageable);
 
-        // Ensure image order is consistent (sequence ASC) for list view
-        posts.forEach(post -> {
-            if (post.getImages() != null) {
-                post.getImages().sort(java.util.Comparator.comparing(PostImage::getSequence));
-            }
-        });
-
         List<PostResponseDto.PostDto> postDtos = posts
                 .map(post -> PostConverter.toDto(post, currentUserId))
                 .toList();
@@ -305,10 +298,6 @@ public class PostService {
         if (post.getShopHashtags() != null) post.getShopHashtags().size();
         if (post.getLikes() != null) post.getLikes().size();
         if (post.getBookmarks() != null) post.getBookmarks().size();
-
-        if (post.getImages() != null) {
-            post.getImages().sort(java.util.Comparator.comparing(PostImage::getSequence));
-        }
 
         boolean isLikedByMe = post.getLikes().stream()
                 .anyMatch(like -> like.getUser().getId().equals(userId));
