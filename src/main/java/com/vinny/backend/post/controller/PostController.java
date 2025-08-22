@@ -160,7 +160,7 @@ public class PostController {
         );
 
     }
-    @Operation(summary = "전체 피드 인기순 조회", description = "좋아요 순으로 전체 게시글 목록을 조회합니다.")
+    @Operation(summary = "전체 피드 인기순 조회 ", description = "좋아요 순으로 전체 게시글 목록을 조회합니다.")
     @GetMapping("/popular")
     public ResponseEntity<ApiResponse<PostResponseDto>> getPopularPosts(
             @Parameter(hidden = true) @CurrentUser Long userId,
