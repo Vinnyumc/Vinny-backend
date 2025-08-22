@@ -164,6 +164,7 @@ public class AuthService {
 
         // 사용자의 refreshToken을 null로 설정하여 로그아웃 처리
         user.updateRefreshToken(null);
+        user.changeStatus(UserStatus.ONBOARDING);
 
         // DB에 변경 사항 저장
         userRepository.save(user);
